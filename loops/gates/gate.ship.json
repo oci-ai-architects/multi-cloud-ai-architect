@@ -1,0 +1,36 @@
+{
+  "id": "gate.ship",
+  "name": "Ship Gate",
+  "type": "workflow",
+  "source": "internal_custom",
+  "provider": "multi-cloud-ai-architect",
+  "status": "draft",
+  "owner": "agent.lead-architect",
+  "trust_level": "high",
+  "apps": {
+    "claude_code": "supported",
+    "codex": "supported",
+    "cursor": "supported",
+    "gemini_cli": "supported"
+  },
+  "last_reviewed": "2026-10-05",
+  "profile_kind": "operating_excellence_gate",
+  "gate_category": "release",
+  "stage": "ship",
+  "agent": "agent.lead-architect",
+  "extends_schema": "../ai-architect/schemas/operating-excellence-gate.schema.json",
+  "pass_criteria": [
+    "gate.spec, gate.decisions, gate.economics, gate.trust, gate.c4, gate.build, gate.evals, gate.operate, gate.verify and gate.claims are PASS, or SKIPPED with a reason, in architecture.json",
+    "Every ADR in Accepted status names an eval that passed in the latest harness run",
+    "A ship packet lists each human gate the release would cross (publish, spend, dns, credentials) with the exact action, and no agent has crossed one",
+    "For anything priced, published or provisioned, a reviewer on a different model provider than the maker signed the claims receipt",
+    "The operator recorded the go decision with a date; an agent cannot set this gate to PASS"
+  ],
+  "evidence_sources": [
+    "docs/architecture/architecture.json",
+    "docs/architecture/claims/",
+    "docs/architecture/review.md"
+  ],
+  "severity_if_failed": "block_release",
+  "notes": "The loop ends at this gate. Crossing it is a human act."
+}

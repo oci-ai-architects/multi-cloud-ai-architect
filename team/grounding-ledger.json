@@ -1,0 +1,41 @@
+{
+  "schema": "mcaa.grounding-ledger.v1",
+  "note": "Primary sources read in a live session that are not already cited in docs/research/ or data/provider-matrix.json. team/check-team.mjs accepts a grounding URL when it appears in the research corpus or here. Anything else must carry [UNVERIFIED] on the same line.",
+  "entries": [
+    {
+      "url": "https://agentskills.io/specification",
+      "read": "2026-10-05",
+      "confirmed": "SKILL.md requires name (1-64 chars, lowercase a-z 0-9 and hyphens, no leading/trailing/double hyphen, must match parent directory) and description (1-1024 chars). Optional: license, compatibility (max 500), metadata (string map), allowed-tools (experimental). Optional dirs scripts/, references/, assets/. Keep SKILL.md under 500 lines; validate with skills-ref."
+    },
+    {
+      "url": "https://agents.md/",
+      "read": "2026-10-05",
+      "confirmed": "AGENTS.md is plain Markdown with no mandatory structure; the nearest file in the directory tree takes precedence; suggested contents are project overview, build and test commands, code style, testing, security."
+    },
+    {
+      "url": "https://modelcontextprotocol.io/specification/latest",
+      "read": "2026-10-05",
+      "confirmed": "Current schema revision 2026-07-28. JSON-RPC 2.0; stateless, self-contained requests; server features resources, prompts, tools; client feature elicitation; opt-in extensions Tasks, Skills over MCP, MCP Apps. Consent and authorization flows are SHOULD, not enforced by the protocol."
+    },
+    {
+      "url": "https://a2a-protocol.org/latest/specification/",
+      "read": "2026-10-05",
+      "confirmed": "A2A 1.0.0. Core objects Agent Card, Task, Message, Artifact, Part. Bindings JSON-RPC, gRPC, HTTP+JSON/REST, all functionally equivalent to spec/a2a.proto."
+    },
+    {
+      "url": "https://www.anthropic.com/engineering/building-effective-agents",
+      "read": "2026-10-05",
+      "confirmed": "Workflows (predefined code paths) vs agents (LLM directs its own process). Five workflow patterns: prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer. Principles: simplicity, transparency, tool documentation and testing. Stopping conditions such as a maximum number of iterations."
+    },
+    {
+      "url": "https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentic-ai-lens.html",
+      "read": "2026-10-05",
+      "confirmed": "Published 2026-06-10. Six pillars. 40 questions with ids AGENTOPS01-06, AGENTSEC01-09, AGENTREL01-08, AGENTPERF01-07, AGENTCOST01-07, AGENTSUS01-03, counted from the custom lens JSON below."
+    },
+    {
+      "url": "https://github.com/aws-samples/sample-well-architected-custom-lens/blob/main/agentic-ai-lens/agentic-ai-lens.json",
+      "read": "2026-10-05",
+      "confirmed": "Machine-readable lens. Question ids and titles in ontology/agentic-ai-lens.questions.json were extracted from this file with node, not typed."
+    }
+  ]
+}

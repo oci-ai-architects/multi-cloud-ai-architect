@@ -1,0 +1,62 @@
+# Provider research refresh: keeps docs/research/providers/*.md and data/provider-matrix.json current.
+# Provider facts decay (renames, archived repos, GA dates, exam changes). This loop re-reads the primary
+# sources each provider note cites and proposes a dated diff. It never edits the research in place:
+# it writes proposals that a human merges. Scheduling is off until the operator registers it.
+# Validate with: node loops/check-loops.mjs
+
+schema: mcaa.loop.v1
+id: provider-refresh
+purpose: "Detect stale or wrong facts in the provider research and propose a sourced, dated correction."
+extends_lifecycle: none
+runs_in: "this repository"
+schedule: "off until the operator registers it; suggested cadence weekly"
+
+budgets:
+  basis: policy-default
+  max_stage_runs: 12
+  max_wall_clock_minutes: 90
+  max_model_tokens: 1500000
+  max_parallel_makers: 3
+  max_spend_usd: 0
+
+retry_policy:
+  default_cap: 1
+  max_cap: 2
+  on_retry: "re-fetch only the sources that failed, once"
+  no_progress_rule: "a source that fails twice is recorded unreachable and the loop moves on"
+
+human_gates: [publish, external_send, spend, legal_ip]
+
+stop_conditions:
+  - "a human gate is reached"
+  - "any stage exceeds its retry cap"
+  - "any budget is exhausted"
+  - "more than a third of cited sources are unreachable, which suggests a network problem rather than staleness"
+
+stages:
+  - id: sweep
+    summary: "Each provider architect re-fetches the primary sources in its research note and records confirmed, changed or unreachable per claim."
+    maker: [google-cloud-architect, cloudflare-architect, vercel-architect, railway-architect]
+    optional_makers: [aws-architect, azure-architect, oci-architect]
+    checker: claims-auditor
+    gates: [gate.claims]
+    inputs: [docs/research/providers/google-cloud.md, docs/research/providers/cloudflare.md, docs/research/providers/vercel.md, docs/research/providers/railway.md, data/provider-matrix.json]
+    outputs: [docs/research/providers/google-cloud.proposed.md, docs/research/providers/cloudflare.proposed.md, docs/research/providers/vercel.proposed.md, docs/research/providers/railway.proposed.md]
+    parallel: true
+    retry_cap: 1
+    on_pass: audit
+    on_fail: sweep
+    stop_if: ["a source requires login or payment to read"]
+
+  - id: audit
+    summary: "Claims auditor samples each changed claim, re-fetches it, and writes the receipt that a human uses to merge the proposals."
+    maker: [claims-auditor]
+    checker: human-or-other-provider
+    gates: [gate.claims]
+    inputs: [docs/research/providers/google-cloud.proposed.md, docs/research/providers/cloudflare.proposed.md, docs/research/providers/vercel.proposed.md, docs/research/providers/railway.proposed.md]
+    outputs: [docs/architecture/claims/YYYY-MM-DD-claims.md]
+    retry_cap: 1
+    on_pass: done
+    on_fail: sweep
+    human_gate_required: true
+    stop_if: ["always: a human merges or rejects the proposed research changes"]

@@ -1,13 +1,18 @@
 ---
-name: Claude SDK Expert
-description: Build autonomous AI agents using Claude Agent SDK with computer use, tool calling, MCP integration, and production best practices
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "Claude Opus 4.5, Sonnet 4.5"
-resources: resources/code-examples.py
+name: claude-sdk
+description: Reference for building agents with the Claude Agent SDK (Python and TypeScript) - computer use, built-in file, shell, search and web tools, MCP server integration, tool design rules, autonomous, human-in-the-loop and retry patterns, streaming, error handling, cost controls, security, testing and monitoring metrics, plus when to pick LangGraph or the OpenAI Agents SDK instead. Use when designing or reviewing an agent built on Anthropic models, wiring MCP servers into a Claude agent, writing tool schemas and descriptions, choosing between Claude model tiers, or comparing the Claude Agent SDK with other agent frameworks. Trigger on "Claude Agent SDK", "claude-agent-sdk", "computer use", "Claude tool calling", "MCP with Claude", "Anthropic agent".
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
+  resources: resources/code-examples.py
 ---
 
-# Claude SDK Expert Skill
+# Claude Agent SDK
+
+Content as of 2026-01-06. Model names, SDK versions and prices below were not re-checked on
+2026-10-05; confirm on the linked primary source before quoting.
 
 ## Purpose
 Build autonomous AI agents using Claude Agent SDK, leveraging computer use, tool orchestration, and MCP integration for production deployments.
@@ -131,15 +136,21 @@ Show real-time progress to build user trust.
 
 **Implementation:** `resources/code-examples.py`
 
-## Model Selection (January 2026)
+## Model selection (as of 2026-01-06)
+
+As of 2026-01-06 [UNVERIFIED]. Source: https://docs.anthropic.com/en/docs/about-claude/models and
+https://www.anthropic.com/pricing. Model ids and prices change; read both pages before quoting.
 
 | Model | Best For | Pricing (per M tokens) | Speed |
 |-------|----------|------------------------|-------|
 | **claude-opus-4-5** | Flagship reasoning, complex agents, highest accuracy | $5 in / $25 out | Slower |
 | **claude-sonnet-4-5** | Best balance - coding, agents, computer use | $3 in / $15 out | Medium |
-| **claude-haiku-4** | Simple tasks, format conversions, high-throughput | $0.25 in / $1.25 out | Fast |
+| **Haiku tier** | Simple tasks, format conversions, high-throughput | [OPEN] the earlier row named a model id (`claude-haiku-4`) and price that do not match the models page; read it for the current Haiku id and price | Fast |
 
-**Note**: Opus 4.5 achieved 80.9% on SWE-bench Verified. Sonnet 4.5 supports 1M token context with beta header.
+**Note**: Anthropic reported 80.9% for Opus 4.5 on SWE-bench Verified (vendor figure, not
+reproduced here; source https://www.anthropic.com/news/claude-opus-4-5, as of 2026-01-06
+[UNVERIFIED]). Sonnet 4.5 supported a 1M token context behind a beta header as of 2026-01-06
+(source https://docs.anthropic.com/en/docs/build-with-claude/context-windows [UNVERIFIED]).
 
 ## Testing Agents
 
@@ -193,13 +204,14 @@ Measure accuracy, latency, tool efficiency.
 
 ## Key Principles
 
-1. **Computer Use is Game-Changing** - Leverage file/bash capabilities fully
+1. **Computer use matters** - Leverage file/bash capabilities fully
 2. **Tools are First-Class** - Design tools as carefully as prompts
 3. **MCP for Data** - Use MCP servers for enterprise connectivity
 4. **Stream for UX** - Real-time feedback builds trust
 5. **Security Always** - Validate inputs, restrict permissions, audit
 6. **Right Model for Task** - Haiku for simple, Sonnet for complex
 
----
+## Changelog
 
-*Build powerful, autonomous agents using Claude's cutting-edge capabilities.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/.
+- 1.1.0: content as of 2026-01-06 (Claude Opus 4.5, Sonnet 4.5).

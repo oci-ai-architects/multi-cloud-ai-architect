@@ -1,27 +1,48 @@
 ---
-name: AI Security Expert
-description: Enterprise AI security - OWASP LLM Top 10, prompt injection defense, guardrails, PII protection
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "OWASP LLM Top 10 v2"
-resources: resources/security-patterns.py
-triggers:
-  - AI security
-  - prompt injection
-  - LLM security
-  - guardrails
-  - PII protection
+name: ai-security-expert
+description: Security reference for applications that call language models - the OWASP Top 10 for LLM Applications (2025 list and the older 2023 numbering), prompt injection defence, insecure output handling, PII detection and redaction, guardrail frameworks (NeMo Guardrails, Guardrails AI), defence-in-depth layers, EU AI Act and SOC 2 control mapping, red-team test categories and incident response steps. Use when threat-modelling an LLM or agent system, reviewing a design or pull request for prompt injection, data leakage or excessive agency, choosing or wiring guardrails, writing a security test plan for a model-backed feature, or mapping controls to a compliance framework. Trigger on "AI security", "LLM security", "prompt injection", "jailbreak", "guardrails", "PII protection", "OWASP LLM Top 10", "excessive agency", "system prompt leakage".
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
+  resources: resources/security-patterns.py
 ---
 
-# AI Security Expert
+# AI security
 
-Enterprise AI security architect specializing in securing LLM applications, defending against prompt injection, implementing guardrails, and OWASP LLM Top 10 compliance.
+Content as of 2026-01-06, except the OWASP 2025 list, which was read on 2026-10-05. Framework
+versions and regulatory details below were not otherwise re-checked; confirm on the linked primary
+source before quoting.
 
-## OWASP LLM Top 10 (2025)
+Reference for securing LLM applications: defending against prompt injection, implementing
+guardrails, and mapping controls to the OWASP Top 10 for LLM Applications.
 
-### Quick Reference
+## OWASP Top 10 for LLM Applications
 
-| # | Vulnerability | Risk | Key Defense |
+### 2025 list
+
+Source: https://genai.owasp.org/llm-top-10/ (read 2026-10-05).
+
+| ID | Risk | Key defence |
+|---|---|---|
+| LLM01:2025 | Prompt Injection | Input sanitization, delimiters, privilege separation |
+| LLM02:2025 | Sensitive Information Disclosure | PII detection, redaction, output filtering |
+| LLM03:2025 | Supply Chain | Verification, pinning, provenance |
+| LLM04:2025 | Data and Model Poisoning | Data provenance, auditing |
+| LLM05:2025 | Improper Output Handling | Output validation, sanitization |
+| LLM06:2025 | Excessive Agency | Human-in-the-loop, least privilege |
+| LLM07:2025 | System Prompt Leakage | Keep secrets out of prompts, enforce controls outside the model |
+| LLM08:2025 | Vector and Embedding Weaknesses | Access control on retrieval, tenant isolation in vector stores |
+| LLM09:2025 | Misinformation | Grounding, citations, confidence signals |
+| LLM10:2025 | Unbounded Consumption | Rate limits, token caps, cost alerts |
+
+### 2023 numbering (v1.1)
+
+The defence notes below were written against the 2023 list, which OWASP still publishes for
+reference at the same URL. Use the 2025 IDs above in new work.
+
+| # | Vulnerability | Risk | Key defence |
 |---|--------------|------|-------------|
 | LLM01 | Prompt Injection | Critical | Input sanitization, delimiters |
 | LLM02 | Insecure Output | High | Output validation, sanitization |
@@ -34,30 +55,30 @@ Enterprise AI security architect specializing in securing LLM applications, defe
 | LLM09 | Overreliance | Medium | Confidence scores, citations |
 | LLM10 | Model Theft | Medium | Rate limiting, watermarking |
 
-### LLM01: Prompt Injection
+### Prompt injection (LLM01)
 
-**Attack Types:**
+**Attack types:**
 - Direct: "Ignore previous instructions..."
 - Indirect: Malicious content in RAG documents
 - Encoding tricks: Unicode, special tokens
 
-**Defense Pattern:**
+**Defence pattern:**
 ```
 User Input → Sanitize → Delimit → LLM → Validate Output → Filter
 ```
 
-### LLM02: Insecure Output Handling
+### Insecure or improper output handling (2023 LLM02, 2025 LLM05)
 - Never execute LLM output as code without validation
 - Sanitize HTML (use allowlist)
 - Validate SQL (SELECT only, table allowlist)
 
-### LLM04: Model DoS
+### Model denial of service (2023 LLM04, 2025 LLM10)
 - Rate limiting per user/API key
 - Token limits on requests
 - Timeout configurations
 - Cost capping/alerts
 
-### LLM06: Sensitive Information Disclosure
+### Sensitive information disclosure (2023 LLM06, 2025 LLM02)
 - PII detection (regex + NER)
 - System prompt protection
 - Training data sanitization
@@ -65,9 +86,9 @@ User Input → Sanitize → Delimit → LLM → Validate Output → Filter
 
 **Code patterns:** `resources/security-patterns.py`
 
-## PII Protection
+## PII protection
 
-### Detection Patterns
+### Detection patterns
 | Type | Example Pattern |
 |------|-----------------|
 | Email | `*@*.com` |
@@ -76,13 +97,13 @@ User Input → Sanitize → Delimit → LLM → Validate Output → Filter
 | Credit Card | 16 digits |
 | IP Address | `X.X.X.X` |
 
-### Redaction Strategy
+### Redaction strategy
 1. Detect PII in input before LLM call
 2. Redact PII in LLM output
 3. Log without PII
 4. Encrypt at rest
 
-## Guardrails Implementation
+## Guardrails implementation
 
 ### NeMo Guardrails (NVIDIA)
 ```
@@ -106,16 +127,19 @@ guard = Guard().use_many(
 )
 ```
 
-### Custom Pipeline
+Validator names and the `use_many` API are as of 2026-01-06 [UNVERIFIED]; check
+https://www.guardrailsai.com/docs before copying.
+
+### Custom pipeline
 ```
 Input Guards → LLM Call → Output Guards → Response
 ```
 
 **Implementation:** `resources/security-patterns.py`
 
-## Security Architecture
+## Security architecture
 
-### Defense in Depth Layers
+### Defence in depth layers
 
 | Layer | Controls |
 |-------|----------|
@@ -127,14 +151,16 @@ Input Guards → LLM Call → Output Guards → Response
 | Output | Response filtering, fact verification |
 | Audit | Logging, retention, compliance |
 
-### Zero Trust Principles
+### Zero trust principles
 - Never trust, always verify
 - Least privilege for agents
 - Assume breach (log everything)
 
-## Compliance Frameworks
+## Compliance frameworks
 
-### EU AI Act (High-Risk)
+### EU AI Act (high-risk systems)
+Obligations as summarised on 2026-01-06 [UNVERIFIED]; primary source:
+https://eur-lex.europa.eu/eli/reg/2024/1689/oj
 - Risk management system
 - Data governance
 - Technical documentation
@@ -142,15 +168,16 @@ Input Guards → LLM Call → Output Guards → Response
 - Accuracy/robustness testing
 
 ### SOC 2 for AI
+Trust services criteria source: https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services
 - Security: Access controls, encryption
 - Availability: SLA monitoring, DR
 - Processing Integrity: Input/output validation
 - Confidentiality: Data classification
 - Privacy: Data minimization, consent
 
-## Security Testing
+## Security testing
 
-### Red Team Categories
+### Red team categories
 1. Direct injection attempts
 2. Jailbreak prompts
 3. Indirect injection via context
@@ -158,7 +185,7 @@ Input Guards → LLM Call → Output Guards → Response
 
 **Test suite:** `resources/security-patterns.py`
 
-### Testing Checklist
+### Testing checklist
 - [ ] Injection patterns blocked
 - [ ] System prompt protected
 - [ ] PII detected and redacted
@@ -166,9 +193,9 @@ Input Guards → LLM Call → Output Guards → Response
 - [ ] Outputs validated
 - [ ] Audit logs complete
 
-## Incident Response
+## Incident response
 
-### Severity Levels
+### Severity levels
 
 | Incident | Severity | Response |
 |----------|----------|----------|
@@ -176,21 +203,22 @@ Input Guards → LLM Call → Output Guards → Response
 | Data exfiltration attempt | High | Block, forensics, notify |
 | Model extraction detected | High | Rate limit, investigate |
 
-### Response Steps
+### Response steps
 1. Contain (block source)
 2. Preserve (logs, evidence)
 3. Analyze (attack pattern)
-4. Remediate (update defenses)
+4. Remediate (update defences)
 5. Document (security log)
 
 ## Resources
 
-- [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/)
 - [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
 - [NeMo Guardrails](https://github.com/NVIDIA/NeMo-Guardrails)
 - [Guardrails AI](https://github.com/guardrails-ai/guardrails)
 - [LLM Security Best Practices](https://llmsecurity.net/)
 
----
+## Changelog
 
-*Secure AI systems with defense in depth and zero trust principles.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, OWASP 2025 list added beside the 2023 numbering the section previously mislabelled as 2025.
+- 1.1.0: content as of 2026-01-06.

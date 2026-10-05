@@ -55,9 +55,15 @@ if (weightSum !== 100) die(`rubric weights sum to ${weightSum}, expected 100`)
 
 // --- preflight checks: deterministic, file-based, no network -----------------
 
+// A candidate controls the submission tree, so a symlink must not lead the scorer outside it.
+const insideSub = (p) => {
+  const root = realpathSync(subDir)
+  const real = realpathSync(p)
+  return real === root || real.startsWith(root + sep)
+}
 const fileText = (rel) => {
   const p = join(subDir, rel)
-  return existsSync(p) && statSync(p).isFile() ? readFileSync(p, 'utf8') : null
+  return existsSync(p) && insideSub(p) && statSync(p).isFile() ? readFileSync(p, 'utf8') : null
 }
 const headingsOf = (text) =>
   text
@@ -72,7 +78,7 @@ const parseJsonl = (text) =>
     .map((l) => JSON.parse(l))
 const mdFiles = (rel, ext) => {
   const p = join(subDir, rel)
-  return existsSync(p) ? readdirSync(p).filter((f) => f.endsWith(ext)).sort() : []
+  return existsSync(p) && insideSub(p) ? readdirSync(p).filter((f) => f.endsWith(ext)).sort() : []
 }
 
 const checks = {

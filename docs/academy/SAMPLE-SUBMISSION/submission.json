@@ -1,0 +1,264 @@
+{
+  "schema": "ai-architect-academy/submission.v1",
+  "fixture": true,
+  "submittedAt": "2026-10-05",
+  "rubricVersion": "0.1.0",
+  "candidate": {
+    "id": "cand-fixture-01",
+    "displayName": "Fixture candidate"
+  },
+  "system": {
+    "id": "ledgerline",
+    "name": "Ledgerline: supplier-invoice intake agent",
+    "oneLine": "Emailed supplier invoices become approval-ready payment drafts; bank-detail changes are surfaced, never applied; the agent cannot pay, approve or edit vendors."
+  },
+  "artifacts": {
+    "spec": "SPEC.md",
+    "system": "docs/architecture/SYSTEM.md",
+    "adrs": "docs/architecture/adr/",
+    "c4": "c4/workspace.dsl",
+    "toolAuthority": "docs/architecture/tool-authority.json",
+    "threatModel": "docs/architecture/05-trust-boundary.md",
+    "evalCases": "docs/architecture/06-evals/cases.jsonl",
+    "evalRunReport": "docs/architecture/06-evals/run-report.md",
+    "costModel": "docs/architecture/cost-model.json",
+    "runbook": "docs/architecture/07-runbook.md",
+    "deployment": "deploy/deployment.json",
+    "incident": "incident-report.md"
+  },
+  "integrity": {
+    "attestation": "I designed, built and deployed this system. Every decision recorded here is mine, and I can defend it without notes. (Fixture text.)",
+    "aiUseDisclosure": "Claude Code with the AI Architect plugin drafted the first versions of SYSTEM.md, the runbook and 9 of 15 eval cases; every one was edited, and the git log shows the edits. ADR-0002 and the IBAN check were written by hand. The C4 model was generated from tool-authority.json by a script I wrote, then hand-tagged. Transcripts for ADR-0002 and ADR-0003: cohort link, not in this fixture.",
+    "historyLocator": "git log from 2026-08-24 to 2026-10-04, 61 commits (fixture)"
+  },
+  "reviews": [
+    {
+      "reviewer": "R1",
+      "role": "primary",
+      "independent": true,
+      "scoredAt": "2026-10-07",
+      "rederived": [
+        "ev.trust.iban: rg -n ibanStatus worker/src/tools/draft.ts -> 1 hit, L9",
+        "ev.model.seam: rg -l provider names -> 2 files under seam/adapters",
+        "GET each deploy url unauthenticated (fixture: .example, skipped and noted)"
+      ],
+      "scores": {
+        "c1.1": {
+          "score": 4,
+          "note": "Kill criterion (a) is wired to the authority.denied stream and a severity-1 trigger; strongest framing in the cohort."
+        },
+        "c1.2": {
+          "score": 3,
+          "note": "Every REQ traces; sizing note with measured review time."
+        },
+        "c2.1": {
+          "score": 3,
+          "note": "All four MADE with re-derivable rg pointers."
+        },
+        "c2.2": {
+          "score": 3,
+          "note": "ADR-0001 rejects the option most tutorials would build. ADR-0003's option 1 rejection leans on the rubric, which is honest and still weaker."
+        },
+        "c2.3": {
+          "score": 3,
+          "note": "Gap report covers quality, cost, latency. Failover not exercised in production."
+        },
+        "c3.1": {
+          "score": 4,
+          "note": "Deployment view maps planes to providers with the boundary visible."
+        },
+        "c3.2": {
+          "score": 3,
+          "note": "Profile applied fully; generated from the authority matrix per disclosure, not verified by me."
+        },
+        "c4.1": {
+          "score": 4,
+          "note": "One principal per write; approve_draft held by no service principal; absentByDesign list."
+        },
+        "c4.2": {
+          "score": 3,
+          "note": "Abuse cases map to eval ids. Accepted risks named with owners."
+        },
+        "c4.3": {
+          "score": 4,
+          "note": "Deterministic guard; inj-04 arrives through a tool result."
+        },
+        "c5.1": {
+          "score": 3,
+          "note": "15 cases, four kinds, decidable assertions."
+        },
+        "c5.2": {
+          "score": 3,
+          "note": "Seeded regression exits 1; fixtures under separate CODEOWNERS. CI gating described, not shown."
+        },
+        "c5.3": {
+          "score": 3,
+          "note": "Every ADR names existing case ids."
+        },
+        "c6.1": {
+          "score": 2,
+          "note": "Unit cost is right, but total is over the NFR and the spec still says 0.05. F2."
+        },
+        "c6.2": {
+          "score": 4,
+          "note": "Guard parks work, does not fail silently; test recorded."
+        },
+        "c7.1": {
+          "score": 3,
+          "note": "Three providers, one plane each, ADR-0003 explains the split."
+        },
+        "c7.2": {
+          "score": 4,
+          "note": "Rollback timed on all three providers; R3 revoke-drafting is the right fast stop."
+        },
+        "c7.3": {
+          "score": 3,
+          "note": "Honest report: detection came from the downstream 422, and the guard closes that gap."
+        },
+        "c8.1": {
+          "score": 3,
+          "note": "Held ADR-0002 under 'the CFO insists on auto-updating bank details'; named the verified-change workflow as the only reversal."
+        },
+        "c8.2": {
+          "score": 3,
+          "note": "Specific disclosure; defence matched the commit history."
+        }
+      }
+    },
+    {
+      "reviewer": "R2",
+      "role": "primary",
+      "independent": true,
+      "scoredAt": "2026-10-08",
+      "rederived": [
+        "seeded regression: checked out seed/remove-iban-guard, harness exit 1 on inj-01",
+        "ev.run.queue: rg -n enqueue ingress/src/index.ts -> L31",
+        "CI workflow blocks fixtures+prompt in one PR (cohort repo)"
+      ],
+      "scores": {
+        "c1.1": {
+          "score": 3,
+          "note": "Meets the bar; condition (b) is not yet emitted by the system."
+        },
+        "c1.2": {
+          "score": 2,
+          "note": "Cost NFR contradicts cost-model.json. Finding F2: fix the spec, not the number."
+        },
+        "c2.1": {
+          "score": 3,
+          "note": "Clean. Planes all owned."
+        },
+        "c2.2": {
+          "score": 3,
+          "note": "Real alternatives. ADR-0003 should argue the Vercel-only option on its merits alone."
+        },
+        "c2.3": {
+          "score": 4,
+          "note": "Validator turns provider B's date drift into a human step. That is the seam working."
+        },
+        "c3.1": {
+          "score": 3,
+          "note": "Good. Portal-to-accounting approval edge deserves its own component view."
+        },
+        "c3.2": {
+          "score": 3,
+          "note": "All tags and principals present."
+        },
+        "c4.1": {
+          "score": 4,
+          "note": "Matrix matches the C4 edges one for one."
+        },
+        "c4.2": {
+          "score": 3,
+          "note": "Data residency accepted with a date; good."
+        },
+        "c4.3": {
+          "score": 4,
+          "note": "Fails closed in code; replay recorded."
+        },
+        "c5.1": {
+          "score": 3,
+          "note": "Sources recorded per case."
+        },
+        "c5.2": {
+          "score": 4,
+          "note": "CI job blocks a PR touching fixtures and prompt together; I checked the workflow file in the cohort repo."
+        },
+        "c5.3": {
+          "score": 3,
+          "note": "Resolves."
+        },
+        "c6.1": {
+          "score": 3,
+          "note": "Sensitivity on three drivers with arithmetic shown; the over-budget reading is stated openly."
+        },
+        "c6.2": {
+          "score": 2,
+          "note": "Guard tested on staging only; the gateway rate limit was not tested at all."
+        },
+        "c7.1": {
+          "score": 3,
+          "note": "Live slice attached."
+        },
+        "c7.2": {
+          "score": 3,
+          "note": "Ops log exists but has two entries; too early to judge the ADR-0003 reversal metric."
+        },
+        "c7.3": {
+          "score": 3,
+          "note": "I wrote the payload. Detection time is from timestamps, not memory."
+        },
+        "c8.1": {
+          "score": 3,
+          "note": "Changed constraint: 10x volume. Answered with the sensitivity row, not a guess."
+        },
+        "c8.2": {
+          "score": 3,
+          "note": "Consistent."
+        }
+      }
+    },
+    {
+      "reviewer": "R3",
+      "role": "adjudicator",
+      "independent": true,
+      "scoredAt": "2026-10-09",
+      "rederived": [
+        "budget-guard staging log for 2026-10-03",
+        "gateway rate-limit config: present, no test record"
+      ],
+      "adjudicates": [
+        "c6.2"
+      ],
+      "scores": {
+        "c6.2": {
+          "score": 3,
+          "note": "The spend guard fired in a recorded test, which meets anchor 3. The untested rate limit is a second guard, so its absence blocks 4, not 3."
+        }
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "from": "R2",
+      "criterion": "c2.2",
+      "text": "Argue ADR-0003 option 1 on its merits; the credential's two-provider rule is not a design reason.",
+      "required": false
+    },
+    {
+      "id": "F2",
+      "from": "R2",
+      "criterion": "c1.2",
+      "text": "The cost NFR and cost-model.json disagree. Reword the NFR to separate model cost from platform cost.",
+      "required": false
+    },
+    {
+      "id": "F3",
+      "from": "R1",
+      "criterion": "c2.3",
+      "text": "Exercise gateway failover in production once and record it.",
+      "required": false
+    }
+  ]
+}

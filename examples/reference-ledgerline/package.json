@@ -1,0 +1,34 @@
+{
+  "name": "reference-ledgerline",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "contract": "node evals/contract.ts",
+    "eval:a": "node evals/run.ts --adapter a-inproc",
+    "eval:b": "node evals/run.ts --adapter b",
+    "eval:a:real": "node evals/run.ts --adapter a-inproc --model gemini",
+    "eval:b:real": "node evals/run.ts --adapter b --model gemini",
+    "eval:seeded": "node evals/run.ts --adapter a-inproc --seed-regression",
+    "dev:worker": "node targets/railway/server.ts",
+    "deploy:cloudflare": "wrangler deploy --config targets/cloudflare/wrangler.jsonc"
+  },
+  "dependencies": {
+    "@ai-sdk/google": "^4.0.88",
+    "ai": "^7.0.128",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261005.1",
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vercel": "^62.4.0",
+    "wrangler": "^4.147.0"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}

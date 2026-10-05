@@ -1,0 +1,11 @@
+{
+  "name": "ledgerline-reference",
+  "main": "worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "MODEL_PROVIDER": "gemini",
+    "GEMINI_MODEL": "gemini-3.8-flash"
+  },
+  "observability": { "enabled": true }
+}

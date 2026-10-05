@@ -1,6 +1,6 @@
 # Ledgerline: supplier-invoice intake agent
 
-Fixture. This is a teaching submission for the Certified AI Architect review. The firm, people,
+Fixture. This is a teaching submission for the AI Architect Credential review. The firm, people,
 URLs and figures are invented; prices are illustrative and marked. Nothing here describes a real
 customer or employer.
 

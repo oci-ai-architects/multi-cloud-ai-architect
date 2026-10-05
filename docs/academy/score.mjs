@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Scores a Certified AI Architect submission against RUBRIC.json. Zero dependencies.
+// Scores a AI Architect Credential submission against RUBRIC.json. Zero dependencies.
 //
 //   node score.mjs <submission-dir> [--fixture] [--preflight-only] [--json] [--rubric RUBRIC.json]
 //                  [--reviews staff-scorecards.json --register reviewers.json]   (required unless --fixture or --preflight-only)

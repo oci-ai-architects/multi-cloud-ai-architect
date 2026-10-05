@@ -1,6 +1,6 @@
 # Sample submission: Ledgerline
 
-A complete worked submission for the Certified AI Architect design review, used to teach the
+A complete worked submission for the AI Architect Credential design review, used to teach the
 format, calibrate reviewers and test the scorer. It is a **fixture**: the firm, people, URLs
 (reserved `.example` domain) and prices are invented, and the scorer labels it ineligible for a
 credential. Copying it as your own submission fails integrity (`fixtureSystemIds` in

@@ -1,4 +1,4 @@
-# Certified AI Architect
+# AI Architect Credential
 
 AI Architect Academy credential, assessed by graded design review of real work.
 
@@ -248,10 +248,10 @@ path; this rubric versions and grandfathers).
 
 ## Decisions this needs from Frank
 
-1. **Name.** "Certified AI Architect" is generic and crowded: Claude Certified Architect, ADaSci
+1. **Name.** Working title set to "AI Architect Credential" on 2026-10-05 (default applied by the maintainer's assistant, reversible). "Certified AI Architect" is generic and crowded: Claude Certified Architect, ADaSci
    CAASA, and training vendors selling "AI Architect certification". Run a trademark search before
    any public use; the fallback is the qualified form "AI Architect Academy Certified Architect
-   (design-reviewed)". `[OPEN]`
+   (design-reviewed)". `[OPEN]` Defaults applied the same day: no refund guarantee until a first cohort has run; the waitlist form stays closed until the estate demand-capture store is provisioned.
 2. **Graph wording.** `role:production-agent-architect` in the academy graph says "This is not a
    certification". The role stays true as written; the credential needs its own `Credential` node
    kind that requires the competency plus the review and defence. Ruling needed before any surface

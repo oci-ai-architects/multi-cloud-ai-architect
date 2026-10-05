@@ -256,8 +256,6 @@ See `templates/cost-calculator.md` for detailed scenarios.
 
 ## License
 
-MIT License - Use freely for your AI architecture projects.
+License: Apache-2.0. See LICENSE.
 
----
-
-*AI Architect Command Center - Design with excellence, diagram with clarity, deploy with confidence.*
+Oracle and OCI are trademarks or registered trademarks of Oracle Corporation. This project is not affiliated with, endorsed by, or sponsored by Oracle Corporation. Other names are marks of their respective owners.

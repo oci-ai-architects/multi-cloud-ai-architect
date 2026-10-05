@@ -5,7 +5,7 @@ Chief AI Architect specializing in Multi-Cloud AI Architectures with deep OCI Ge
 
 ## WHY
 Enterprise AI requires expertise across cloud providers, security patterns, cost optimization, and production deployment. This toolkit provides:
-- **22 domain skills** for specialized knowledge
+- **30 skills** (see `SKILLS.md`), validated by `node skills/check-skills.mjs`
 - **Architecture templates** (D2, Terraform)
 - **Best practices** from real deployments
 
@@ -86,7 +86,7 @@ Full details: `cheatsheets/`
 ```
 claude-ai-architect/
 ├── CLAUDE.md              # This file
-├── skills/                # 22 domain skills (auto-activated)
+├── skills/                # 30 skills, indexed in SKILLS.md
 ├── knowledge-base/        # Deep domain documentation
 ├── templates/             # D2, Terraform, discovery questions
 ├── cheatsheets/           # Quick reference guides

@@ -39,12 +39,12 @@ claude-ai-architect/
 │   ├── multi-cloud/            # Multi-cloud patterns
 │   └── ai-infrastructure/      # GPU and infrastructure
 │
-├── skills/                      # 14 specialized skills
+├── skills/                      # 30 skills, indexed in SKILLS.md; node skills/check-skills.mjs
 │   ├── architecture-diagramming/
 │   ├── genai-dac-specialist/
 │   ├── rag-expert/
 │   ├── enterprise-ai-patterns/
-│   └── ... (10 more)
+│   └── ... (26 more)
 │
 ├── templates/
 │   ├── d2/                     # D2 diagram templates
@@ -233,7 +233,7 @@ See `templates/cost-calculator.md` for detailed scenarios.
 ## Contributing
 
 1. Add knowledge to `knowledge-base/`
-2. Create skills in `skills/`
+2. Create skills in `skills/` and run `node skills/check-skills.mjs`
 3. Add templates to `templates/`
 4. Document in `cheatsheets/`
 

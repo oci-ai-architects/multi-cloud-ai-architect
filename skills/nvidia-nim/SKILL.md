@@ -1,19 +1,29 @@
 ---
 name: nvidia-nim
-description: NVIDIA NIM inference microservices for deploying AI models with OpenAI-compatible APIs, self-hosted or cloud
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "NVIDIA NIM 1.x"
+description: Reference for NVIDIA NIM inference microservices, which serve foundation models behind OpenAI-compatible APIs either from NVIDIA's hosted API catalog or as self-hosted containers - client setup, chat, embeddings and tool calling, LangChain and LlamaIndex integration, Docker Compose and Helm deployment, GPU tuning variables, network policy, NeMo Guardrails, monitoring, troubleshooting, and a NIM-backed MCP server. Use when deploying or calling a NIM, sizing self-hosted inference against a hosted API, wiring NIM into LangChain, LlamaIndex or an agent, or debugging a NIM container. Trigger on "NIM", "NVIDIA NIM", "integrate.api.nvidia.com", "build.nvidia.com", "nvcr.io/nim", "NGC_API_KEY", "TensorRT-LLM", "Triton", "NeMo", "self-hosted Llama on GPUs". Model catalog snapshot in references/; runnable samples in examples/ and a D2 diagram in templates/.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# NVIDIA NIM Expert Skill
+# NVIDIA NIM
 
-You are an expert in NVIDIA NIM (NVIDIA Inference Microservices) - a set of accelerated inference microservices for deploying foundation models on any cloud, data center, workstation, or PC.
+Content as of 2026-01-06. Model IDs, container tags, environment variables, metric names and prices
+below were not re-checked on 2026-10-05; confirm them on the NIM documentation
+(https://docs.nvidia.com/nim/index.html) and the API catalog (https://build.nvidia.com/explore/discover)
+before quoting. This skill uses public NVIDIA documentation and implies no affiliation.
+
+NVIDIA NIM (NVIDIA Inference Microservices) is a set of accelerated inference microservices for
+deploying foundation models on a cloud, data center, workstation or PC.
+
+Local files: [Python SDK examples](examples/nim_sdk_examples.py), [NeMo agent patterns](examples/nemo_agent_patterns.py), [NIM MCP server](examples/nim_mcp_server.py), [architecture diagram](templates/nim-architecture.d2).
 
 ## Overview
 
 NVIDIA NIM provides:
-- **OpenAI-compatible APIs** for seamless integration with existing tools
+- **OpenAI-compatible APIs**, so existing OpenAI clients work by changing the base URL
 - **Optimized inference** using TensorRT-LLM, vLLM, and Triton Inference Server
 - **Flexible deployment** - self-hosted containers or NVIDIA's cloud API
 - **Enterprise-ready** - part of NVIDIA AI Enterprise with security updates
@@ -53,37 +63,9 @@ from openai import OpenAI
 client = OpenAI(base_url="http://localhost:8000/v1", api_key="not-used")
 ```
 
-## Supported Models
+## Supported models
 
-### LLM Models
-| Model | Size | Best For |
-|-------|------|----------|
-| meta/llama-3.1-405b-instruct | 405B | Complex reasoning, enterprise |
-| meta/llama-3.1-70b-instruct | 70B | General purpose, balanced |
-| meta/llama-3.1-8b-instruct | 8B | Fast inference, cost-effective |
-| mistralai/mixtral-8x22b-instruct-v0.1 | 141B | Multi-expert reasoning |
-| nvidia/nemotron-4-340b-instruct | 340B | Enterprise, high accuracy |
-| google/gemma-2-27b-it | 27B | Efficient, open weights |
-
-### Vision Models (VLM)
-| Model | Capabilities |
-|-------|-------------|
-| microsoft/phi-3-vision-128k-instruct | Image understanding |
-| nvidia/vila-1.5-40b | Video/image analysis |
-| google/paligemma-3b-mix-224 | Multimodal tasks |
-
-### Embedding Models
-| Model | Dimensions | Use Case |
-|-------|------------|----------|
-| nvidia/nv-embedqa-e5-v5 | 1024 | RAG, semantic search |
-| nvidia/nv-embed-v2 | 4096 | High-quality embeddings |
-| nvidia/llama-3.2-nv-embedqa-1b-v2 | 2048 | Balanced performance |
-
-### Reranking Models
-| Model | Use Case |
-|-------|----------|
-| nvidia/nv-rerankqa-mistral-4b-v3 | Document reranking |
-| nvidia/llama-3.2-nv-rerankqa-1b-v2 | Fast reranking |
+The model catalog as of 2026-01-06 (LLM, vision, embedding and reranking NIMs with sizes and embedding dimensions) is in [model catalog](references/model-catalog.md). Model IDs change often; check https://build.nvidia.com/explore/discover before naming one.
 
 ## API Reference
 
@@ -256,6 +238,9 @@ docker run -d --gpus all \
 
 ### Key Configuration Parameters
 
+As of 2026-01-06 [UNVERIFIED]. Variable names and defaults vary by NIM and release; check
+https://docs.nvidia.com/nim/large-language-models/latest/configuration.html.
+
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | NIM_MAX_MODEL_LEN | Max sequence length | Model default |
@@ -278,8 +263,8 @@ User Request → API Gateway (OCI)
                     ↓
     ┌───────────────┴───────────────┐
     ↓                               ↓
-NVIDIA NIM Cloud              OCI GenAI DAC
-(integrate.api.nvidia.com)    (Self-hosted NIM)
+NVIDIA NIM Cloud              Self-hosted NIM
+(integrate.api.nvidia.com)    (OCI GPU compute)
 - Burst capacity              - Dedicated capacity
 - Pay-per-token               - Predictable costs
 - Latest models               - Data residency
@@ -354,13 +339,11 @@ response = rails.generate(
 
 ## Cost Optimization
 
-### Token-Based Pricing (Cloud API)
+### Token-based pricing (hosted API)
 
-| Model | Input (per 1M) | Output (per 1M) |
-|-------|----------------|-----------------|
-| Llama 3.1 8B | $0.30 | $0.50 |
-| Llama 3.1 70B | $0.88 | $1.20 |
-| Llama 3.1 405B | $5.00 | $15.00 |
+[OPEN]. The per-token prices carried here until 2026-01-06 had no source and are removed. Hosted API
+terms (trial credits, NVIDIA AI Enterprise licensing, partner endpoints) are stated on
+https://build.nvidia.com/ and https://www.nvidia.com/en-us/data-center/products/ai-enterprise/.
 
 ### Self-Hosted Cost Estimation
 
@@ -368,8 +351,9 @@ response = rails.generate(
 GPU Hours/Month × GPU Cost/Hour = Infrastructure Cost
 
 Example (Llama 3.1 70B on 2x A100):
-- 730 hours × $3.50/hour = $2,555/month
-- Break-even: ~2M tokens/day vs cloud pricing
+- 730 hours × [OPEN] GPU price per hour from your cloud's GPU pricing page
+- Break-even against a hosted API: [OPEN], computed from measured tokens per second on your
+  hardware and the hosted price on the day
 ```
 
 ## Monitoring & Observability
@@ -386,6 +370,9 @@ Example (Llama 3.1 70B on 2x A100):
 
 ### Key Metrics to Monitor
 
+Metric names as of 2026-01-06 [UNVERIFIED]; the exported names are listed in
+https://docs.nvidia.com/nim/large-language-models/latest/observability.html.
+
 - `nim_request_latency_seconds` - Request latency
 - `nim_tokens_processed_total` - Token throughput
 - `nim_gpu_memory_used_bytes` - GPU memory usage
@@ -393,7 +380,7 @@ Example (Llama 3.1 70B on 2x A100):
 
 ## NeMo Agent Toolkit Integration
 
-For building agentic applications with NIM:
+For building agentic applications with NIM. The class names below are illustrative as of 2026-01-06 [UNVERIFIED]; check the toolkit README (https://github.com/NVIDIA/NeMo-Agent-Toolkit) for the current API:
 
 ```python
 from nemo_agent_toolkit import AgentConfig, ReactAgent
@@ -441,7 +428,7 @@ async def generate_text(prompt: str, model: str = "meta/llama-3.1-70b-instruct")
 
 | Issue | Solution |
 |-------|----------|
-| GPU not detected | Ensure NVIDIA driver 535+ and nvidia-container-toolkit |
+| GPU not detected | Check the driver version in the support matrix (535+ as of 2026-01-06 [UNVERIFIED], https://docs.nvidia.com/nim/large-language-models/latest/support-matrix.html) and install nvidia-container-toolkit |
 | OOM errors | Reduce NIM_MAX_MODEL_LEN or increase tensor parallelism |
 | Slow cold start | Pre-warm with dummy requests, use KV cache |
 | API key invalid | Verify nvapi- prefix, check NGC account status |
@@ -464,3 +451,8 @@ curl http://localhost:8000/v1/models
 - [NeMo Agent Toolkit](https://github.com/NVIDIA/NeMo-Agent-Toolkit)
 - [LangChain NVIDIA Integration](https://python.langchain.com/docs/integrations/chat/nvidia_ai_endpoints/)
 - [NIM on NGC Catalog](https://catalog.ngc.nvidia.com/containers?filters=nim)
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced or removed, model catalog moved to references/.
+- 1.1.0: updated for NVIDIA NIM 1.x.

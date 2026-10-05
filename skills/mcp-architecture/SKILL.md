@@ -1,20 +1,28 @@
 ---
-name: MCP Architecture Expert
-description: Design and implement Model Context Protocol servers for standardized AI-to-data integration with resources, tools, prompts, and security best practices
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "MCP Spec 1.0"
+name: mcp-architecture
+description: Fundamentals of the Model Context Protocol (MCP) for connecting agents to data and tools - host, client and server roles over JSON-RPC 2.0, the three server capabilities (resources, tools, prompts), minimal Python and TypeScript servers, client configuration, and security basics (OAuth scopes, input validation, rate limiting, audit logging), with aggregation, caching, streaming, metrics and testing in references/. Use when explaining MCP to a team, deciding whether to build a server or reuse an existing one, sketching a first server, or wiring a server into a client such as Claude Desktop. Trigger on "what is MCP", "MCP server", "MCP resources", "MCP tools vs prompts", "build an MCP server", "mcpServers", "MCP OAuth". Check protocol details against the current specification revision (2026-07-28 per SOUL.md) at https://modelcontextprotocol.io/specification/latest. For server design patterns and multi-server setups see mcp-2025-patterns.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# MCP Architecture Expert Skill
+# MCP architecture
+
+Content as of 2026-01-06. The original "MCP Spec 1.0" label predates the dated specification
+revisions the protocol now publishes; this repository cites revision 2026-07-28
+(https://modelcontextprotocol.io/specification/latest, read 2026-10-05 per `SOUL.md`). SDK calls,
+server package names and model IDs below were not re-checked on 2026-10-05; confirm them on the
+official repositories (https://github.com/modelcontextprotocol) before quoting.
 
 ## Purpose
-Master the Model Context Protocol (MCP) to build standardized, reusable integrations between AI systems and data sources, eliminating the N×M integration problem.
+Build standardized, reusable integrations between AI systems and data sources with the Model Context Protocol, replacing one-off N×M integrations.
 
 ## What is MCP?
 
 ### Model Context Protocol
-Open standard (November 2024, Anthropic) for connecting AI systems to external data sources and tools through a unified protocol.
+An open standard announced by Anthropic in November 2024 (https://www.anthropic.com/news/model-context-protocol) for connecting AI systems to external data sources and tools through one protocol.
 
 **The Problem:** N agents × M tools = N×M custom integrations
 **The Solution:** N agents + M MCP servers = N+M integrations (any agent uses any tool)
@@ -223,7 +231,14 @@ await server.connect(transport);
 
 ## Common MCP Servers
 
-### Official Servers (by Anthropic)
+### Early reference servers
+
+As of 2026-01-06 [UNVERIFIED]. The protocol project maintains a small set of reference servers at
+https://github.com/modelcontextprotocol/servers and moved several early ones to
+https://github.com/modelcontextprotocol/servers-archived; many services now publish their own
+servers (Stripe and GitHub among them). Check both repositories, or the provider's own docs, before
+recommending any server below.
+
 - **GitHub** - Issues, PRs, repos
 - **Slack** - Messages, channels
 - **Google Drive** - Files, docs
@@ -232,7 +247,7 @@ await server.connect(transport);
 - **Git** - Repository operations
 - **Stripe** - Payment data
 
-### Installing Official Servers
+### Installing reference servers
 ```bash
 # Via npm
 npx @modelcontextprotocol/server-github
@@ -270,6 +285,12 @@ python -m mcp_server_slack
 ```
 
 ### Claude SDK Integration
+
+Illustrative only, as of 2026-01-06 [UNVERIFIED]. The Messages API connects to remote MCP servers
+by URL through its MCP connector, not by launching a local command; see
+https://docs.anthropic.com/en/docs/agents-and-tools/mcp-connector for the current parameter shape
+and model IDs (https://docs.anthropic.com/en/docs/about-claude/models).
+
 ```python
 from anthropic import Anthropic
 
@@ -344,106 +365,9 @@ async def sensitive_operation(data: dict):
     return process(data)
 ```
 
-## Advanced Patterns
+## Advanced patterns, monitoring and testing
 
-### Multi-Source Aggregation
-```python
-@server.resource("aggregated://customer")
-async def aggregate_customer_data(customer_id: str):
-    """Combine data from multiple sources"""
-    crm_data = await crm_server.get_resource(f"crm://{customer_id}")
-    support_data = await support_server.get_resource(f"support://{customer_id}")
-    analytics_data = await analytics_server.get_resource(f"analytics://{customer_id}")
-
-    return {
-        "uri": f"aggregated://customer/{customer_id}",
-        "data": {
-            **crm_data,
-            **support_data,
-            **analytics_data
-        }
-    }
-```
-
-### Caching Layer
-```python
-from functools import lru_cache
-
-@server.resource("cached://")
-@lru_cache(maxsize=1000)
-async def cached_resource(uri: str):
-    """Cache frequently accessed resources"""
-    return await expensive_fetch(uri)
-```
-
-### Streaming Large Data
-```python
-@server.tool()
-async def stream_large_dataset(query: str):
-    """Stream results for large datasets"""
-    async for chunk in database.stream(query):
-        yield chunk
-```
-
-## Monitoring & Observability
-
-### Metrics Collection
-```python
-from prometheus_client import Counter, Histogram
-
-tool_calls = Counter('mcp_tool_calls', 'Tool invocations', ['tool_name'])
-latency = Histogram('mcp_latency', 'Operation latency')
-
-@server.tool()
-@latency.time()
-async def monitored_tool():
-    tool_calls.labels(tool_name='monitored_tool').inc()
-    # Tool implementation
-```
-
-### Error Tracking
-```python
-import logging
-
-logger = logging.getLogger("mcp_server")
-
-@server.tool()
-async def error_tracked_tool():
-    try:
-        return await risky_operation()
-    except Exception as e:
-        logger.error(f"Tool failed: {e}", exc_info=True)
-        raise
-```
-
-## Testing MCP Servers
-
-### Unit Testing
-```python
-import pytest
-from mcp.testing import MockServer
-
-@pytest.mark.asyncio
-async def test_customer_tool():
-    server = MockServer()
-    result = await server.call_tool("get_customer", {"id": "123"})
-    assert result["customer_id"] == "123"
-```
-
-### Integration Testing
-```python
-@pytest.mark.asyncio
-async def test_full_workflow():
-    # Start test server
-    async with TestMCPServer() as server:
-        # Test resource access
-        resource = await server.get_resource("test://data")
-        assert resource is not None
-
-        # Test tool execution
-        result = await server.call_tool("process_data", {"input": "test"})
-        assert result["success"] == True
-```
+Multi-source aggregation, caching, streaming large results, Prometheus metrics, error tracking, and unit and integration tests are in [advanced patterns, observability and testing](references/advanced-observability-testing.md).
 
 ## Decision Framework
 
@@ -469,6 +393,7 @@ async def test_full_workflow():
 - Python: `pip install mcp`
 - TypeScript: `npm install @modelcontextprotocol/sdk`
 
----
+## Changelog
 
-*MCP is the universal standard for AI-to-data integration in 2025 and beyond.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/.
+- 1.1.0: updated for MCP Spec 1.0.

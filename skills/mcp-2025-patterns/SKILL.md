@@ -1,17 +1,21 @@
 ---
 name: mcp-2025-patterns
-description: Current best practices for Model Context Protocol server design, implementation, and integration. Updated patterns for 2026 MCP ecosystem including multi-server orchestration, security, and performance.
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "MCP Specification 1.0, Next.js DevTools MCP"
-changelog: |
-  - 1.1.0: Updated for MCP 1.0 stable spec, Next.js 16.1 DevTools MCP server
-  - 1.0.0: Initial skill with 2025 MCP patterns and best practices
+description: Design patterns for Model Context Protocol (MCP) servers and multi-server setups - single-responsibility servers, resource-first design, tool naming and input schemas, structured outputs, credential isolation, input validation, rate limiting, audit logging, server composition, cross-server workflows and health checks, with performance, error-handling and testing patterns in references/. Use when designing a new MCP server, reviewing an existing server's tool surface or security, composing several MCP servers for one agent, or writing tests for MCP tools. Trigger on "MCP server design", "MCP tool naming", "MCP security", "multi-server MCP", "mcpServers config", "MCP rate limiting", "test an MCP tool". Patterns predate the dated MCP specification revisions; check protocol details against the current revision (2026-07-28 per SOUL.md) at https://modelcontextprotocol.io/specification/latest. For resources, prompts and transport basics see mcp-architecture.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# MCP 2026 Patterns
+# MCP server design patterns
 
-This skill covers current best practices for Model Context Protocol (MCP) server design, implementation, and integration as of early 2026.
+Content as of 2026-01-06. The original "MCP Specification 1.0" label predates the dated
+specification revisions the protocol now publishes; the current revision cited in this repository
+is 2026-07-28 (https://modelcontextprotocol.io/specification/latest, read 2026-10-05 per `SOUL.md`).
+SDK class names in the snippets (`MCPServer`, `addTool`) are illustrative pseudocode and were not
+re-checked against the official SDKs (https://github.com/modelcontextprotocol); confirm before
+copying.
 
 ---
 
@@ -343,202 +347,32 @@ server.addTool("health_check", async () => {
 
 ---
 
-## Performance Patterns
+## Performance, error handling and testing
 
-### Pattern 1: Connection Pooling
-```typescript
-// Reuse connections across requests
-const pool = new ConnectionPool({
-  max: 10,
-  idleTimeout: 30000
-});
-
-server.addTool("db_query", async (params) => {
-  const conn = await pool.acquire();
-  try {
-    return await conn.query(params.sql);
-  } finally {
-    pool.release(conn);
-  }
-});
-```
-
-### Pattern 2: Caching
-```typescript
-import { LRUCache } from "lru-cache";
-
-const cache = new LRUCache({
-  max: 1000,
-  ttl: 1000 * 60 * 5 // 5 minutes
-});
-
-server.addTool("get_user", async (params) => {
-  const cacheKey = `user:${params.id}`;
-
-  // Check cache first
-  const cached = cache.get(cacheKey);
-  if (cached) return cached;
-
-  // Fetch and cache
-  const user = await fetchUser(params.id);
-  cache.set(cacheKey, user);
-  return user;
-});
-```
-
-### Pattern 3: Batch Operations
-```typescript
-// Support batch operations to reduce round trips
-server.addTool("batch_create_issues", async (params) => {
-  const { issues } = params;
-
-  // Process in parallel with concurrency limit
-  const results = await pMap(
-    issues,
-    issue => createIssue(issue),
-    { concurrency: 5 }
-  );
-
-  return {
-    created: results.filter(r => r.success).length,
-    failed: results.filter(r => !r.success).length,
-    results
-  };
-});
-```
+Connection pooling, caching, batch operations, structured error responses, graceful degradation, and unit and integration tests for tools are in [performance, errors and testing](references/performance-errors-testing.md). Load it when building or reviewing server internals.
 
 ---
 
-## Error Handling
+## Worked example: one agent, several focused servers
 
-### Structured Error Responses
-```typescript
-class MCPError extends Error {
-  constructor(code, message, details = {}) {
-    super(message);
-    this.code = code;
-    this.details = details;
-  }
+A typical setup for an engineering agent composes one server per domain:
 
-  toResponse() {
-    return {
-      success: false,
-      error: {
-        code: this.code,
-        message: this.message,
-        details: this.details,
-        recoverable: this.isRecoverable(),
-        suggested_action: this.getSuggestedAction()
-      }
-    };
-  }
-}
+- **github**: repository management, issues, PRs
+- **linear**: project management, issues, cycles
+- **notion**: documentation, databases, pages
+- **an image-generation server**: image generation
+- **n8n**: workflow automation
+- **playwright**: browser automation
 
-// Usage
-throw new MCPError(
-  "RATE_LIMITED",
-  "GitHub API rate limit exceeded",
-  {
-    limit: 5000,
-    remaining: 0,
-    reset_at: "2025-12-19T12:00:00Z"
-  }
-);
-```
+Practices that keep such a setup manageable:
 
-### Graceful Degradation
-```typescript
-server.addTool("enriched_search", async (params) => {
-  const results = await primarySearch(params);
+1. **Server per domain**: keep each server focused (GitHub for code, Linear for tasks).
+2. **Consistent naming**: the host namespaces tools, for example Claude Code exposes them as `mcp__<server>__<action>`.
+3. **Graceful fallbacks**: if a server is unavailable, the agent says so and suggests an alternative.
+4. **Route by task**: tool descriptions say clearly which task each server owns, so the model picks the right one.
 
-  // Try to enrich, but don't fail if enrichment fails
-  try {
-    return await enrichResults(results);
-  } catch (enrichError) {
-    console.warn("Enrichment failed, returning basic results", enrichError);
-    return {
-      ...results,
-      enrichment_status: "failed",
-      enrichment_error: enrichError.message
-    };
-  }
-});
-```
+## Changelog
 
----
-
-## Testing Patterns
-
-### Unit Testing Tools
-```typescript
-import { describe, it, expect, vi } from "vitest";
-
-describe("create_issue tool", () => {
-  it("creates issue with valid params", async () => {
-    const mockGithub = vi.fn().mockResolvedValue({
-      number: 123,
-      html_url: "https://github.com/..."
-    });
-
-    const result = await createIssueTool({
-      owner: "test",
-      repo: "test-repo",
-      title: "Test issue"
-    }, { github: mockGithub });
-
-    expect(result.success).toBe(true);
-    expect(result.issue.number).toBe(123);
-  });
-
-  it("validates required params", async () => {
-    await expect(createIssueTool({ owner: "test" }))
-      .rejects.toThrow("Missing required: repo, title");
-  });
-});
-```
-
-### Integration Testing
-```typescript
-describe("MCP Server Integration", () => {
-  let server;
-  let client;
-
-  beforeAll(async () => {
-    server = await startMCPServer();
-    client = await connectMCPClient(server.url);
-  });
-
-  it("lists available tools", async () => {
-    const tools = await client.listTools();
-    expect(tools).toContain("create_issue");
-    expect(tools).toContain("list_repositories");
-  });
-
-  it("executes tool and returns result", async () => {
-    const result = await client.callTool("health_check", {});
-    expect(result.status).toBe("healthy");
-  });
-});
-```
-
----
-
-## FrankX System Integration
-
-### Current MCP Servers in Use
-- **github-mcp**: Repository management, issues, PRs
-- **linear-mcp**: Project management, issues, cycles
-- **notion-mcp**: Documentation, databases, pages
-- **nano-banana-mcp**: Image generation
-- **n8n-mcp**: Workflow automation
-- **playwright-mcp**: Browser automation
-
-### Best Practices for FrankX
-1. **Server per domain**: Keep MCPs focused (GitHub for code, Linear for tasks)
-2. **Consistent naming**: `mcp__<server>__<action>` format
-3. **Graceful fallbacks**: If MCP unavailable, suggest alternative
-4. **Context awareness**: Use right MCP for right task automatically
-
----
-
-*MCP servers extend Claude's capabilities with real-world integrations. Design them with clear responsibility, robust error handling, and security in mind.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/.
+- 1.1.0: updated for the MCP 1.0 stable spec and the Next.js 16.1 DevTools MCP server.
+- 1.0.0: initial skill with 2025 MCP patterns and best practices.

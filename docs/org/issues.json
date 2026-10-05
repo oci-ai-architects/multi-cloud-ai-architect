@@ -1,0 +1,356 @@
+[
+  {
+    "repo": "oci-genai-guides",
+    "title": "P0-3: remove the 'Oracle AI Center of Excellence' attribution from the README header",
+    "body": "README.md line 3 says 'Oracle AI Center of Excellence | January 2026', which presents personal community work as an official Oracle team output. Replace it with the standard disclaimer ('Unofficial community project. Not affiliated with, endorsed by, or sponsored by Oracle Corporation. Oracle, OCI, and related marks are trademarks of Oracle Corporation.'). One-line fix with no history rewrite. Do it before any rename. Also check frankxai/oracle-genai-guides, which has the same header.",
+    "labels": [
+      "trademark",
+      "p0"
+    ],
+    "priority": "P0"
+  },
+  {
+    "repo": "invoice-oci",
+    "title": "P0-3: correct the 'created by an Oracle employee' statements",
+    "body": "DISCLAIMER.md and README.md describe the author as an Oracle employee. The author is an independent maintainer. Replace with the standard non-affiliation wording. Done in the draft PR on invoice-oci.",
+    "labels": [
+      "trademark",
+      "docs",
+      "p0"
+    ],
+    "priority": "P0"
+  },
+  {
+    "repo": "oci-ai-architect",
+    "title": "Remove unsafe 'dangerously-skip-permissions / all operations pre-approved' advice",
+    "body": "CLAUDE.md lines 7-9 tell users the project 'runs with --dangerously-skip-permissions. All operations are pre-approved'. multi-cloud-ai-architect/CLAUDE.md says 'Full Autonomy Mode: All operations pre-approved'. A public template should not ship this. Replace it with a least-privilege permissions note (an allowlist of read-only commands; ask before deploy or destroy). Apply the same change in both repos and in any pack that inherits CLAUDE.md.",
+    "labels": [
+      "security",
+      "docs"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "oci-ai-architect",
+    "title": "Export salvageable content into a fresh `patterns` repo, then archive this one privately",
+    "body": "After the private pre-rename hygiene step, export these into a new ai-architects-community/patterns repo (fresh history):\n- patterns/ (24 solution patterns in 7 families)\n- ai-coe/*/agents/agent-spec/*.yaml blueprints (automotive, creative-marketing, web3, cloud-infra)\n- agents/python/*.py\n\nStrip during export: unverified figures ('$2.4M+ annual ROI', '99% threat detection', '85% MTTR reduction'), named consulting-firm comparisons (ai-coe/EXECUTIVE_SUMMARY.md:377, WORKSHOP_CURRICULUM.md:1023), and ai-coe/006-oracle-aicoe-design-system.css.\nDrop: resources/sdlc/ (zip export including __MACOSX, .DS_Store, ._settings.local.json), ai-coe/TODAY_ACCOMPLISHMENTS.md, the duplicate methodology/ folder.\nSend the 6 OCI skills to pack-oci (they are identical to multi-cloud-ai-architect's copies) and drop knowledge-base/ (identical to multi-cloud-ai-architect).\nThen archive oci-ai-architect as private. Do not rename it in place.",
+    "labels": [
+      "restructure",
+      "content"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "claude-code-oci-ai-architect-skills",
+    "title": "Fix plugin install: reconcile with frankxai copy, merge #4, enforce `claude plugin validate --strict`",
+    "body": "Issues #1, #2 and #3 (evangineer, 2026-02-25) report that every plugin fails to install. PR #4 (+82/-224, mergeable) has been open since 2026-02-26. frankxai/claude-code-oracle-skills already carries a newer fix ('pass claude plugin validate --strict', #2, 2026-09-30) plus the Apache-2.0 relicense. The two copies have diverged.\n\n1. Diff the two repos and port the frankxai commits since 2026-02-05.\n2. Merge or rebase PR #4 and ask the contributor for DCO or Apache-2.0 consent.\n3. Add `claude plugin validate --strict` to CI (this closes #3).\n4. Fix the repository/homepage URLs in .claude-plugin/marketplace.json (frankxai/claude-code-oracle-skills) and manifest.yaml (github.com/FrankX/...).\n5. Use one version number: the badge says 3.1.0, marketplace.json 3.0.0, manifest.yaml 1.0.0.\n6. Reply on #1 to #3 and thank the contributor.",
+    "labels": [
+      "bug",
+      "ci",
+      "community"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "claude-code-oci-ai-architect-skills",
+    "title": "Repair failing Quality Gates workflow and re-enable schedule",
+    "body": "The last runs (2026-04-13/20/27) failed on Lint Markdown, Check Links and Check Skill Completeness. After that, the cron was disabled for inactivity. Fix the lint config or the content, point the link checker at real URLs (Pages is off, so frankxai.github.io/claude-code-oracle-skills is dead), and make tests/check_skill_completeness.py pass. Add concurrency, a timeout and a draft gate. Then switch to the shared org workflow (see the .github CI issue).",
+    "labels": [
+      "ci"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "claude-code-oci-ai-architect-skills",
+    "title": "Remove internal planning docs from the public repo",
+    "body": "Remove IP_AND_NAMING_STRATEGY.md (discusses employer considerations and account strategy), STRATEGIC_ASSESSMENT.md, MASTER_PLAN.md and docs/logs/SESSION_2026-01-27_COMPLETE.md. Keep only the user-facing conclusions: the disclaimer and the naming rules, which now live in .github. Do the same in frankxai/claude-code-oracle-skills before it is cut down to a pointer.",
+    "labels": [
+      "hygiene",
+      "docs"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "claude-code-oci-ai-architect-skills",
+    "title": "Rename to `pack-oci` and rename `oracle-*` plugin IDs to nominative `oci-*` names",
+    "body": "Rename the repo to pack-oci, and the marketplace from 'oracle-ai-architect-skills' to 'pack-oci'. Plugin IDs: oracle-adk -> oci-adk, oracle-agent-spec -> agent-spec, oracle-ai-architect -> oci-ai-architect, oracle-diagram-generator -> architecture-diagrams (moves to architect-skills), oracle-infogenius* -> architecture-visuals (moves to architect-skills), oracle-work-mode -> confidential-engagement (moves to architect-skills), oracle-confidentiality -> confidentiality-audit, oracle-sdd-generator -> sdd-generator, oracle-solution-design -> solution-design, oracle-ip-intelligence -> review the content and decide whether to keep it.\n\nPut the standard disclaimer at the top of the README. Keep the old IDs as aliases for one release only if the marketplace format supports it, then remove them. Update the install commands in the README, the frankxai stub, the Academy and frankx.ai.",
+    "labels": [
+      "rename",
+      "trademark"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "claude-code-oci-ai-architect-skills",
+    "title": "Absorb cline, codex and cline-engineer repos as `adapters/`",
+    "body": "Merge into pack-oci:\n- cline-oci-ai-architect-skills: .clinerules/, .cursor/rules/, .roo/rules/ and .windsurf/rules/ go to adapters/{cline,cursor,roo,windsurf}/. Add the missing .windsurf execution-mode file. Do not copy .clinerules/intelligence/state/*.jsonl or *.json (runtime state).\n- codex-oci-ai-architect-skills: AGENTS.md, profiles/ and instructions/ go to adapters/codex/.\n- workflows/ (11 files, byte-identical between cline and cline-oci-ai-engineer, same titles in codex) become one workflows/ folder.\n- Skills: one SKILL.md set. Reconcile the differing copies of oci-services-expert, oracle-adk and oracle-agent-spec (33-66 changed lines against multi-cloud-ai-architect).\n\nAfter the merge, put a pointer README in each source repo and archive it.",
+    "labels": [
+      "restructure",
+      "merge"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "cline-oci-ai-engineer",
+    "title": "Archive: README describes files that do not exist, content is 100% duplicate",
+    "body": "README.md clones oci-ai-architects/oci-ai-engineer-skills, which does not exist, and documents .clinerules/ and skills/, which are not in the repo. All 11 workflows are byte-identical to cline-oci-ai-architect-skills/workflows/. Replace the README with a pointer to pack-oci and archive the repo. No content migration is needed.",
+    "labels": [
+      "archive"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": "multi-cloud-ai-architect",
+    "title": "Rename to `architect-skills` and make it vendor-neutral",
+    "body": "Rename to architect-skills. Move out the OCI-only content (genai-dac-specialist, oci-services-expert, oracle-adk, oracle-agent-spec, knowledge-base/oci-genai/, knowledge-base/ai-infrastructure/OCI-GPU-INFRASTRUCTURE.md, templates/terraform/oci-*, mcp-servers/oci-infrastructure) to pack-oci. Move skills/aws-ai-services to pack-aws and skills/azure-ai-services to pack-azure as seeds. Bring in the neutral skills from pack-oci: agentic-orchestration, the diagram generator, visuals, confidentiality and the tests/ harness. Remove the OCI focus from the README tagline and CLAUDE.md.",
+    "labels": [
+      "rename",
+      "restructure"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "multi-cloud-ai-architect",
+    "title": "Rewrite README: fix quick start, skill count and repo name",
+    "body": "The quick start runs `cd claude-ai-architect` (wrong directory). The tree diagram uses the old name. The README says '14 specialized skills', CLAUDE.md says 22, and there are 23. Rewrite the README around the vendor-neutral scope: what the repo is, an install path per harness, the skill list generated from the folder, how it pairs with pack-* repos and with frankxai/ai-architect's /architect-cloud, and the disclaimer. Remove the Jan-2026 model table from CLAUDE.md, or replace it with a dated link to a maintained source.",
+    "labels": [
+      "docs"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "multi-cloud-ai-architect",
+    "title": "Write the provider-pack contract",
+    "body": "Define once what every pack-<provider> repo contains: skills/ (SKILL.md with frontmatter), adapters/{claude,codex,cline,cursor,roo,windsurf}, references/, prices.json (one row per service with source_url and retrieved_at, the same schema that frankxai/ai-architect/prices/prices.json and its cloud-harness skill read), evals/ (trigger cases and answer checks), DISCLAIMER.md, LICENSE (Apache-2.0) and NOTICE. Publish it in .github as PACK_CONTRACT.md with a template repo, and enforce it with a CI check.",
+    "labels": [
+      "spec",
+      "packs"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "oci-genai-guides",
+    "title": "Rename to `genai-guides`, drop strategy docs, generalise decision guides",
+    "body": "Remove CONTENT_STRATEGY.md, MASTER_CONTENT_STRATEGY.md, SYNTHESIS_REPORT.md ('FrankX Oracle GenAI Content Strategy') and VALIDATION_REPORT.md, which are internal planning. Keep docs/decision-guides/ and content/blog/series-production-genai-oci/. Turn MIGRATION_BEDROCK_TO_OCI.md into the first of a migration matrix (any provider to any provider). Expand MULTI_CLOUD_COMPARISON.md with GCP, Cloudflare, Vercel and Railway. Check the claim 'GenerateText/SummarizeText deprecated as of June 2026' against current OCI docs. Link frankxai/agentic-architecture-field-guide for agent-OS architecture instead of duplicating it.",
+    "labels": [
+      "rename",
+      "content"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": "oci-ai-coe-starter-kit",
+    "title": "Rename to `ai-coe-starter-kit` and make the packs provider-neutral",
+    "body": "Keep the team-to-pack structure (research, data engineering, clinical, coding agents). Each pack gets a neutral SKILL.md plus provider implementations (OCI first, linking pack-oci). The README promises references/ and scripts/ in every pack, but only oci-genai-research has references/ and oci-clinical-ai is a single SKILL.md. Either fill them or correct the README. Add a retrieved-on date to every row of shared/pricing-reference.md. Link frankxai/ai-coe (operating model) and awesome-ai-coe (catalog).",
+    "labels": [
+      "rename",
+      "content"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": "oci-one-click-stacks",
+    "title": "Rename to `stacks-oci` and absorb openclaw-on-oci",
+    "body": "Move openclaw-on-oci into stacks/openclaw/. Keep the existing release asset URL (openclaw-on-oci-stack-v0.2.1.zip) resolving, either by re-uploading it under a matching release or by leaving the archived repo's releases in place, so the 'Deploy to Oracle Cloud' button keeps working. Make acos_repo_url default to empty and document it as optional (variables.tf:112, cloud-init.tftpl:22-44). Add a LICENSE and the disclaimer. Move docs/enterprise-token-*.md and catalog/enterprise-token-*.yaml (internal demand planning) out of the user docs. Keep the roadmap issues #2-#9.",
+    "labels": [
+      "rename",
+      "merge",
+      "iac"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": "invoice-oci",
+    "title": "Rename to `example-invoice-extraction` and add provider adapters",
+    "body": "The pattern (object storage, LLM extraction to JSON, ERP interface) is provider-neutral. Keep OCI Functions plus Fusion AP as the reference adapter. Add a second adapter (for example Cloudflare Workers + R2, or Vercel functions + Blob) once those packs exist. Delete docs/images/CLAUDE.md (a stray claude-mem activity log). Put the MIT attribution for gruntemannen/invoice-vNext into NOTICE when relicensing to Apache-2.0.",
+    "labels": [
+      "rename",
+      "content"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": "oci-ai-life-sciences",
+    "title": "Delete fork of anthropics/life-sciences (0 own commits)",
+    "body": "This is a fork of anthropics/life-sciences, 0 commits ahead and 4 behind, 24 MB. Publishing an Anthropic repo under an 'oci-' name implies an affiliation that does not exist and adds nothing. Archive it, then delete it. Frank must confirm the delete.",
+    "labels": [
+      "archive",
+      "trademark"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "oci_open-webui",
+    "title": "Delete fork of dariomanda/oci_open-webui (0 own commits)",
+    "body": "Fork with 0 commits ahead and 5 behind. stacks-oci/stacks/openwebui-oci already covers the deploy path. frankxai/oci-open-webui is a second fork of the same upstream. Archive both, then delete this one. Frank must confirm the delete.",
+    "labels": [
+      "archive"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Rename org to `ai-architects-community` and rewrite the profile",
+    "body": "Rename oci-ai-architects to ai-architects-community (free on 2026-10-05; the fallback is cloud-ai-architects). GitHub redirects repo URLs after a rename, but the old org name becomes claimable, and if it is claimed the redirects stop. On rename day, update every inbound link: the frankxai stubs, ai-architect-academy 11-hyperscalers/*, frankx.ai and the marketplace install commands.\n\nRewrite profile/README.md: fix the broken link (oci-coe-starter-kit should be oci-ai-coe-starter-kit), fix the typo ('build for ai systems'), remove the unverifiable claims ('battle-tested', 'run production AI systems'), and list the target repo set grouped as core / packs / stacks / examples. Set the org display name, description and URL, and add topics to every repo.",
+    "labels": [
+      "org",
+      "rename",
+      "docs"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": ".github",
+    "title": "Unify licensing on Apache-2.0 with LICENSING.md and NOTICE",
+    "body": "Five repos have no licence (multi-cloud-ai-architect, oci-ai-architect, oci-one-click-stacks, openclaw-on-oci, cline-oci-ai-engineer). Six are MIT. The frankxai copies and frankxai/ai-architect moved to Apache-2.0 on 2026-08-27. Every org repo has one human contributor (frankxai), so relicensing needs no third-party sign-off. Keep upstream licences for derived material (invoice-vNext MIT goes into NOTICE). Reuse the frankxai LICENSING.md text, which already covers rights holder, trademark carve-out and future-entity assignment.",
+    "labels": [
+      "licence",
+      "org"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": ".github",
+    "title": "Add the trademark disclaimer to every repo and enforce it in CI",
+    "body": "Repos missing the disclaimer: multi-cloud-ai-architect, oci-ai-architect (no README at all), oci-genai-guides, oci-one-click-stacks, openclaw-on-oci, and the org copy of claude-code-oci-ai-architect-skills. Use the oci-ai-coe-starter-kit/README.md:3 wording, generalised per provider. Add a CI check that fails if a pack-* or stacks-* README does not contain it. No provider logos or trade dress in any repo; diagrams use text labels or icons the user downloads (keep the ORACLE_ICONS_SETUP.md approach).",
+    "labels": [
+      "trademark",
+      "ci"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": ".github",
+    "title": "Enable org-wide secret scanning, push protection and a gitleaks job",
+    "body": "This audit found no live secrets (working trees and full history of 5 repos, HEAD of 7 more), but nothing prevents one. Secret scanning and push protection are free for public repos on the free plan, so enable both for all repos. Add gitleaks to the shared workflow so forks and PRs are also checked. Add a SECURITY.md at org level.",
+    "labels": [
+      "security",
+      "ci"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": ".github",
+    "title": "Shared reusable CI workflow for all repos",
+    "body": "One reusable workflow in .github/workflows, called by each repo:\n- markdownlint and a link check (lychee)\n- SKILL.md frontmatter validation and the pack-contract check\n- `claude plugin validate --strict` where .claude-plugin/ exists\n- gitleaks\n- terraform fmt/validate plus tflint for stacks-*\n- the disclaimer check\n\nRequired settings: concurrency with cancel-in-progress, timeout-minutes, paths filters, and a draft gate with ready_for_review in the trigger. Weekly scheduled runs only on repos with external links.",
+    "labels": [
+      "ci"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": ".github",
+    "title": "Remove committed junk and runtime state across repos",
+    "body": "- cline-oci-ai-architect-skills: .clinerules/intelligence/state/routing-history.jsonl and routing-metrics.json\n- invoice-oci: docs/images/CLAUDE.md (claude-mem log)\n- oci-ai-architect: resources/sdlc/__MACOSX/ and 7 .DS_Store files (handled by the export issue)\n\nAdd .DS_Store, __MACOSX/, *.jsonl state paths and claude-mem files to a shared .gitignore template.",
+    "labels": [
+      "hygiene"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Stale-claims sweep: models, prices, version badges",
+    "body": "Date or remove time-sensitive claims:\n- the model tables in multi-cloud-ai-architect/CLAUDE.md and knowledge-base/ (Cohere Command R+, Llama 3.1, 'GPT-5.2', 'Opus 4.5' as current)\n- oci-ai-architect knowledge-base DEDICATED-AI-CLUSTERS.md\n- the DAC sizing dollar ranges in CLAUDE.md\n- the InfoGenius $/image tiers in the claude-code README\n- the testedModels list in marketplace.json\n- the OCI GenAI GA/Beta table in the oci-genai-guides README\n\nEach price or availability claim becomes a prices.json row with source_url and retrieved_at, or is removed. Nothing is quoted from memory.",
+    "labels": [
+      "content",
+      "accuracy"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Create pack-gcp (Google Cloud: Vertex AI, Gemini API, ADK, A2A)",
+    "body": "First new pack, because the estate already has a Google partner track and ai-architect's cloud-harness lists GCP Vertex. Scope: Vertex AI model garden and endpoints, Gemini API vs Vertex choice, Agent Development Kit, A2A protocol, Vertex AI Search/RAG Engine, AlloyDB/BigQuery vector options, IAM and VPC-SC for AI, pricing rows. Follow the pack contract. Pull current docs through Context7 or the official docs before writing; no remembered model names or prices. Include evals and the disclaimer.",
+    "labels": [
+      "pack",
+      "new-repo",
+      "gcp"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Create pack-vercel (AI SDK, AI Gateway, Fluid compute, Sandbox, Workflow)",
+    "body": "Second new pack. ai-architect's cloud-harness already lists Vercel. Scope: AI SDK agent patterns, AI Gateway routing and fallbacks, Fluid compute limits for agent workloads, Vercel Sandbox for code execution, Workflow/Queues for durable agents, Blob/Edge Config, observability, pricing rows. Follow the pack contract; use live docs; include evals and the disclaimer.",
+    "labels": [
+      "pack",
+      "new-repo",
+      "vercel"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Create pack-cloudflare (Workers AI, AI Gateway, Vectorize, Agents SDK)",
+    "body": "Scope: Workers AI models, AI Gateway (caching, rate limits, logging), Vectorize, Agents SDK on Durable Objects, D1/R2/KV for agent state, Workflows, Zero Trust for internal AI apps, pricing rows. Follow the pack contract; use live docs; include evals and the disclaimer. The invoice example's second adapter can target this pack.",
+    "labels": [
+      "pack",
+      "new-repo",
+      "cloudflare"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Create pack-aws (Bedrock, AgentCore, Knowledge Bases, SageMaker)",
+    "body": "Seed from multi-cloud-ai-architect/skills/aws-ai-services and the Bedrock parts of templates/terraform/ai-gateway. Scope: Bedrock models and inference profiles, Bedrock Agents/AgentCore, Knowledge Bases, Guardrails, SageMaker for fine-tuning and hosting, IAM and VPC endpoints, pricing rows. Follow the pack contract; use live docs; include evals and the disclaimer.",
+    "labels": [
+      "pack",
+      "new-repo",
+      "aws"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Create pack-azure (Azure OpenAI / AI Foundry, AI Search)",
+    "body": "Seed from multi-cloud-ai-architect/skills/azure-ai-services and the Azure parts of skills/terraform-iac/resources/modules.tf. Scope: AI Foundry projects and model deployments, Azure OpenAI quotas and PTUs, AI Search vector and hybrid retrieval, Agent Service, content safety, private networking, pricing rows. Follow the pack contract; use live docs; include evals and the disclaimer.",
+    "labels": [
+      "pack",
+      "new-repo",
+      "azure"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": ".github",
+    "title": "Create pack-railway (agent runtimes on Railway)",
+    "body": "Scope: hosting long-running agent and MCP servers on Railway (services, volumes, private networking, cron, templates), secrets handling, observability (for example Langfuse on Railway), cost rows. Include at least one deployable template, such as an MCP server or an Open WebUI-class app. Follow the pack contract; use live docs; include evals and the disclaimer.",
+    "labels": [
+      "pack",
+      "new-repo",
+      "railway"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": "frankxai/claude-code-oracle-skills",
+    "title": "Cut the 'MOVED' stubs down to pointer READMEs and archive them",
+    "body": "frankxai/claude-code-oracle-skills, frankxai/oci-ai-architect and frankxai/oracle-genai-guides say 'MOVED', but they still hold full content, Apache-2.0-licensed, and in one case newer than the org copy. First port their newer changes into the org repos (see the pack-oci install issue). Then replace each with a README pointing at the new ai-architects-community repo, remove the rest of the tree in a normal commit, and archive. Also archive frankxai/oracleclaw-on-oci and frankxai/oci-open-webui (both forks).",
+    "labels": [
+      "archive",
+      "frankxai"
+    ],
+    "priority": "P1"
+  },
+  {
+    "repo": "frankxai/ai-architect",
+    "title": "Read pack prices.json rows from /architect-cloud",
+    "body": "skills/cloud-harness only accepts a cloud choice backed by a repo file or a prices.json row with source_url and retrieved_at. The pack-* repos ship exactly those rows. Add a documented way, such as an install step or a fetch script, to merge a chosen pack's prices.json into the project's prices.json. Link the packs from the cloud-harness 'Clouds to consider' list. This makes the community org the evidence layer for the product without forking it.",
+    "labels": [
+      "integration",
+      "packs"
+    ],
+    "priority": "P2"
+  },
+  {
+    "repo": "frankxai/ai-architect-academy",
+    "title": "Link 11-hyperscalers/* to the provider packs",
+    "body": "11-hyperscalers/{aws,azure,gcp,oci}/README.md should link pack-aws, pack-azure, pack-gcp and pack-oci, and gain Cloudflare, Vercel and Railway entries once those packs exist. Update any links to oci-ai-architects/* on the org rename day.",
+    "labels": [
+      "docs",
+      "links"
+    ],
+    "priority": "P2"
+  }
+]

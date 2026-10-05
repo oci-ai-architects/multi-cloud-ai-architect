@@ -1,0 +1,17 @@
+{
+  "provider": "cross-provider",
+  "currency": "USD",
+  "asOf": "2026-10-05",
+  "note": "Agent-runtime compute rates side by side for cost-per-task modelling. Each row is copied from the provider pack's prices.json; see those files for full rows and caveats.",
+  "rows": [
+    {"item": "AWS AgentCore Runtime v2 CPU (consumption)", "unit": "vCPU-hour", "price": 0.1276, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AWS AgentCore Runtime v2 memory (consumption)", "unit": "GB-hour", "price": 0.0169, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "Google Agent Runtime compute", "unit": "vCPU-hour", "price": 0.085, "verification": "search-snippet-of-official-page", "sourceUrl": "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing", "asOf": "2026-10-05"},
+    {"item": "Google Agent Runtime memory", "unit": "GiB-hour", "price": 0.009, "verification": "search-snippet-of-official-page", "sourceUrl": "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing", "asOf": "2026-10-05"},
+    {"item": "Vercel Fluid Active CPU (Pro, starting at)", "unit": "hour", "price": 0.128, "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Vercel Fluid provisioned memory (Pro, starting at)", "unit": "GB-hour", "price": 0.0106, "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Cloudflare Durable Objects duration", "unit": "1M GB-s", "price": 12.50, "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Railway container CPU", "unit": "vCPU-second", "price": 0.00000772, "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Railway container memory", "unit": "GB-second", "price": 0.00000386, "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"}
+  ]
+}

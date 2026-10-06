@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI Architects</title>
+  <meta name="description" content="An independent community for engineers who design agentic systems: one eval-gated method from spec to deploy, an open kit for seven platforms, and a credential earned by a reviewed design.">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f4f1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101318">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="wordmark" href="./" aria-label="AI Architects, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 29 16 16 29 3 16Z" fill="none" stroke="currentColor" stroke-width="2.25"/><path d="M3 16h26" stroke="currentColor" stroke-width="2.25"/><circle cx="16" cy="16" r="3.2" fill="var(--accent)"/></svg>
+        <span>AI Architects</span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="method.html">Method</a></li>
+          <li><a href="providers.html">Providers</a></li>
+          <li><a href="academy.html">Academy</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap">
+        <h1 id="hero-title">Agent architecture that passes its evals before it ships.</h1>
+        <p class="lede">AI Architects is an independent community for engineers who design agentic systems. One method from spec to deploy, a kit for seven platforms that is still being built, and a credential that will be earned with a reviewed design.</p>
+        <div class="actions">
+          <a class="button" href="method.html">Read the method</a>
+          <a class="button button--quiet" href="academy.html#waitlist">Join the academy waitlist</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" aria-labelledby="method-title">
+      <div class="wrap">
+        <h2 id="method-title" class="visually-hidden">The method</h2>
+        <figure class="sheet">
+          <div class="sheet-body">
+            <svg class="diagram--wide" viewBox="0 0 1100 244" role="img" aria-labelledby="mw-t mw-d">
+              <title id="mw-t">The AI Architects method</title>
+              <desc id="mw-d">Five stages in order: spec, architecture decision record, C4 agentic views, evals, deploy. The evals stage is a gate. If an eval falls below its threshold, work returns to the decision record. If it passes, the design deploys.</desc>
+              <g aria-hidden="true">
+                <path class="d-fail" d="M770 76 V34 H330 V84"/>
+                <path class="d-arrow--fail" d="M324 80 L330 92 L336 80Z"/>
+                <text class="d-fail-text" x="550" y="26" text-anchor="middle">Below threshold: revise the decision</text>
+
+                <rect class="d-node" x="25" y="92" width="170" height="84" rx="4"/>
+                <text class="d-step" x="41" y="114">1</text>
+                <text class="d-title" x="110" y="140" text-anchor="middle">Spec</text>
+                <text class="d-small" x="110" y="160" text-anchor="middle">spec.md</text>
+
+                <rect class="d-node" x="245" y="92" width="170" height="84" rx="4"/>
+                <text class="d-step" x="261" y="114">2</text>
+                <text class="d-title" x="330" y="140" text-anchor="middle">ADR</text>
+                <text class="d-small" x="330" y="160" text-anchor="middle">adr/0001.md</text>
+
+                <rect class="d-node" x="465" y="92" width="170" height="84" rx="4"/>
+                <text class="d-step" x="481" y="114">3</text>
+                <text class="d-title" x="550" y="140" text-anchor="middle">C4 agentic</text>
+                <text class="d-small" x="550" y="160" text-anchor="middle">views/*.dsl</text>
+
+                <path class="d-gate" d="M770 78 L852 134 L770 190 L688 134Z"/>
+                <text class="d-step" x="770" y="112" text-anchor="middle">4</text>
+                <text class="d-title" x="770" y="140" text-anchor="middle">Evals</text>
+                <text class="d-small" x="770" y="158" text-anchor="middle">gate</text>
+
+                <rect class="d-node d-node--accent" x="905" y="92" width="170" height="84" rx="4"/>
+                <text class="d-step" x="921" y="114">5</text>
+                <text class="d-title" x="990" y="140" text-anchor="middle">Deploy</text>
+                <text class="d-small" x="990" y="160" text-anchor="middle">two platforms</text>
+
+                <path class="d-flow" style="--i:0" d="M195 134 H237"/>
+                <path class="d-arrow" d="M235 128 L245 134 L235 140Z"/>
+                <path class="d-flow" style="--i:1" d="M415 134 H457"/>
+                <path class="d-arrow" d="M455 128 L465 134 L455 140Z"/>
+                <path class="d-flow" style="--i:2" d="M635 134 H680"/>
+                <path class="d-arrow" d="M678 128 L688 134 L678 140Z"/>
+                <path class="d-pass" style="--i:3" d="M852 134 H897"/>
+                <path class="d-arrow--pass" d="M895 128 L905 134 L895 140Z"/>
+                <text class="d-pass-text" x="878" y="122" text-anchor="middle">pass</text>
+
+                <path class="d-line" d="M25 214 H1075"/>
+                <text class="d-small" x="25" y="238">Spec Kit and OpenSpec compatible</text>
+                <text class="d-small" x="1075" y="238" text-anchor="end">No stage is skipped. A failed gate is a design change.</text>
+              </g>
+            </svg>
+
+            <svg class="diagram--tall" viewBox="0 0 360 700" role="img" aria-labelledby="mt-t mt-d">
+              <title id="mt-t">The AI Architects method</title>
+              <desc id="mt-d">Five stages in order: spec, architecture decision record, C4 agentic views, evals, deploy. The evals stage is a gate. If an eval falls below its threshold, work returns to the decision record. If it passes, the design deploys.</desc>
+              <g aria-hidden="true">
+                <path class="d-fail" d="M92 430 H34 V180 H86"/>
+                <path class="d-arrow--fail" d="M84 174 L96 180 L84 186Z"/>
+                <text class="d-fail-text" x="24" y="305" text-anchor="middle" transform="rotate(-90 24 305)">Below threshold: revise</text>
+
+                <rect class="d-node" x="96" y="24" width="200" height="74" rx="4"/>
+                <text class="d-step" x="110" y="44">1</text>
+                <text class="d-title" x="196" y="62" text-anchor="middle">Spec</text>
+                <text class="d-small" x="196" y="82" text-anchor="middle">sized to the change</text>
+
+                <rect class="d-node" x="96" y="143" width="200" height="74" rx="4"/>
+                <text class="d-step" x="110" y="163">2</text>
+                <text class="d-title" x="196" y="181" text-anchor="middle">ADR</text>
+                <text class="d-small" x="196" y="201" text-anchor="middle">names its eval</text>
+
+                <rect class="d-node" x="96" y="262" width="200" height="74" rx="4"/>
+                <text class="d-step" x="110" y="282">3</text>
+                <text class="d-title" x="196" y="300" text-anchor="middle">C4 agentic</text>
+                <text class="d-small" x="196" y="320" text-anchor="middle">trust boundaries</text>
+
+                <path class="d-gate" d="M196 378 L300 430 L196 482 L92 430Z"/>
+                <text class="d-step" x="196" y="410" text-anchor="middle">4</text>
+                <text class="d-title" x="196" y="436" text-anchor="middle">Evals</text>
+                <text class="d-small" x="196" y="454" text-anchor="middle">gate</text>
+
+                <rect class="d-node d-node--accent" x="96" y="560" width="200" height="74" rx="4"/>
+                <text class="d-step" x="110" y="580">5</text>
+                <text class="d-title" x="196" y="598" text-anchor="middle">Deploy</text>
+                <text class="d-small" x="196" y="618" text-anchor="middle">two platforms</text>
+
+                <path class="d-flow" style="--i:0" d="M196 98 V135"/>
+                <path class="d-arrow" d="M190 133 L196 143 L202 133Z"/>
+                <path class="d-flow" style="--i:1" d="M196 217 V254"/>
+                <path class="d-arrow" d="M190 252 L196 262 L202 252Z"/>
+                <path class="d-flow" style="--i:2" d="M196 336 V370"/>
+                <path class="d-arrow" d="M190 368 L196 378 L202 368Z"/>
+                <path class="d-pass" style="--i:3" d="M196 482 V552"/>
+                <path class="d-arrow--pass" d="M190 550 L196 560 L202 550Z"/>
+                <text class="d-pass-text" x="208" y="524">pass</text>
+                <text class="d-small" x="196" y="670" text-anchor="middle">A failed gate is a design change.</text>
+              </g>
+            </svg>
+          </div>
+          <ol class="sheet-legend">
+            <li><strong>Spec</strong>One page per change, readable by Spec Kit or OpenSpec.</li>
+            <li><strong>ADR</strong>A decision with its context, options, and the eval that accepts it.</li>
+            <li><strong>C4 agentic</strong>Context and container views with agents, tools and trust boundaries drawn in.</li>
+            <li><strong>Evals</strong>Graders run in CI. An ADR is accepted only when its eval passes.</li>
+            <li><strong>Deploy</strong>The same design runs on at least two platforms.</li>
+          </ol>
+          <dl class="title-block">
+            <div><dt>Drawing</dt><dd>Eval-gated method, spec to deploy</dd></div>
+            <div><dt>Sheet</dt><dd>1 of 1</dd></div>
+            <div><dt>Revision</dt><dd>Draft</dd></div>
+            <div><dt>Date</dt><dd><time datetime="2026-10-05">5 Oct 2026</time></dd></div>
+          </dl>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="gap-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="gap-title">What the method builds on, and what it adds</h2>
+          <p>Three sources the method relies on, what each one covers, and the rule the method adds. Each was read on 5 October 2026.</p>
+        </div>
+        <ul class="claims">
+          <li>
+            <h3>Each cloud's lens is written for that cloud</h3>
+            <p>The AWS Agentic AI Lens, published in June 2026, says it is &ldquo;built around the AWS services and open source frameworks&rdquo; for agentic AI. The method uses its questions as a review checklist and asks the same design to run on a second platform.</p>
+            <span class="source">Source: <a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentic-ai-lens.html">AWS Agentic AI Lens</a></span>
+          </li>
+          <li>
+            <h3>Spec tools can oversize the spec</h3>
+            <p>Birgitta Böckeler's October 2025 review of Kiro, Spec Kit and Tessl found one tool turning a small bug into four user stories and sixteen acceptance criteria. Her review does not cover decision records or evals. The method sizes the spec to the change and keeps it readable by Spec Kit and OpenSpec.</p>
+            <span class="source">Sources: <a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html">Böckeler on SDD tools</a>, <a href="https://github.com/github/spec-kit">Spec Kit</a>, <a href="https://github.com/Fission-AI/OpenSpec">OpenSpec</a></span>
+          </li>
+          <li>
+            <h3>Evals already run in CI</h3>
+            <p>Anthropic's January 2026 guide to agent evals recommends running them in CI on every agent change. The method adds one rule on top: an architecture decision record counts as accepted only when its named eval passes.</p>
+            <span class="source">Source: <a href="https://anthropic.com/engineering/demystifying-evals-for-ai-agents">Anthropic on agent evals</a></span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--sunk" aria-labelledby="matrix-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="matrix-title">Seven platforms, read from their own repositories</h2>
+          <p>What each platform publishes for agent builders from its own GitHub organisation or website: skills, MCP servers, frameworks and certifications. Read on 5 October 2026. Star counts move, so every count carries its date.</p>
+        </div>
+        <div class="stack-sm">
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Provider matrix table">
+            <table class="matrix-wide">
+              <caption>AI Architects is independent of every platform listed and not affiliated with any of them; &ldquo;vendor-published&rdquo; says who publishes an item. Platforms marked primary get full packs first. <span class="tag">unverified</span> marks a claim not yet confirmed on the vendor's own page, and no price is shown for one. Full comparison with every source on the <a href="providers.html">providers page</a>.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Platform</th>
+                  <th scope="col">Vendor-published skills</th>
+                  <th scope="col">MCP servers</th>
+                  <th scope="col">Agent framework</th>
+                  <th scope="col">Architect-level certification</th>
+                </tr>
+              </thead>
+              <tbody id="matrix-body">
+                <tr><td colspan="5" class="matrix-status">Loading the provider matrix.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <noscript><p class="note">The table above needs JavaScript. The same data, as plain HTML, is on the <a href="providers.html">providers page</a>.</p></noscript>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="kit-title">
+      <div class="wrap kit">
+        <div>
+          <h2 id="kit-title">The kit</h2>
+          <p class="lede" style="margin-top:1rem">Skills in the open SKILL.md format, written once and installed into Claude Code, Codex, Cursor or Cline through thin adapters. Anything specific to one provider lives in that provider's pack, so the core stays neutral.</p>
+          <ul class="status-list" aria-label="Kit status">
+            <li><strong>Usable today</strong><span>Nothing to install yet. The method and the provider comparison on this site are the parts you can use now.</span></li>
+            <li><strong>In progress</strong><span>A repository layout being reshaped from an OCI-first repository. Drafts of the method skill and of six provider packs (AWS, Azure, Google Cloud, Cloudflare, Vercel, Railway) exist. None has passed review.</span></li>
+            <li><strong>Not yet</strong><span>Public repositories, releases and eval results. Each repository opens under Apache-2.0 after the organisation is renamed and the repository passes review. The names on the right are the target layout.</span></li>
+          </ul>
+        </div>
+        <ul class="kit-list">
+          <li><code>architect-skills</code><p>The neutral core: RAG, MCP architecture, agent orchestration, AI security, FinOps, diagramming and Terraform.</p></li>
+          <li><code>pack-&lt;provider&gt;</code><p>One pack per platform: AWS, Azure, Google Cloud, Cloudflare, Vercel, Railway and OCI. Provider names are used only to say what the pack is for.</p></li>
+          <li><code>patterns</code><p>Solution patterns, each with a business view, a technical view and an agent spec.</p></li>
+          <li><code>stacks-&lt;provider&gt;</code><p>Deployable stacks, one folder per stack, released as versioned archives.</p></li>
+          <li><code>example-&lt;use-case&gt;</code><p>Worked examples taken end to end, with provider adapters inside.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--sunk" aria-labelledby="academy-title">
+      <div class="wrap credential">
+        <div>
+          <h2 id="academy-title">The credential is a reviewed design</h2>
+          <p class="lede" style="margin-top:1rem">Each vendor exam covers that vendor's platform, and exams retire on the vendor's schedule: Microsoft lists AI-102, the Azure AI Engineer Associate exam, as retired on 30 June 2026. The academy will assess one design taken from brief to two deployments.</p>
+          <p class="note">Not open yet. The rubric will be published with a sample assessed design before assessment opens. The price is not set.</p>
+          <div class="actions" style="margin-top:1.75rem">
+            <a class="button" href="academy.html#waitlist">Join the waitlist</a>
+            <a class="button button--quiet" href="academy.html">How assessment works</a>
+          </div>
+          <span class="source">Source: <a href="https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams">Microsoft Learn exam retirement list</a>, read 5 October 2026</span>
+        </div>
+        <ol class="steps" aria-label="Assessment steps">
+          <li><div><strong>Take a product brief</strong><span>A realistic agentic problem with constraints on cost, data and risk.</span></div></li>
+          <li><div><strong>Write the spec and decisions</strong><span>A right-sized spec and the ADRs it needs.</span></div></li>
+          <li><div><strong>Draw the agentic views</strong><span>C4 context and container views with trust boundaries.</span></div></li>
+          <li><div><strong>Gate it with evals</strong><span>Each ADR names the eval and threshold that accepts it.</span></div></li>
+          <li><div><strong>Deploy it twice</strong><span>The same design running on two platforms.</span></div></li>
+          <li><div><strong>Defend it in review</strong><span>Reviewers score the work against a published rubric.</span></div></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>
+        <p><strong>AI Architects is an independent community project, not affiliated with or endorsed by any cloud provider.</strong> Product names are trademarks of their owners and appear here only to identify them.</p>
+        <p style="margin-top:0.75rem">Research collected on <time datetime="2026-10-05">5 October 2026</time>. A figure that rests on a secondary source is tagged where it appears.</p>
+      </div>
+      <ul>
+        <li><a href="method.html">Method</a></li>
+        <li><a href="providers.html">Providers</a></li>
+        <li><a href="academy.html">Academy</a></li>
+        <li><a href="llms.txt">llms.txt</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="assets/matrix.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "id": "gate.claims",
+  "name": "Claims Audit Gate",
+  "type": "workflow",
+  "source": "internal_custom",
+  "provider": "multi-cloud-ai-architect",
+  "status": "draft",
+  "owner": "agent.claims-auditor",
+  "trust_level": "high",
+  "apps": {
+    "claude_code": "supported",
+    "codex": "supported",
+    "cursor": "supported",
+    "gemini_cli": "supported"
+  },
+  "last_reviewed": "2026-10-05",
+  "profile_kind": "operating_excellence_gate",
+  "gate_category": "claims_audit",
+  "stage": "claims-audit",
+  "agent": "agent.claims-auditor",
+  "extends_schema": "../ai-architect/schemas/operating-excellence-gate.schema.json",
+  "pass_criteria": [
+    "docs/architecture/claims/<YYYY-MM-DD>-claims.md exists, written by claims-auditor in a fresh context",
+    "Every claim of class figure is sourced and dated, re-derived by command, or marked [UNVERIFIED] or [OPEN] in the artifact",
+    "Zero affiliation, social-proof or personal-data claims remain without a linked, verifiable record (SOUL.md R2, R3, R6)",
+    "At least three cited URLs per provider note were re-fetched this session; status claims such as renamed, archived or GA were checked",
+    "The eval harness was re-run and its pass and fail counts match 06-evals/rubric.md",
+    "git status --porcelain shows the auditor wrote only inside its write scope"
+  ],
+  "evidence_sources": [
+    "docs/architecture/claims/",
+    "docs/architecture/receipts/",
+    "git status --porcelain docs/architecture/"
+  ],
+  "severity_if_failed": "block_release",
+  "notes": "Extends gate.verify from AI Architect. The auditor re-derives and records; it never repairs."
+}

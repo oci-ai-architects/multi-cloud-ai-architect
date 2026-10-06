@@ -1,0 +1,390 @@
+{
+  "schema": "ai-architect-academy/rubric.v1",
+  "version": "0.1.0",
+  "status": "draft: unratified, not yet calibrated on real submissions",
+  "owner": "frank@frankx.ai",
+  "updated": "2026-10-05",
+  "credential": "AI Architect Credential (AI Architect Academy, design-reviewed)",
+  "scale": {
+    "0": "Absent. The artifact or behaviour is missing.",
+    "1": "Asserted. Present as a claim, but the evidence cannot be re-derived from the submission alone.",
+    "2": "Partial. Real and re-derivable, with a gap a reviewer can name in one sentence.",
+    "3": "Architect. Meets the bar: complete, re-derivable, and the trade-off is stated.",
+    "4": "Principal. Exceeds the bar: the candidate tested the decision against its own reversal condition, or the evidence would convince a hostile reviewer."
+  },
+  "passRules": {
+    "reviewersRequired": 2,
+    "adjudicationDelta": 2,
+    "preflightCap": 1,
+    "passPercent": 70,
+    "distinctionPercent": 85,
+    "distinctionMinCriterion": 3,
+    "minCriterionScore": 2,
+    "hardGates": [
+      { "criterion": "c4.3", "min": 3 },
+      { "criterion": "c5.2", "min": 3 },
+      { "criterion": "c7.1", "min": 3 },
+      { "criterion": "c8.2", "min": 3 }
+    ],
+    "fixtureSystemIds": ["ledgerline", "support-triage", "contract-rag", "personal-ai-coe"]
+  },
+  "domains": [
+    {
+      "id": "D1",
+      "title": "Framing and spec",
+      "criteria": [
+        {
+          "id": "c1.1",
+          "title": "Outcome, non-goals and kill criterion",
+          "weight": 4,
+          "anchors": {
+            "0": "No stated outcome.",
+            "1": "An outcome exists but is a slogan; no non-goals or the kill criterion has no threshold.",
+            "2": "Outcome and non-goals are concrete; the kill criterion is vague about how or when it is measured.",
+            "3": "One-sentence outcome, at least two named non-goals, a kill criterion with a threshold and a measurement date.",
+            "4": "As 3, and the kill criterion is wired to a metric the deployed system already emits."
+          },
+          "preflight": [
+            { "type": "headings", "path": "SPEC.md", "all": ["outcome", "non-goals", "kill criterion"] }
+          ]
+        },
+        {
+          "id": "c1.2",
+          "title": "Spec traceability and NFR budget",
+          "weight": 6,
+          "anchors": {
+            "0": "No spec, or a PRD with no requirements.",
+            "1": "Requirements exist without IDs or acceptance tests.",
+            "2": "Requirements carry IDs; some trace to evals or ADRs; the NFR budget lacks numbers.",
+            "3": "Every requirement has an ID and an acceptance eval or ADR; latency, cost and quality budgets are numeric.",
+            "4": "As 3, and the spec is sized to the change: the candidate reports review time and cut sections that did not change a decision."
+          },
+          "preflight": [
+            { "type": "headings", "path": "SPEC.md", "all": ["requirements", "nfr budget", "traceability"] },
+            { "type": "regex", "path": "SPEC.md", "pattern": "REQ-\\d{2}", "min": 5 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "title": "Architecture decisions",
+      "criteria": [
+        {
+          "id": "c2.1",
+          "title": "The four decisions are made or honestly open",
+          "weight": 5,
+          "anchors": {
+            "0": "No decision record.",
+            "1": "Decisions described in prose with no verdict or evidence.",
+            "2": "Model seam, loop shape, trust boundary and long-run home each have a verdict; some evidence pointers do not re-derive.",
+            "3": "All four carry MADE or OPEN with a re-derivable evidence pointer; every OPEN has a dated deferral cost; all seven planes have an owner.",
+            "4": "As 3, and the fix-first order among OPEN items is argued from reversal cost."
+          },
+          "preflight": [
+            { "type": "file", "path": "docs/architecture/SYSTEM.md" },
+            { "type": "regex", "path": "docs/architecture/SYSTEM.md", "pattern": "\\|\\s*(model|loop|trust|run)\\s*\\|[^\\n]*\\|\\s*(MADE|OPEN)\\s*\\|", "min": 4 }
+          ]
+        },
+        {
+          "id": "c2.2",
+          "title": "ADRs reject something specific",
+          "weight": 6,
+          "anchors": {
+            "0": "No ADRs.",
+            "1": "ADRs restate the chosen design; the alternatives are straw men.",
+            "2": "At least three ADRs with real alternatives; reversal conditions are unobservable or missing in some.",
+            "3": "At least three ADRs; each rejects an option a reasonable engineer would pick, names the cost being accepted, and states an observable reversal condition.",
+            "4": "As 3, and at least one ADR records a reversal test that was actually run."
+          },
+          "preflight": [
+            { "type": "dirCount", "path": "docs/architecture/adr", "ext": ".md", "min": 3 },
+            { "type": "eachFile", "path": "docs/architecture/adr", "ext": ".md", "headings": ["context", "options considered", "decision", "consequences", "what would reverse this", "acceptance eval"] }
+          ]
+        },
+        {
+          "id": "c2.3",
+          "title": "The model seam is proven on a second provider",
+          "weight": 4,
+          "anchors": {
+            "0": "Provider SDKs imported at call sites; no seam.",
+            "1": "A seam is claimed but no eval ran through it on another provider.",
+            "2": "An eval slice ran on a second provider or fake adapter; the gap report is missing quality, cost or latency.",
+            "3": "Eval slice on a second provider with a gap report covering quality, cost and latency, and no product code changed above the seam.",
+            "4": "As 3, and the failover path was exercised in the deployed system."
+          },
+          "preflight": [
+            { "type": "headings", "path": "docs/architecture/06-evals/run-report.md", "all": ["second provider slice"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "title": "Architecture communication",
+      "criteria": [
+        {
+          "id": "c3.1",
+          "title": "C4 views at three levels",
+          "weight": 5,
+          "anchors": {
+            "0": "No diagram, or a picture with no model behind it.",
+            "1": "One box-and-arrow diagram with unlabelled relationships.",
+            "2": "Context and container views; the orchestrating container has no component view.",
+            "3": "Context, container and an agent component view from one model file; every relationship says what crosses it.",
+            "4": "As 3, and a deployment view maps containers to the two providers with the trust boundary drawn."
+          },
+          "preflight": [
+            { "type": "regex", "path": "c4/workspace.dsl", "pattern": "\\b(systemContext|container|component)\\s+\\w+", "min": 3 }
+          ]
+        },
+        {
+          "id": "c3.2",
+          "title": "Agentic profile applied",
+          "weight": 5,
+          "anchors": {
+            "0": "Agents drawn as ordinary services.",
+            "1": "Agent elements tagged; tools, seam and human gates are not distinguished.",
+            "2": "Profile tags present; some tool relationships lack a principal or side-effect flag.",
+            "3": "Every Agent, Tool, ModelSeam, HumanGate and Untrusted element is tagged; every tool invocation names its principal and whether it has side effects.",
+            "4": "As 3, and the diagram is generated or checked from the same authority matrix the code enforces."
+          },
+          "preflight": [
+            { "type": "regex", "path": "c4/workspace.dsl", "pattern": "\"(Agent|Tool|ModelSeam|HumanGate|Untrusted)\"", "min": 5 },
+            { "type": "regex", "path": "c4/workspace.dsl", "pattern": "principal=", "min": 2 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "title": "Authority and security",
+      "criteria": [
+        {
+          "id": "c4.1",
+          "title": "Tool authority is least privilege",
+          "weight": 6,
+          "anchors": {
+            "0": "No authority model.",
+            "1": "A tool list without principals.",
+            "2": "Principals per tool; a write principal is shared or a revocation path is missing.",
+            "3": "Every tool flags side effects, no principal backs more than one side-effecting tool, every principal has a revocation path.",
+            "4": "As 3, and the authority check runs outside the model and is covered by an eval."
+          },
+          "preflight": [
+            { "type": "authorityMatrix", "path": "docs/architecture/tool-authority.json" }
+          ]
+        },
+        {
+          "id": "c4.2",
+          "title": "Threat model covers tool results",
+          "weight": 5,
+          "anchors": {
+            "0": "No threat model.",
+            "1": "Generic OWASP list with no link to this system.",
+            "2": "System-specific, but tool or retrieval output is missing from untrusted inputs, or no risk is accepted.",
+            "3": "Trust boundaries, untrusted inputs including tool results, abuse cases, mitigations, and named accepted risks.",
+            "4": "As 3, and each abuse case maps to an eval case id."
+          },
+          "preflight": [
+            { "type": "headings", "path": "docs/architecture/05-trust-boundary.md", "all": ["trust boundaries", "untrusted inputs", "abuse cases", "mitigations", "accepted risks"] }
+          ]
+        },
+        {
+          "id": "c4.3",
+          "title": "Injection fails closed",
+          "weight": 4,
+          "hardGate": true,
+          "anchors": {
+            "0": "No injection case.",
+            "1": "An injection case exists but was never run.",
+            "2": "It ran; it passes only because the model declined, with no check outside the model.",
+            "3": "Injection cases from real untrusted sources run and fail closed through a deterministic guard.",
+            "4": "As 3, plus an injection arriving through a tool result, not only through user input."
+          },
+          "preflight": [
+            { "type": "evalCases", "path": "docs/architecture/06-evals/cases.jsonl", "min": 1, "kinds": { "injection": 1 } },
+            { "type": "regex", "path": "docs/architecture/06-evals/run-report.md", "pattern": "inj-\\d+\\s*\\|\\s*PASS", "min": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "title": "Evaluation",
+      "criteria": [
+        {
+          "id": "c5.1",
+          "title": "The case set is honest",
+          "weight": 5,
+          "anchors": {
+            "0": "No cases.",
+            "1": "Happy-path cases only.",
+            "2": "At least ten cases including refusal and injection; expectations a grader could decide two ways.",
+            "3": "At least ten cases across golden, refusal, injection and edge kinds; each expect and must_not is decidable twice the same way.",
+            "4": "As 3, and cases are drawn from production or realistic captured inputs with provenance."
+          },
+          "preflight": [
+            { "type": "evalCases", "path": "docs/architecture/06-evals/cases.jsonl", "min": 10, "kinds": { "golden": 1, "refusal": 1, "injection": 1, "edge": 1 } }
+          ]
+        },
+        {
+          "id": "c5.2",
+          "title": "The harness can fail",
+          "weight": 6,
+          "hardGate": true,
+          "anchors": {
+            "0": "No harness.",
+            "1": "A harness that has only ever reported green.",
+            "2": "A seeded regression fails the harness, but fixtures change in the same commits as prompts.",
+            "3": "A seeded regression makes the harness exit non-zero, and fixtures are versioned apart from the system under test.",
+            "4": "As 3, and the harness gates deploys in CI."
+          },
+          "preflight": [
+            { "type": "headings", "path": "docs/architecture/06-evals/run-report.md", "all": ["baseline run", "seeded regression"] },
+            { "type": "regex", "path": "docs/architecture/06-evals/run-report.md", "pattern": "exit code:\\s*[1-9]", "min": 1 }
+          ]
+        },
+        {
+          "id": "c5.3",
+          "title": "Decisions are eval-accepted",
+          "weight": 4,
+          "anchors": {
+            "0": "No link between decisions and evals.",
+            "1": "ADRs mention testing in general terms.",
+            "2": "Some ADRs name an acceptance eval; some named cases do not exist.",
+            "3": "Every ADR names acceptance eval ids that exist in the case set.",
+            "4": "As 3, and the acceptance run is recorded with the ADR's status change."
+          },
+          "preflight": [
+            { "type": "adrEvalsResolve", "path": "docs/architecture/adr", "cases": "docs/architecture/06-evals/cases.jsonl" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D6",
+      "title": "Economics",
+      "criteria": [
+        {
+          "id": "c6.1",
+          "title": "Cost per unit of work from sourced prices",
+          "weight": 5,
+          "anchors": {
+            "0": "No cost model.",
+            "1": "A monthly total with no unit.",
+            "2": "Cost per unit; some price rows lack a source or are older than 90 days.",
+            "3": "Cost per unit of work from price rows that each carry a source URL and a retrieval date within 90 days, plus a sensitivity band on three drivers.",
+            "4": "As 3, and the unit cost is reconciled against observed usage from the deployed system."
+          },
+          "preflight": [
+            { "type": "jsonKeys", "path": "docs/architecture/cost-model.json", "keys": ["unitOfWork", "tokensPerUnit", "costPerUnit", "sensitivity"] },
+            { "type": "priceRows", "path": "docs/architecture/cost-model.json", "maxAgeDays": 90 }
+          ]
+        },
+        {
+          "id": "c6.2",
+          "title": "Ceiling and runaway guard",
+          "weight": 5,
+          "anchors": {
+            "0": "No ceiling.",
+            "1": "A budget alert only.",
+            "2": "A ceiling with an enforcing guard that has never been triggered.",
+            "3": "A stated ceiling and a guard that stops spend, with evidence it fired in a test.",
+            "4": "As 3, and the guard degrades the product visibly, with parked work and a reason the operator can see."
+          },
+          "preflight": [
+            { "type": "jsonKeys", "path": "docs/architecture/cost-model.json", "keys": ["ceiling", "runawayGuard.mechanism", "runawayGuard.testedBy"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D7",
+      "title": "Delivery on two clouds",
+      "criteria": [
+        {
+          "id": "c7.1",
+          "title": "Deployed on two providers",
+          "weight": 6,
+          "hardGate": true,
+          "anchors": {
+            "0": "Not deployed.",
+            "1": "Deployed on one provider, or URLs that do not resolve for a stranger.",
+            "2": "Two providers, but the split is incidental and undocumented.",
+            "3": "Two distinct providers, each running a named plane, with live URLs and an ADR stating why the split exists.",
+            "4": "As 3, and the same eval slice was run against the live deployment with results attached."
+          },
+          "preflight": [
+            { "type": "providers", "path": "deploy/deployment.json", "min": 2 }
+          ]
+        },
+        {
+          "id": "c7.2",
+          "title": "Operable: rollback, observability, owner",
+          "weight": 4,
+          "anchors": {
+            "0": "No runbook.",
+            "1": "Prose runbook with no commands.",
+            "2": "Commands present; rollback untested or no observability locator.",
+            "3": "Rollback command per provider, observability locator, named owner, and a dry-run record.",
+            "4": "As 3, and a rollback was executed and timed."
+          },
+          "preflight": [
+            { "type": "headings", "path": "docs/architecture/07-runbook.md", "all": ["rollback", "observability", "owner"] }
+          ]
+        },
+        {
+          "id": "c7.3",
+          "title": "Incident simulation detected by telemetry",
+          "weight": 5,
+          "anchors": {
+            "0": "No incident simulation.",
+            "1": "A story about an incident with no telemetry.",
+            "2": "Injected failure detected, but by reading code or after the fact.",
+            "3": "Injected failure mode named, detected by a signal that predates the injection, measured time to detection, a guard added, a witness attests.",
+            "4": "As 3, and a replay of the original injection fails loudly on the new guard."
+          },
+          "preflight": [
+            { "type": "headings", "path": "incident-report.md", "all": ["injected failure mode", "time to detection", "what the telemetry showed", "fix", "guard added", "witness"] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "D8",
+      "title": "Defence and integrity",
+      "criteria": [
+        {
+          "id": "c8.1",
+          "title": "Live decision defence",
+          "weight": 6,
+          "anchors": {
+            "0": "Did not attend.",
+            "1": "Cannot explain the submitted decisions.",
+            "2": "Explains the decisions; changes the answer when pushed without new evidence.",
+            "3": "Defends each ADR under a changed constraint and names what evidence would change the answer.",
+            "4": "As 3, and identifies a weakness in the own submission the reviewers had not raised."
+          },
+          "preflight": []
+        },
+        {
+          "id": "c8.2",
+          "title": "Integrity and AI-use disclosure",
+          "weight": 4,
+          "hardGate": true,
+          "anchors": {
+            "0": "No attestation, or the work is not the candidate's.",
+            "1": "Attestation signed; defence contradicts the commit history.",
+            "2": "Attestation and disclosure present; disclosure is vague.",
+            "3": "Signed attestation, specific AI-use disclosure, commit history spanning the work, defence consistent with both.",
+            "4": "As 3, and the disclosure links the agent transcripts behind the two hardest decisions."
+          },
+          "preflight": [
+            { "type": "manifest", "keys": ["integrity.attestation", "integrity.aiUseDisclosure", "integrity.historyLocator"] }
+          ]
+        }
+      ]
+    }
+  ]
+}

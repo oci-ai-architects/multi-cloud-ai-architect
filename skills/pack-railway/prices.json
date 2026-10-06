@@ -1,0 +1,18 @@
+{
+  "provider": "Railway",
+  "currency": "USD",
+  "asOf": "2026-10-05",
+  "note": "List prices from railway.com/pricing read 2026-10-05. Monthly equivalents are Railway's own approximations.",
+  "rows": [
+    {"item": "Free plan", "unit": "month", "price": 0, "included": "$1/month usage", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Hobby plan", "unit": "month", "price": 5.00, "included": "$5/month usage", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Pro plan", "unit": "workspace-month", "price": 20.00, "included": "$20/month usage", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Container CPU", "unit": "vCPU-second", "price": 0.00000772, "notes": "about $20 per vCPU-month", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Container memory", "unit": "GB-second", "price": 0.00000386, "notes": "about $10 per GB-month", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Volume storage", "unit": "GB-second", "price": 0.00000006, "notes": "about $0.15 per GB-month", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Egress", "unit": "GB", "price": 0.05, "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Sandbox CPU (active use)", "unit": "vCPU-second", "price": 0.00001929, "notes": "about $50 per vCPU-month", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Sandbox memory", "unit": "GB-second", "price": 0.00001929, "notes": "about $50 per GB-month", "sourceUrl": "https://railway.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Template kickback (verified templates)", "unit": "percent of template usage", "price": 15, "notes": "25% if the author also answers user questions; this is income, not a cost", "sourceUrl": "https://docs.railway.com/templates/partners", "asOf": "2026-10-05"}
+  ]
+}

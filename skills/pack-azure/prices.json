@@ -1,0 +1,10 @@
+{
+  "provider": "Microsoft Azure",
+  "currency": "USD",
+  "asOf": "2026-10-05",
+  "note": "Hosted-agent compute and Foundry tool prices did not render on the official pricing page on 2026-10-05 and are omitted. Certification and partner prices in the provider research are third-party or search-snippet figures and are omitted under the sourcing rule.",
+  "rows": [
+    {"item": "Foundry-native agents (prompts and workflows) orchestration", "unit": "flat", "price": 0, "notes": "pay for model tokens and tools separately", "sourceUrl": "https://azure.microsoft.com/en-us/pricing/details/foundry-agent-service/", "asOf": "2026-10-05"},
+    {"item": "Foundry file search vector storage free allowance", "unit": "GB", "price": 0, "included": "1 GB free; per-GB-day rate not rendered", "sourceUrl": "https://azure.microsoft.com/en-us/pricing/details/foundry-agent-service/", "asOf": "2026-10-05"}
+  ]
+}

@@ -1,0 +1,827 @@
+[
+  {
+    "provider": "Google Cloud",
+    "tier": "primary",
+    "asOf": "2026-10-05",
+    "officialSkillRepos": [
+      {
+        "repo": "https://github.com/google/skills",
+        "stars": 20939,
+        "lastPush": "2026-10-02",
+        "license": "Apache-2.0",
+        "skillCount": 155
+      },
+      {
+        "repo": "https://github.com/google/agents-cli",
+        "stars": 6050,
+        "lastPush": "2026-09-30",
+        "license": "Apache-2.0",
+        "skillCount": 7
+      },
+      {
+        "repo": "https://github.com/google-gemini/gemini-skills",
+        "stars": 4247,
+        "lastPush": "2026-09-23",
+        "license": "Apache-2.0",
+        "skillCount": 3
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "Google-managed remote MCP servers (BigQuery, Cloud SQL, GKE, Cloud Run, Spanner, ...)",
+        "url": "https://docs.cloud.google.com/mcp/supported-products",
+        "type": "remote"
+      },
+      {
+        "name": "MCP catalog",
+        "repo": "https://github.com/google/mcp",
+        "stars": 4622,
+        "lastPush": "2026-08-17",
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "MCP Toolbox for Databases",
+        "repo": "https://github.com/googleapis/mcp-toolbox",
+        "stars": 16586,
+        "lastPush": "2026-10-05",
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "gcloud MCP",
+        "repo": "https://github.com/googleapis/gcloud-mcp",
+        "stars": 921,
+        "lastPush": "2026-10-05",
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "Cloud Run MCP",
+        "repo": "https://github.com/GoogleCloudPlatform/cloud-run-mcp",
+        "stars": 631,
+        "lastPush": "2026-10-05",
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "GKE MCP",
+        "repo": "https://github.com/GoogleCloudPlatform/gke-mcp",
+        "stars": 168,
+        "lastPush": "2026-09-28",
+        "license": "Apache-2.0"
+      }
+    ],
+    "agentFrameworks": [
+      {
+        "name": "Agent Development Kit (Python)",
+        "repo": "https://github.com/google/adk-python",
+        "stars": 21709,
+        "license": "Apache-2.0",
+        "docs": "https://adk.dev/"
+      },
+      {
+        "name": "ADK Go / Java / TypeScript",
+        "repos": [
+          "https://github.com/google/adk-go",
+          "https://github.com/google/adk-java",
+          "https://github.com/google/adk-js"
+        ]
+      },
+      {
+        "name": "ADK recipes (formerly adk-samples)",
+        "repo": "https://github.com/google/adk-recipes",
+        "stars": 10414
+      },
+      {
+        "name": "Agent2Agent (A2A) protocol",
+        "repo": "https://github.com/a2aproject/A2A",
+        "stars": 26012,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "Agent Starter Pack",
+        "repo": "https://github.com/GoogleCloudPlatform/agent-starter-pack",
+        "stars": 6568,
+        "lastPush": "2026-07-21",
+        "note": "possibly superseded by agents-cli [UNVERIFIED]"
+      },
+      {
+        "name": "Gemini Enterprise Agent Platform (formerly Vertex AI; Agent Engine, Agent Studio)",
+        "source": "https://www.hpcwire.com/aiwire/2026/04/23/google-unveils-gemini-enterprise-agent-platform/"
+      }
+    ],
+    "architectureCentre": {
+      "hub": "https://docs.cloud.google.com/architecture",
+      "agentic": [
+        "https://docs.cloud.google.com/architecture/choose-agentic-ai-architecture-components",
+        "https://docs.cloud.google.com/architecture/multiagent-ai-system",
+        "https://docs.cloud.google.com/architecture/multi-tenant-agentic-ai-system"
+      ],
+      "wellArchitected": "https://docs.cloud.google.com/architecture/framework/perspectives/ai-ml/operational-excellence"
+    },
+    "certifications": [
+      {
+        "name": "Professional Agentic Architect",
+        "costUSD": 200,
+        "status": "GA registration opens 2026-11-02 (beta $120, closed)",
+        "url": "https://cloud.google.com/learn/certification/agentic-architect"
+      },
+      {
+        "name": "Professional Cloud Architect",
+        "costUSD": 200,
+        "url": "https://cloud.google.com/learn/certification/cloud-architect"
+      },
+      {
+        "name": "Generative AI Leader",
+        "costUSD": 99,
+        "url": "https://cloud.google.com/learn/certification/generative-ai-leader"
+      }
+    ],
+    "partnerProgram": {
+      "name": "Google Cloud Partner Network (successor to Partner Advantage)",
+      "tiers": [
+        "Select",
+        "Premier",
+        "Diamond"
+      ],
+      "fee": "[UNVERIFIED]",
+      "url": "https://cloud.google.com/blog/topics/partners/introducing-google-cloud-partner-network"
+    },
+    "sources": [
+      "https://github.com/google/skills",
+      "https://github.com/google/mcp",
+      "https://github.com/google/adk-python",
+      "https://cloud.google.com/learn/certification/agentic-architect",
+      "https://docs.cloud.google.com/mcp/overview",
+      "https://www.channele2e.com/news/google-cloud-revamps-partner-network-to-reward-real-customer-outcomes"
+    ]
+  },
+  {
+    "provider": "Cloudflare",
+    "tier": "primary",
+    "asOf": "2026-10-05",
+    "officialSkillRepos": [
+      {
+        "repo": "https://github.com/cloudflare/skills",
+        "stars": 2988,
+        "lastPush": "2026-10-01",
+        "license": "Apache-2.0",
+        "skillCount": 16
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "Cloudflare remote MCP servers monorepo (ai-gateway, autorag, browser-rendering, docs-ai-search, workers-bindings, workers-observability, radar, ...)",
+        "repo": "https://github.com/cloudflare/mcp-server-cloudflare",
+        "stars": 4353,
+        "lastPush": "2026-10-01",
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "Cloudflare API MCP",
+        "repo": "https://github.com/cloudflare/mcp",
+        "stars": 922,
+        "lastPush": "2026-10-02",
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "workers-mcp (legacy stdio bridge)",
+        "repo": "https://github.com/cloudflare/workers-mcp",
+        "stars": 647,
+        "lastPush": "2026-04-23",
+        "license": "Apache-2.0"
+      }
+    ],
+    "agentFrameworks": [
+      {
+        "name": "Agents SDK",
+        "repo": "https://github.com/cloudflare/agents",
+        "stars": 5775,
+        "license": "MIT",
+        "docs": "https://developers.cloudflare.com/agents/"
+      },
+      {
+        "name": "Project Think (preview harness)",
+        "docs": "https://developers.cloudflare.com/agents/harnesses/think/"
+      },
+      {
+        "name": "Sandbox SDK",
+        "repo": "https://github.com/cloudflare/sandbox-sdk",
+        "stars": 1145,
+        "license": "NOASSERTION"
+      },
+      {
+        "name": "Workers AI",
+        "docs": "https://developers.cloudflare.com/workers-ai/"
+      },
+      {
+        "name": "AI Gateway",
+        "docs": "https://developers.cloudflare.com/ai-gateway/"
+      },
+      {
+        "name": "AI Search (formerly AutoRAG)",
+        "docs": "https://developers.cloudflare.com/agents/tools/ai-search/"
+      },
+      {
+        "name": "Durable Objects",
+        "docs": "https://developers.cloudflare.com/durable-objects/"
+      },
+      {
+        "name": "Code Mode",
+        "docs": "https://developers.cloudflare.com/agents/tools/codemode/"
+      },
+      {
+        "name": "workerd runtime",
+        "repo": "https://github.com/cloudflare/workerd",
+        "stars": 8809,
+        "license": "Apache-2.0"
+      }
+    ],
+    "architectureCentre": {
+      "hub": "https://developers.cloudflare.com/reference-architecture/",
+      "agentic": [
+        "https://developers.cloudflare.com/reference-architecture/diagrams/ai/enterprise-ai-agent-workspace/",
+        "https://developers.cloudflare.com/reference-architecture/diagrams/ai/enterprise-ai-vibe-coding-platform/"
+      ],
+      "wellArchitected": null
+    },
+    "certifications": [
+      {
+        "name": "Application Security Associate / Zero Trust Associate (beta)",
+        "costUSD": null,
+        "note": "taken in person at Cloudflare Connect; the $495 University Pass, added to the conference pass, includes one attempt at each exam",
+        "url": "https://www.cloudflare.com/connect/cloudflare-university/"
+      },
+      {
+        "name": "Zaraz Certified Developer",
+        "costUSD": 0,
+        "url": "https://www.credly.com/org/cloudflare/badge/cloudflare-zaraz-certified-developer"
+      }
+    ],
+    "certificationGap": "No developer-platform / Workers / AI-agents certification exists",
+    "partnerProgram": {
+      "name": "Cloudflare Partner Network (PowerUP: Registered/Select/Elite [UNVERIFIED]; Self-Serve Partner Program closed beta; Design Partner designation 2026)",
+      "fee": "[UNVERIFIED]",
+      "url": "https://blog.cloudflare.com/self-serve-partners-beta/"
+    },
+    "sources": [
+      "https://github.com/cloudflare/agents",
+      "https://github.com/cloudflare/skills",
+      "https://github.com/cloudflare/mcp-server-cloudflare",
+      "https://developers.cloudflare.com/agents/",
+      "https://blog.cloudflare.com/agents-week-in-review/",
+      "https://www.infoq.com/news/2026/04/cloudflare-project-think/",
+      "https://www.cloudflare.com/press/press-releases/2026/cloudflare-launches-design-partner-designation-to-accelerate-secure-ai-and-seamless-sase-adoption/"
+    ]
+  },
+  {
+    "provider": "Vercel",
+    "tier": "primary",
+    "asOf": "2026-10-05",
+    "officialSkillRepos": [
+      {
+        "repo": "https://github.com/vercel-labs/skills",
+        "stars": 33159,
+        "lastPush": "2026-10-02",
+        "license": "MIT",
+        "note": "npx skills installer"
+      },
+      {
+        "repo": "https://github.com/vercel-labs/agent-skills",
+        "stars": 31950,
+        "lastPush": "2026-08-28",
+        "license": null,
+        "skillCount": 9,
+        "note": "no licence file detected"
+      },
+      {
+        "repo": "https://github.com/vercel/vercel-plugin",
+        "stars": 297,
+        "lastPush": "2026-10-05",
+        "license": "NOASSERTION"
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "Vercel MCP (remote, OAuth)",
+        "url": "https://mcp.vercel.com",
+        "docs": "https://vercel.com/docs/agent-resources/vercel-mcp",
+        "type": "remote"
+      },
+      {
+        "name": "mcp-handler (host MCP on Next.js/Nuxt/Svelte)",
+        "repo": "https://github.com/vercel-labs/mcp-handler",
+        "stars": 682,
+        "lastPush": "2026-09-18",
+        "license": null
+      }
+    ],
+    "agentFrameworks": [
+      {
+        "name": "AI SDK 7",
+        "repo": "https://github.com/vercel/ai",
+        "stars": 27123,
+        "license": "NOASSERTION",
+        "docs": "https://ai-sdk.dev/"
+      },
+      {
+        "name": "eve agent framework",
+        "repo": "https://github.com/vercel/eve",
+        "stars": 5457,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "Workflow SDK",
+        "repo": "https://github.com/vercel/workflow",
+        "stars": 2443,
+        "license": "Apache-2.0",
+        "status": "GA"
+      },
+      {
+        "name": "Vercel Sandbox",
+        "repo": "https://github.com/vercel/sandbox",
+        "stars": 208,
+        "license": "Apache-2.0",
+        "status": "GA"
+      },
+      {
+        "name": "AI Gateway",
+        "url": "https://vercel.com/ai-gateway",
+        "status": "GA"
+      },
+      {
+        "name": "Chat SDK",
+        "repo": "https://github.com/vercel/chat",
+        "stars": 2393,
+        "license": "MIT",
+        "status": "GA"
+      },
+      {
+        "name": "Vercel Connect",
+        "url": "https://vercel.com/blog/introducing-vercel-connect",
+        "status": "GA"
+      },
+      {
+        "name": "Vercel Agent",
+        "url": "https://vercel.com/changelog/vercel-agent-now-in-limited-beta",
+        "status": "public beta"
+      }
+    ],
+    "architectureCentre": {
+      "hub": null,
+      "agentic": [
+        "https://vercel.com/i/how-to-build-production-ready-ai-agents",
+        "https://vercel.com/blog/vercel-ship-2026-recap"
+      ],
+      "wellArchitected": null
+    },
+    "certifications": [
+      {
+        "name": "Vercel Academy course certificates (e.g. Builders Guide to the AI SDK)",
+        "costUSD": 0,
+        "note": "completion certificate, not proctored",
+        "url": "https://vercel.com/academy/ai-sdk"
+      },
+      {
+        "name": "Vercel Partner Certification (firm-level, Solution Partners only)",
+        "costUSD": null,
+        "url": "https://vercel.com/blog/vercel-launches-partner-certification"
+      }
+    ],
+    "certificationGap": "No individual proctored certification",
+    "partnerProgram": {
+      "name": "Vercel Partners: Solution Partners + Technology Partners",
+      "fee": "[UNVERIFIED]",
+      "url": "https://vercel.com/partners"
+    },
+    "sources": [
+      "https://vercel.com/blog/vercel-ship-2026-recap",
+      "https://github.com/vercel/ai",
+      "https://github.com/vercel/eve",
+      "https://github.com/vercel-labs/skills",
+      "https://vercel.com/docs/agent-resources/vercel-mcp",
+      "https://vercel.com/partners/solution-partners"
+    ]
+  },
+  {
+    "provider": "Railway",
+    "tier": "primary",
+    "asOf": "2026-10-05",
+    "officialSkillRepos": [
+      {
+        "repo": "https://github.com/railwayapp/railway-skills",
+        "stars": 325,
+        "lastPush": "2026-10-01",
+        "license": "MIT",
+        "skillCount": 1
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "Railway remote MCP (OAuth)",
+        "url": "https://mcp.railway.com",
+        "launched": "2026-04-17",
+        "type": "remote",
+        "docs": "https://railway.com/changelog/2026-04-17-remote-mcp"
+      },
+      {
+        "name": "Railway CLI-bundled MCP (railway mcp install)",
+        "repo": "https://github.com/railwayapp/cli",
+        "stars": 622,
+        "lastPush": "2026-10-01",
+        "license": "MIT"
+      },
+      {
+        "name": "railway-mcp-server (ARCHIVED 2026-05-23)",
+        "repo": "https://github.com/railwayapp/railway-mcp-server",
+        "stars": 190,
+        "license": "MIT",
+        "archived": true
+      }
+    ],
+    "agentFrameworks": [
+      {
+        "name": "Railway Agent (railway agent CLI)",
+        "docs": "https://railway.com/changelog/2026-04-17-remote-mcp"
+      },
+      {
+        "name": "railway skills install",
+        "docs": "https://railway.com/changelog/2026-04-17-remote-mcp"
+      },
+      {
+        "name": "Railpack builder",
+        "repo": "https://github.com/railwayapp/railpack",
+        "stars": 1218,
+        "license": "MIT"
+      },
+      {
+        "name": "AI template marketplace",
+        "url": "https://railway.com/deploy/category/ai"
+      }
+    ],
+    "architectureCentre": {
+      "hub": null,
+      "agentic": [
+        "https://blog.railway.com/p/state-of-railway-agents"
+      ],
+      "wellArchitected": null,
+      "agentDocs": [
+        "https://railway.com/llms.txt",
+        "https://railway.com/llms-templates.md"
+      ]
+    },
+    "certifications": [],
+    "certificationGap": "No certifications of any kind",
+    "partnerProgram": {
+      "name": "Railway Open Source & Technology Partners (template kickback 15% usage, 25% with support)",
+      "fee": 0,
+      "url": "https://docs.railway.com/templates/partners"
+    },
+    "sources": [
+      "https://railway.com/changelog/2026-04-17-remote-mcp",
+      "https://github.com/railwayapp/railway-skills",
+      "https://github.com/railwayapp/railway-mcp-server",
+      "https://docs.railway.com/templates/partners",
+      "https://blog.railway.com/p/annoucing-railway-technology-partners"
+    ]
+  },
+  {
+    "provider": "AWS",
+    "tier": "secondary",
+    "asOf": "2026-10-05",
+    "officialSkillRepos": [
+      {
+        "repo": "https://github.com/aws/agent-toolkit-for-aws",
+        "stars": 2804,
+        "lastPush": "2026-10-05",
+        "license": "Apache-2.0",
+        "skillCount": 186,
+        "status": "GA"
+      },
+      {
+        "repo": "https://github.com/awslabs/agent-plugins",
+        "stars": 911,
+        "lastPush": "2026-10-05",
+        "license": "Apache-2.0",
+        "skillCount": 34
+      },
+      {
+        "repo": "https://github.com/awslabs/aidlc-workflows",
+        "stars": 4993,
+        "lastPush": "2026-10-05",
+        "license": "MIT-0"
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "AWS MCP servers (62 under src/)",
+        "repo": "https://github.com/awslabs/mcp",
+        "stars": 9753,
+        "lastPush": "2026-10-04",
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "AgentCore Gateway (APIs/Lambda to MCP, managed)",
+        "docs": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html",
+        "type": "managed"
+      }
+    ],
+    "agentFrameworks": [
+      {
+        "name": "Amazon Bedrock AgentCore (Harness, Runtime, Memory, Gateway, Identity, Code Interpreter, Browser, Observability, Payments, Evaluations, Optimization, Policy, Registry)",
+        "docs": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html"
+      },
+      {
+        "name": "AgentCore CLI",
+        "repo": "https://github.com/aws/agentcore-cli",
+        "stars": 301,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "AgentCore Python SDK",
+        "repo": "https://github.com/aws/bedrock-agentcore-sdk-python",
+        "stars": 776,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "Strands Agents harness-sdk (renamed from sdk-python)",
+        "repo": "https://github.com/strands-agents/harness-sdk",
+        "stars": 8671,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "AgentCore samples",
+        "repo": "https://github.com/awslabs/agentcore-samples",
+        "stars": 3428,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "Generative AI CDK Constructs",
+        "repo": "https://github.com/awslabs/generative-ai-cdk-constructs",
+        "stars": 544,
+        "license": "Apache-2.0"
+      }
+    ],
+    "architectureCentre": {
+      "hub": "https://aws.amazon.com/architecture/",
+      "agentic": [
+        "https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentic-ai-lens.html"
+      ],
+      "wellArchitected": "https://aws.amazon.com/about-aws/whats-new/2025/04/well-architected-generative-ai-lens"
+    },
+    "certifications": [
+      {
+        "name": "AWS Certified Generative AI Developer - Professional (AIP-C01)",
+        "costUSD": 300,
+        "url": "https://aws.amazon.com/certification/certified-generative-ai-developer-professional/"
+      },
+      {
+        "name": "AWS Certified AI Practitioner (AIF-C01)",
+        "costUSD": 100,
+        "url": "https://aws.amazon.com/certification/certified-ai-practitioner/"
+      },
+      {
+        "name": "AWS Certified Machine Learning Engineer - Associate (MLA-C01)",
+        "costUSD": 150,
+        "url": "https://aws.amazon.com/certification/certified-machine-learning-engineer-associate/",
+        "note": "MLA-C02 beta listed at $75"
+      },
+      {
+        "name": "AWS Agentic AI Demonstrated (credential)",
+        "costUSD": null,
+        "url": "https://aws.amazon.com/certification/certified-generative-ai-developer-professional/"
+      }
+    ],
+    "partnerProgram": {
+      "name": "AWS Partner Network (free registration; Software Path $2,500/yr [UNVERIFIED]; AI Competency incl. Agentic AI categories)",
+      "url": "https://aws.amazon.com/blogs/apn/powering-partner-success-2026-innovations/"
+    },
+    "sources": [
+      "https://github.com/aws/agent-toolkit-for-aws",
+      "https://github.com/awslabs/mcp",
+      "https://github.com/strands-agents/harness-sdk",
+      "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html",
+      "https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentic-ai-lens.html",
+      "https://aws.amazon.com/certification/certified-generative-ai-developer-professional/",
+      "https://labra.io/aws-partner-programs-guide/"
+    ]
+  },
+  {
+    "provider": "Microsoft Azure",
+    "tier": "secondary",
+    "asOf": "2026-10-05",
+    "officialSkillRepos": [
+      {
+        "repo": "https://github.com/microsoft/skills",
+        "stars": 3081,
+        "lastPush": "2026-10-05",
+        "license": "MIT",
+        "skillCount": 205
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "Microsoft MCP catalog incl. Azure MCP Server",
+        "repo": "https://github.com/microsoft/mcp",
+        "stars": 3730,
+        "lastPush": "2026-10-05",
+        "license": "MIT"
+      },
+      {
+        "name": "Microsoft Learn MCP",
+        "repo": "https://github.com/MicrosoftDocs/mcp",
+        "stars": 1930,
+        "lastPush": "2026-09-29",
+        "license": "CC-BY-4.0"
+      },
+      {
+        "name": "Foundry MCP Server (preview, cloud-hosted)",
+        "url": "https://mcp.ai.azure.com",
+        "type": "remote",
+        "docs": "https://learn.microsoft.com/en-us/azure/foundry/mcp/get-started"
+      },
+      {
+        "name": "Azure/azure-mcp (ARCHIVED)",
+        "repo": "https://github.com/Azure/azure-mcp",
+        "stars": 1223,
+        "archived": true
+      }
+    ],
+    "agentFrameworks": [
+      {
+        "name": "Microsoft Agent Framework 1.0 (GA 2026-04-03)",
+        "repo": "https://github.com/microsoft/agent-framework",
+        "stars": 13947,
+        "license": "MIT",
+        "docs": "https://learn.microsoft.com/en-us/agent-framework/overview/"
+      },
+      {
+        "name": "Semantic Kernel",
+        "repo": "https://github.com/microsoft/semantic-kernel",
+        "stars": 28628,
+        "license": "MIT"
+      },
+      {
+        "name": "AutoGen (maintenance mode)",
+        "repo": "https://github.com/microsoft/autogen",
+        "stars": 61259
+      },
+      {
+        "name": "Microsoft Foundry Agent Service samples",
+        "repo": "https://github.com/microsoft-foundry/foundry-samples",
+        "stars": 454,
+        "license": "MIT"
+      },
+      {
+        "name": "Azure Developer CLI (azd)",
+        "repo": "https://github.com/Azure/azure-dev",
+        "stars": 570,
+        "license": "MIT"
+      }
+    ],
+    "architectureCentre": {
+      "hub": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/ai-get-started",
+      "agentic": [
+        "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns",
+        "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/idea/multiple-agent-workflow-automation",
+        "https://github.com/Azure/AI-Landing-Zones"
+      ],
+      "wellArchitected": "https://learn.microsoft.com/en-us/azure/well-architected/ai/architecture-pattern"
+    },
+    "certifications": [
+      {
+        "name": "Microsoft Certified: Azure AI Apps and Agents Developer Associate (AI-103)",
+        "costUSD": 165,
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-apps-and-agents-developer-associate/",
+        "note": "typical US price for Associate and Expert exams, set by country",
+        "priceSource": "https://learn.microsoft.com/en-us/credentials/certifications/frequently-asked-questions"
+      },
+      {
+        "name": "Microsoft Certified: Agentic AI Business Solutions Architect Expert (AB-100)",
+        "costUSD": 165,
+        "url": "https://learn.microsoft.com/en-us/credentials/certifications/agentic-ai-business-solutions-architect/",
+        "note": "typical US price for Associate and Expert exams, set by country",
+        "priceSource": "https://learn.microsoft.com/en-us/credentials/certifications/frequently-asked-questions"
+      },
+      {
+        "name": "Azure AI Engineer Associate (AI-102) - RETIRED 2026-06-30",
+        "costUSD": null,
+        "url": "https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams"
+      }
+    ],
+    "partnerProgram": {
+      "name": "Microsoft AI Cloud Partner Program (Solutions Partner for Cloud & AI Platforms; Partner Launch Benefits $350/yr, Partner Success Core $895/yr [UNVERIFIED])",
+      "url": "https://learn.microsoft.com/en-us/partner-center/membership/partner-launch-benefits"
+    },
+    "sources": [
+      "https://github.com/microsoft/agent-framework",
+      "https://github.com/microsoft/skills",
+      "https://github.com/microsoft/mcp",
+      "https://devblogs.microsoft.com/foundry/announcing-foundry-mcp-server-preview-speeding-up-ai-dev-with-microsoft-foundry/",
+      "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns",
+      "https://visualstudiomagazine.com/articles/2026/04/06/microsoft-ships-production-ready-agent-framework-1-0-for-net-and-python.aspx",
+      "https://learn.microsoft.com/en-us/partner-center/membership/introduction-to-pcs",
+      "https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams"
+    ]
+  },
+  {
+    "provider": "Oracle OCI",
+    "tier": "secondary",
+    "asOf": "2026-10-05",
+    "officialSkillRepos": [
+      {
+        "repo": "https://github.com/oracle/skills",
+        "stars": 869,
+        "lastPush": "2026-09-29",
+        "license": "UPL-1.0",
+        "skillCount": 15
+      },
+      {
+        "repo": "https://github.com/oracle-samples/fusion-ai-skills",
+        "stars": 6,
+        "lastPush": "2026-09-09"
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "Oracle MCP servers (OCI API, compute, networking, pricing, usage, database, ...)",
+        "repo": "https://github.com/oracle/mcp",
+        "stars": 452,
+        "lastPush": "2026-10-03",
+        "license": "UPL-1.0"
+      }
+    ],
+    "agentFrameworks": [
+      {
+        "name": "OCI Enterprise AI (Responses API, hosted Applications, Vector Stores, Projects; GA 2026-03-31)",
+        "docs": "https://docs.oracle.com/en-us/iaas/releasenotes/generative-ai/enterprise-ai.htm"
+      },
+      {
+        "name": "OCI ADK (pip install oci[adk])",
+        "docs": "https://docs.oracle.com/en-us/iaas/Content/generative-ai-agents/adk/api-reference/introduction.htm",
+        "repo": "https://github.com/oracle/oci-python-sdk"
+      },
+      {
+        "name": "Open Agent Specification",
+        "repo": "https://github.com/oracle/agent-spec",
+        "stars": 436,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "WayFlow",
+        "repo": "https://github.com/oracle/wayflow",
+        "stars": 189,
+        "license": "Apache-2.0"
+      },
+      {
+        "name": "langchain-oracle",
+        "repo": "https://github.com/oracle/langchain-oracle",
+        "stars": 64,
+        "license": "UPL-1.0"
+      },
+      {
+        "name": "Oracle AI Developer Hub",
+        "repo": "https://github.com/oracle-devrel/oracle-ai-developer-hub",
+        "stars": 4404
+      }
+    ],
+    "architectureCentre": {
+      "hub": "https://docs.oracle.com/solutions/",
+      "agentic": [
+        "https://docs.oracle.com/en/solutions/deploy-agentic-ai-agent-platform/index.html",
+        "https://docs.oracle.com/en/solutions/oci-genai-enterprise/index.html"
+      ],
+      "wellArchitected": null
+    },
+    "certifications": [
+      {
+        "name": "Oracle Agentic AI Foundations Associate (2026)",
+        "costUSD": 0,
+        "url": "https://learn.oracle.com/ols/learning-path/become-an-oracle-agentic-ai-foundations-associate-2026/146553/163239"
+      },
+      {
+        "name": "OCI Enterprise AI Professional",
+        "costUSD": null,
+        "verified": false,
+        "url": "https://blogs.oracle.com/oracleuniversity/oci-certification-learning-paths-and-exams-2026-updates-now-available",
+        "note": "price not confirmed on Oracle's page"
+      },
+      {
+        "name": "OCI 2025 Generative AI Professional (1Z0-1127-25)",
+        "costUSD": null,
+        "verified": false,
+        "url": "https://education.oracle.com/oracle-cloud-infrastructure-2025-generative-ai-professional/pexam_1Z0-1127-25",
+        "note": "price not confirmed on Oracle's page"
+      }
+    ],
+    "partnerProgram": {
+      "name": "Oracle PartnerNetwork (Principal Level 0 $500 / L1 $5,000 / L2 $100,000 / L3 $500,000 per yr [UNVERIFIED by direct read])",
+      "url": "https://www.oracle.com/partnernetwork/program/faq/"
+    },
+    "sources": [
+      "https://github.com/oracle/skills",
+      "https://github.com/oracle/mcp",
+      "https://github.com/oracle/agent-spec",
+      "https://docs.oracle.com/en-us/iaas/releasenotes/generative-ai/enterprise-ai.htm",
+      "https://blogs.oracle.com/oracleuniversity/oracle-agentic-ai-foundations-training-certification-now-available",
+      "https://www.oracle.com/opn/manage/opn-level-policies-12405077.pdf?IS_CONTAINERIZED=Y"
+    ]
+  }
+]

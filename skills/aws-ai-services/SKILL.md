@@ -1,26 +1,33 @@
 ---
-name: AWS AI Services Expert
-description: Build AI applications on AWS using Bedrock, SageMaker, and AI/ML services with best practices for enterprise deployment
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "AWS Bedrock Claude/Llama"
-triggers:
-  - AWS Bedrock
-  - SageMaker
-  - AWS AI
-  - Amazon AI
+name: aws-ai-services
+description: Reference for building model-backed applications on AWS service by service - Amazon Bedrock model invocation, streaming, Titan embeddings, Knowledge Bases (RAG) and Bedrock Agents in boto3; SageMaker training, endpoints and JumpStart; Kendra, Comprehend and Textract; a serverless pipeline and an enterprise RAG layout; IAM least-privilege policies and VPC endpoints; and a token-cost model kept in a dated reference. Use when writing or reviewing boto3 code against Bedrock or SageMaker, wiring a Bedrock Knowledge Base, locking Bedrock access down with IAM and PrivateLink, or estimating Bedrock token cost. Trigger on "AWS Bedrock", "Bedrock invoke_model", "SageMaker", "JumpStart", "Kendra", "Textract", "AWS AI", "Amazon AI". Prefer pack-aws for agent architecture decisions on AWS (AgentCore, Strands, Agentic AI Lens); this skill holds the lower-level service detail.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
+  supersededBy: pack-aws
 ---
 
-# AWS AI Services Expert
+# AWS AI services
 
-You are an expert in Amazon Web Services AI and ML services, specializing in Amazon Bedrock for foundation models, SageMaker for custom ML, and the broader AWS AI ecosystem.
+Content as of 2026-01-06, and several model ids in the code predate that date. Model names, model
+ids, SDK versions and prices below were not re-checked on 2026-10-05; confirm on the linked primary
+source before quoting or copying. For agent architecture on AWS, load `pack-aws` first.
+
+Service-level reference for Amazon Bedrock (foundation models), SageMaker (custom ML) and the
+adjacent AWS AI services.
 
 ## AWS Bedrock
 
 ### Overview
 Amazon Bedrock is a fully managed service providing foundation models from leading AI companies through a single API.
 
-### Available Models
+### Available models
+
+As of 2026-01-06 [UNVERIFIED], and the Anthropic and Meta rows list older generations. Source:
+https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html. Read it for the current
+catalogue and per-region availability before choosing a model id.
 
 | Provider | Models | Best For |
 |----------|--------|----------|
@@ -355,40 +362,11 @@ module "bedrock_kb" {
 """
 ```
 
-## Pricing Optimization
+## Pricing optimization
 
-### Bedrock Pricing (per 1K tokens)
-
-| Model | Input | Output |
-|-------|-------|--------|
-| Claude 3.5 Sonnet | $0.003 | $0.015 |
-| Claude 3 Haiku | $0.00025 | $0.00125 |
-| Llama 3.1 70B | $0.00265 | $0.0035 |
-| Titan Text Express | $0.0002 | $0.0006 |
-
-### Cost Optimization Strategies
-
-```python
-class BedrockCostOptimizer:
-    MODEL_COSTS = {
-        "claude-3-5-sonnet": {"input": 0.003, "output": 0.015},
-        "claude-3-haiku": {"input": 0.00025, "output": 0.00125},
-        "llama-3-70b": {"input": 0.00265, "output": 0.0035},
-    }
-
-    def select_model(self, task_complexity: str, max_cost: float = None):
-        """Select most cost-effective model for task"""
-        if task_complexity == "simple":
-            return "claude-3-haiku"  # Cheapest
-        elif task_complexity == "moderate":
-            return "llama-3-70b"  # Good balance
-        else:
-            return "claude-3-5-sonnet"  # Best capability
-
-    def estimate_cost(self, model: str, input_tokens: int, output_tokens: int):
-        costs = self.MODEL_COSTS[model]
-        return (input_tokens * costs["input"] + output_tokens * costs["output"]) / 1000
-```
+The Bedrock price table and the `BedrockCostOptimizer` example moved to
+[references/pricing.md](references/pricing.md). Figures there are as of 2026-01-06 [UNVERIFIED];
+the primary source is https://aws.amazon.com/bedrock/pricing/.
 
 ## Security Best Practices
 
@@ -437,3 +415,8 @@ resource "aws_vpc_endpoint" "bedrock" {
 - [SageMaker Docs](https://docs.aws.amazon.com/sagemaker/)
 - [AWS AI/ML Blog](https://aws.amazon.com/blogs/machine-learning/)
 - [Bedrock Pricing](https://aws.amazon.com/bedrock/pricing/)
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/.
+- 1.1.0: content as of 2026-01-06.

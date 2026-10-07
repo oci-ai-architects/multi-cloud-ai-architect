@@ -1,26 +1,32 @@
 ---
-name: Azure AI Services Expert
-description: Build AI applications on Azure using Azure OpenAI, Cognitive Services, and ML services with enterprise patterns
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "Azure OpenAI GPT-5.2"
-triggers:
-  - Azure OpenAI
-  - Azure AI
-  - Cognitive Services
-  - Azure ML
+name: azure-ai-services
+description: Reference for building model-backed applications on Azure service by service - Azure OpenAI chat, streaming, function calling, embeddings and vision with the openai Python SDK; provisioned throughput (PTU) sizing; Azure AI Search vector and hybrid queries; Prompt Flow; Azure Machine Learning training and managed endpoints; a RAG reference layout; Bicep for accounts, deployments and private endpoints; managed identity; and content filtering. Use when writing or reviewing code against Azure OpenAI or Azure AI Search, sizing PTUs, deploying Azure OpenAI with Bicep behind a private endpoint, or wiring managed identity instead of API keys. Trigger on "Azure OpenAI", "AzureOpenAI client", "PTU", "Azure AI Search", "Cognitive Services", "Azure ML", "Prompt Flow", "Azure AI". Prefer pack-azure for agent architecture decisions on Azure (Microsoft Foundry, Foundry Agent Service, Agent Framework); this skill holds the lower-level service detail.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
+  supersededBy: pack-azure
 ---
 
-# Azure AI Services Expert
+# Azure AI services
 
-You are an expert in Microsoft Azure AI services, specializing in Azure OpenAI Service for GPT models, Azure AI Services, and Azure Machine Learning.
+Content as of 2026-01-06, and the model list and API versions in the code predate that date. Model
+names, API versions and prices below were not re-checked on 2026-10-05; confirm on the linked
+primary source before quoting or copying. For agent architecture on Azure, load `pack-azure` first.
+
+Service-level reference for Azure OpenAI, Azure AI Search and Azure Machine Learning.
 
 ## Azure OpenAI Service
 
 ### Overview
 Azure OpenAI provides access to OpenAI models (GPT-4, GPT-4o, DALL-E, Whisper) with Azure's enterprise security, compliance, and regional availability.
 
-### Available Models
+### Available models
+
+As of 2026-01-06 [UNVERIFIED], and the list shows older generations. Source:
+https://learn.microsoft.com/azure/ai-foundry/openai/concepts/models. Read it for current models,
+context windows and regional availability.
 
 | Model | Context | Best For |
 |-------|---------|----------|
@@ -145,40 +151,16 @@ response = client.chat.completions.create(
 )
 ```
 
-## Provisioned Throughput Units (PTU)
+## Provisioned throughput units (PTU)
 
-### When to Use PTU
+### When to use PTU
 - Predictable, high-volume workloads
 - Guaranteed performance requirements
 - Cost optimization at scale
 
-### PTU Sizing
-
-```python
-# PTU capacity estimation
-def estimate_ptus(
-    requests_per_minute: int,
-    avg_input_tokens: int,
-    avg_output_tokens: int,
-    model: str = "gpt-4o"
-) -> int:
-    """Estimate PTUs needed for workload"""
-
-    # Tokens per minute per PTU (approximate)
-    TPM_PER_PTU = {
-        "gpt-4o": 10000,
-        "gpt-4-turbo": 8000,
-        "gpt-35-turbo": 50000,
-    }
-
-    total_tokens_per_minute = requests_per_minute * (avg_input_tokens + avg_output_tokens)
-    ptus_needed = total_tokens_per_minute / TPM_PER_PTU[model]
-
-    return max(1, int(ptus_needed * 1.2))  # 20% buffer
-
-# Example: 100 RPM, 500 input tokens, 200 output tokens
-estimate_ptus(100, 500, 200, "gpt-4o")  # Returns: 9 PTUs
-```
+Sizing code and pricing notes are in [references/ptu-and-pricing.md](references/ptu-and-pricing.md).
+Throughput per PTU and the PTU price are set per model by Microsoft; read
+https://learn.microsoft.com/azure/ai-foundry/openai/concepts/provisioned-throughput before sizing.
 
 ## Azure AI Search (Cognitive Search)
 
@@ -294,62 +276,8 @@ nodes:
 
 ## Azure Machine Learning
 
-### Training with Azure ML
-
-```python
-from azure.ai.ml import MLClient, command, Input
-from azure.identity import DefaultAzureCredential
-
-ml_client = MLClient(
-    DefaultAzureCredential(),
-    subscription_id="...",
-    resource_group_name="...",
-    workspace_name="..."
-)
-
-# Define training job
-job = command(
-    code="./src",
-    command="python train.py --data ${{inputs.data}} --lr ${{inputs.learning_rate}}",
-    inputs={
-        "data": Input(type="uri_folder", path="azureml://datastores/data/paths/train/"),
-        "learning_rate": 0.001,
-    },
-    environment="AzureML-pytorch-2.0-cuda11.8@latest",
-    compute="gpu-cluster",
-    experiment_name="llm-finetune"
-)
-
-# Submit job
-returned_job = ml_client.jobs.create_or_update(job)
-```
-
-### Deploy to Managed Endpoint
-
-```python
-from azure.ai.ml.entities import (
-    ManagedOnlineEndpoint,
-    ManagedOnlineDeployment,
-    Model,
-)
-
-# Create endpoint
-endpoint = ManagedOnlineEndpoint(
-    name="llm-endpoint",
-    auth_mode="key"
-)
-ml_client.online_endpoints.begin_create_or_update(endpoint).result()
-
-# Deploy model
-deployment = ManagedOnlineDeployment(
-    name="llm-deployment",
-    endpoint_name="llm-endpoint",
-    model=Model(path="./model"),
-    instance_type="Standard_NC24ads_A100_v4",
-    instance_count=1,
-)
-ml_client.online_deployments.begin_create_or_update(deployment).result()
-```
+Training jobs and managed online endpoints with the `azure-ai-ml` SDK are in
+[references/azure-ml.md](references/azure-ml.md).
 
 ## Architecture Patterns
 
@@ -418,19 +346,8 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-
 
 ## Pricing
 
-### Azure OpenAI Pricing (per 1K tokens)
-
-| Model | Input | Output |
-|-------|-------|--------|
-| GPT-4o | $0.005 | $0.015 |
-| GPT-4 Turbo | $0.01 | $0.03 |
-| GPT-3.5 Turbo | $0.0005 | $0.0015 |
-| text-embedding-3-large | $0.00013 | - |
-
-### PTU Pricing
-- ~$0.06 per PTU-hour
-- Minimum 1 month commitment
-- 30%+ savings vs pay-as-you-go at scale
+Moved to [references/ptu-and-pricing.md](references/ptu-and-pricing.md), dated 2026-01-06 and
+marked [UNVERIFIED]. Primary source: https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/.
 
 ## Security
 
@@ -499,3 +416,8 @@ if hasattr(response.choices[0], 'content_filter_results'):
 - [Azure AI Search Docs](https://learn.microsoft.com/azure/search/)
 - [Azure ML Docs](https://learn.microsoft.com/azure/machine-learning/)
 - [Azure OpenAI Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/.
+- 1.1.0: content as of 2026-01-06.

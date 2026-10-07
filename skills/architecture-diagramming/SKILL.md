@@ -1,24 +1,21 @@
 ---
-name: Architecture Diagramming Expert
-description: Create professional architecture diagrams using D2, Draw.io, Mermaid, and OCI official icons for enterprise-grade visualizations
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "D2 0.7+"
-triggers:
-  - diagram
-  - architecture diagram
-  - draw
-  - visualize
-  - D2
-  - mermaid
-  - draw.io
+name: architecture-diagramming
+description: Produces cloud and AI architecture diagrams as code - picks between D2 (with the TALA or default layouts), Mermaid, draw.io (with the public OCI icon toolkit) and ASCII by audience and output, gives D2 syntax, layered OCI and multi-cloud D2 templates, Mermaid flowchart and sequence examples, draw.io CLI export and batch scripts, layering, colour and connector conventions, and a four-step gather, choose, draw, export workflow. Use when drawing or reviewing an architecture diagram for a design doc, ADR, slide or README, choosing a diagram-as-code tool, exporting diagrams in CI, or applying consistent layer and colour conventions across a set of diagrams. Trigger on "diagram", "architecture diagram", "draw the architecture", "visualize", "D2", "TALA", "mermaid", "draw.io", "OCI icons", "sequence diagram".
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# Architecture Diagramming Expert
+# Architecture diagramming
 
-You are an expert in creating professional architecture diagrams for cloud solutions, particularly OCI. You use multiple tools strategically based on the use case.
+Content as of 2026-01-06. Tool versions, CLI flags and download locations below were not re-checked on
+2026-10-05; confirm on the linked primary source before quoting.
 
-## Tool Selection Matrix
+Diagram-as-code for cloud solutions, with OCI examples. Pick the tool by audience and output format.
+
+## Tool selection matrix
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -40,14 +37,17 @@ RECOMMENDATION:
 - Inline in code/docs → ASCII art
 ```
 
-## D2 Language (Recommended for Architecture)
+## D2 language (recommended for architecture)
 
-### Why D2?
+### Why D2
 - **Text-based**: Version control friendly
-- **Beautiful output**: Professional SVG/PNG
-- **TALA layout**: Designed for architecture diagrams
-- **Grid layouts**: Perfect for layered architectures
-- **22K+ GitHub stars**: Active community
+- **Polished output**: SVG/PNG/PDF
+- **TALA layout**: Designed for architecture diagrams (a separately licensed layout engine; see https://d2lang.com/tour/tala)
+- **Grid layouts**: Suited to layered architectures
+- **Community**: star count [OPEN], read https://github.com/terrastruct/d2 rather than quoting a remembered figure
+
+Versions: the earlier note said "D2 0.7+" as of 2026-01-06 [UNVERIFIED]; current release at
+https://github.com/terrastruct/d2/releases.
 
 ### Installation
 ```bash
@@ -88,163 +88,10 @@ server -> database: {
 }
 ```
 
-### D2 OCI Architecture Template
-```d2
-# OCI GenAI Architecture
-direction: right
+### D2 templates
 
-title: OCI GenAI with Dedicated AI Clusters {
-  near: top-center
-  style.font-size: 24
-  style.bold: true
-}
-
-# Layers using grid
-layers: {
-  grid-rows: 4
-  grid-columns: 1
-
-  presentation: Presentation Layer {
-    style.fill: "#E8F4FD"
-  }
-  application: Application Layer {
-    style.fill: "#FFF3E0"
-  }
-  ai: AI Services Layer {
-    style.fill: "#E8F5E9"
-  }
-  data: Data Layer {
-    style.fill: "#F3E5F5"
-  }
-}
-
-# Presentation Layer
-users: Users {
-  shape: person
-}
-lb: Load Balancer {
-  shape: hexagon
-  style.fill: "#4A90D9"
-}
-
-# Application Layer
-api: API Gateway {
-  shape: rectangle
-  style.fill: "#FF9800"
-}
-app: Application Server {
-  shape: rectangle
-}
-functions: OCI Functions {
-  shape: step
-}
-
-# AI Layer
-dac: Dedicated AI Cluster {
-  shape: rectangle
-  style.fill: "#4CAF50"
-  style.stroke-width: 3
-
-  gpu1: GPU Node 1
-  gpu2: GPU Node 2
-  gpu3: GPU Node N
-}
-endpoint: GenAI Endpoint {
-  shape: rectangle
-  style.fill: "#81C784"
-}
-agent: GenAI Agent {
-  shape: rectangle
-  style.fill: "#A5D6A7"
-}
-
-# Data Layer
-kb: Knowledge Base {
-  shape: cylinder
-  style.fill: "#9C27B0"
-}
-objstore: Object Storage {
-  shape: cylinder
-  style.fill: "#7B1FA2"
-}
-adb: Autonomous DB {
-  shape: cylinder
-  style.fill: "#6A1B9A"
-}
-
-# Connections
-users -> lb: HTTPS
-lb -> api
-api -> app
-app -> endpoint: Inference
-app -> agent: Chat
-agent -> kb: RAG Query
-endpoint -> dac
-kb -> objstore: Documents
-kb -> adb: Vector Search
-```
-
-### D2 Multi-Cloud Template
-```d2
-# Multi-Cloud AI Architecture
-direction: down
-
-title: Multi-Cloud AI Platform {
-  near: top-center
-  style.font-size: 24
-}
-
-# Cloud Providers
-clouds: {
-  grid-rows: 1
-  grid-columns: 3
-
-  oci: OCI {
-    style.fill: "#C74634"
-    style.stroke: "#A03428"
-
-    genai: GenAI DAC
-    adb: Autonomous DB
-    objstore: Object Storage
-  }
-
-  azure: Azure {
-    style.fill: "#0078D4"
-    style.stroke: "#005A9E"
-
-    openai: Azure OpenAI
-    cosmos: Cosmos DB
-    blob: Blob Storage
-  }
-
-  aws: AWS {
-    style.fill: "#FF9900"
-    style.stroke: "#CC7A00"
-
-    bedrock: Bedrock
-    rds: RDS
-    s3: S3
-  }
-}
-
-# Central Gateway
-gateway: AI Gateway {
-  shape: hexagon
-  style.fill: "#333"
-  style.font-color: "#FFF"
-}
-
-# Connections
-gateway -> clouds.oci.genai: Primary
-gateway -> clouds.azure.openai: Fallback
-gateway -> clouds.aws.bedrock: Fallback
-
-# Interconnect
-clouds.oci <-> clouds.azure: OCI-Azure Interconnect {
-  style.stroke: "#28a745"
-  style.stroke-width: 3
-}
-```
+A layered OCI generative AI template and a three-cloud gateway template are in
+[references/d2-templates.md](references/d2-templates.md).
 
 ### Compile D2 Diagrams
 ```bash
@@ -266,9 +113,12 @@ d2 --watch input.d2 output.svg
 
 ## Draw.io with OCI Icons
 
-### Official OCI Icon Toolkit
+### OCI icon toolkit
 
-**Download Location:**
+Oracle publishes architecture diagram toolkits on its public docs; follow the toolkit's usage terms
+and do not present a diagram as Oracle's own.
+
+**Download location:**
 https://docs.oracle.com/en-us/iaas/Content/General/Reference/graphicsfordiagrams.htm
 
 **Available Formats:**
@@ -558,3 +408,8 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o diagram.svg
 ### Mermaid
 - [Mermaid Documentation](https://mermaid.js.org/)
 - [Mermaid Live Editor](https://mermaid.live/)
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/.
+- 1.1.0: content as of 2026-01-06 (D2 0.7+).

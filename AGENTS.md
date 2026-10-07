@@ -117,6 +117,7 @@ node loops/check-loops.mjs               # loop shape, budgets, retry caps, gate
 node graph/archgraph.mjs validate graph/examples/edge-gemini-railway-vercel.graph.json
 node graph/archgraph.mjs mermaid  graph/examples/edge-gemini-railway-vercel.graph.json
 node ontology/validate.mjs               # ontology integrity and the lens-to-capability coverage
+node skills/check-skills.mjs             # every SKILL.md against the agentskills.io rules
 ```
 
 Run all of them before handing work over. A red check is reported, not hidden.
@@ -137,5 +138,5 @@ Run all of them before handing work over. A red check is reported, not hidden.
   still apply to every agent in this repository.
 - `CLAUDE.md`'s model selection table (dated January 2026) and OCI DAC sizing table carry no sources.
   Do not quote them. Fetch current figures and cite them, or write `[OPEN]`.
-- Several `skills/*/SKILL.md` files use display names that break the agentskills.io `name` rule.
-  `SKILLS.md` lists them.
+- The reference-layer skills in `SKILLS.md` passed `node skills/check-skills.mjs` on 2026-10-05,
+  but their figures are dated 2026-01-06 and mostly `[UNVERIFIED]`. Re-check before quoting.

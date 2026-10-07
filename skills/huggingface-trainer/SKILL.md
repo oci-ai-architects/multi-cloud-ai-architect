@@ -1,25 +1,24 @@
 ---
-name: HuggingFace Model Trainer
-description: Train and fine-tune LLMs using HuggingFace TRL, Transformers, and cloud GPU infrastructure with SFT, DPO, GRPO methods
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "TRL 0.12+, Transformers 4.47+"
-triggers:
-  - fine-tuning
-  - model training
-  - huggingface
-  - TRL
-  - LoRA
-  - PEFT
+name: huggingface-trainer
+description: Training and fine-tuning recipes for open-weight LLMs with Hugging Face TRL, Transformers and PEFT - choosing between SFT, DPO, GRPO and continued pretraining, LoRA and QLoRA configuration, GPU memory planning, chat and instruction dataset preparation and filtering, training on Hugging Face Jobs, GGUF conversion for llama.cpp or Ollama, evaluation with lm-evaluation-harness, and hyperparameter starting points. Use when fine-tuning or aligning an open model, picking a training method for the data you have, estimating the GPU a training run needs, preparing a training dataset, or exporting a fine-tuned model for local inference. Trigger on "fine-tuning", "model training", "huggingface", "TRL", "SFT", "DPO", "GRPO", "LoRA", "QLoRA", "PEFT", "GGUF". For managed fine-tuning on OCI see genai-dac-specialist.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# HuggingFace Model Trainer
+# Hugging Face model training
 
-You are an expert in training and fine-tuning large language models using HuggingFace's TRL (Transformer Reinforcement Learning), Transformers, and PEFT libraries. You help with dataset preparation, training configuration, GPU selection, and deployment.
+Content as of 2026-01-06, written against TRL 0.12 or later and Transformers 4.47 or later ([TRL releases](https://github.com/huggingface/trl/releases), [Transformers releases](https://github.com/huggingface/transformers/releases), [UNVERIFIED] since). Model IDs, library versions and GPU figures below were not re-checked on 2026-10-05; confirm on the linked primary source before quoting.
 
-## Training Methods Overview
+Trainer argument names drift between TRL releases. Known renames [UNVERIFIED, check the [TRL docs](https://huggingface.co/docs/trl)]: `tokenizer=` became `processing_class=`, `max_seq_length` became `max_length` in `SFTConfig`, and `GRPOTrainer` takes `reward_funcs=`. The scripts below keep the 2026-01 argument names.
 
-### Method Selection Guide
+Training and fine-tuning LLMs with Hugging Face TRL (Transformer Reinforcement Learning), Transformers and PEFT: dataset preparation, training configuration, GPU selection and export. Deployment and evaluation depth: [references/export-and-evaluation.md](references/export-and-evaluation.md). Managed runs and cost estimation: [references/hf-jobs.md](references/hf-jobs.md).
+
+## Training methods overview
+
+### Method selection guide
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -42,14 +41,14 @@ You are an expert in training and fine-tuning large language models using Huggin
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 1. Supervised Fine-Tuning (SFT)
+## 1. Supervised fine-tuning (SFT)
 
 ### When to Use
 - You have instruction/response pairs
 - Adapting a model to your domain
 - Teaching specific output formats
 
-### Basic SFT Script
+### Basic SFT script
 
 ```python
 from trl import SFTTrainer, SFTConfig
@@ -91,7 +90,7 @@ trainer.train()
 trainer.save_model("./final-model")
 ```
 
-### SFT with Chat Template
+### SFT with chat template
 
 ```python
 from trl import SFTTrainer, SFTConfig
@@ -117,14 +116,14 @@ trainer = SFTTrainer(
 )
 ```
 
-## 2. Direct Preference Optimization (DPO)
+## 2. Direct preference optimization (DPO)
 
 ### When to Use
 - You have preference data (chosen vs rejected responses)
 - Aligning model with human preferences
 - Improving response quality
 
-### DPO Script
+### DPO script
 
 ```python
 from trl import DPOTrainer, DPOConfig
@@ -160,7 +159,7 @@ trainer = DPOTrainer(
 trainer.train()
 ```
 
-### Preference Data Format
+### Preference data format
 
 ```python
 # Required columns: prompt, chosen, rejected
@@ -171,14 +170,14 @@ preference_example = {
 }
 ```
 
-## 3. Group Relative Policy Optimization (GRPO)
+## 3. Group relative policy optimization (GRPO)
 
 ### When to Use
 - You have a reward function or verifier
 - Math/code tasks with checkable answers
 - RL-based training without paired preferences
 
-### GRPO Script
+### GRPO script
 
 ```python
 from trl import GRPOTrainer, GRPOConfig
@@ -219,14 +218,14 @@ trainer = GRPOTrainer(
 trainer.train()
 ```
 
-## 4. Parameter-Efficient Fine-Tuning (PEFT/LoRA)
+## 4. Parameter-efficient fine-tuning (PEFT and LoRA)
 
-### Why Use LoRA
+### Why use LoRA
 - Train large models on limited GPU memory
-- 10-100x fewer trainable parameters
+- Trainable parameters are a small fraction of the model (print them with `print_trainable_parameters()`)
 - Fast training, easy to merge or swap adapters
 
-### LoRA Configuration
+### LoRA configuration
 
 ```python
 from peft import LoraConfig, get_peft_model, TaskType
@@ -244,6 +243,7 @@ lora_config = LoraConfig(
 # Apply to model
 model = get_peft_model(model, lora_config)
 model.print_trainable_parameters()
+# Illustrative output for an 8B model; run it to get your own figure.
 # Output: trainable params: 6,553,600 || all params: 8,030,261,248 || trainable%: 0.082
 ```
 
@@ -307,9 +307,11 @@ model = AutoModelForCausalLM.from_pretrained(
 # Then apply LoRA as normal
 ```
 
-## GPU Selection Guide
+## GPU selection guide
 
-### Memory Requirements
+### Memory requirements
+
+Rough planning figures as of 2026-01-06 [UNVERIFIED]; actual use depends on sequence length, batch size, optimizer and gradient checkpointing. Estimate a specific model with the [Accelerate model memory estimator](https://huggingface.co/docs/accelerate/usage_guides/model_size_estimator) and confirm with a short run.
 
 | Model Size | Full Fine-tune | LoRA | QLoRA |
 |------------|---------------|------|-------|
@@ -318,7 +320,9 @@ model = AutoModelForCausalLM.from_pretrained(
 | 34B | 200GB+ | 48GB | 24GB |
 | 70B | 400GB+ | 80GB | 48GB |
 
-### GPU Recommendations
+### GPU recommendations
+
+GPU fits as of 2026-01-06 [UNVERIFIED]. Instance families: [AWS accelerated computing](https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing), [Google Cloud GPUs](https://cloud.google.com/compute/docs/gpus), [Azure GPU sizes](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview). Compare prices on the day from each provider's pricing page.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -338,232 +342,28 @@ model = AutoModelForCausalLM.from_pretrained(
 │  - AWS: p4d (A100), p5 (H100)                                   │
 │  - GCP: a2-highgpu (A100), a3-highgpu (H100)                   │
 │  - Azure: NC A100, ND H100                                      │
-│  - Lambda Labs: Most cost-effective for training                │
-│  - RunPod: Good spot pricing                                    │
+│  - Lambda: GPU cloud (https://lambda.ai/pricing)                │
+│  - RunPod: GPU cloud with spot capacity (runpod.io/pricing)     │
 │  - HuggingFace Jobs: Managed training infrastructure            │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Dataset Preparation
+## Dataset preparation
 
-### Chat Format Dataset
+Use a `messages` column in chat format for chat SFT, `prompt`/`completion` or instruction/input/output columns for instruction SFT, and `prompt`/`chosen`/`rejected` for DPO. Filter very short and repetitive completions and deduplicate on the prompt before training. Examples and filter code: [references/dataset-preparation.md](references/dataset-preparation.md).
 
-```python
-from datasets import Dataset
+## Managed training runs
 
-# Conversation format
-conversations = [
-    {
-        "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "What is Python?"},
-            {"role": "assistant", "content": "Python is a programming language..."}
-        ]
-    },
-    # More examples...
-]
+Hugging Face Jobs runs a training script on managed GPUs, submitted from the CLI or an MCP tool. Submission example and a cost estimator with placeholder rates: [references/hf-jobs.md](references/hf-jobs.md).
 
-dataset = Dataset.from_list(conversations)
-dataset.push_to_hub("your-org/chat-dataset")
-```
+## Export and evaluation
 
-### Instruction Format
+Convert a fine-tuned model to GGUF for llama.cpp or Ollama, choose a quantization level, and evaluate with lm-evaluation-harness or a custom test set: [references/export-and-evaluation.md](references/export-and-evaluation.md).
 
-```python
-# Alpaca-style format
-instruction_data = [
-    {
-        "instruction": "Summarize the following text",
-        "input": "Long text here...",
-        "output": "Summary here..."
-    }
-]
+## Practices
 
-# Or simpler format
-simple_data = [
-    {
-        "prompt": "Question or instruction",
-        "completion": "Expected response"
-    }
-]
-```
-
-### Data Quality Tips
-
-```python
-# Filter low-quality examples
-def filter_quality(example):
-    # Remove very short responses
-    if len(example["completion"]) < 50:
-        return False
-    # Remove repetitive content
-    if example["completion"].count(example["completion"][:20]) > 3:
-        return False
-    return True
-
-dataset = dataset.filter(filter_quality)
-
-# Deduplicate
-from datasets import concatenate_datasets
-
-def deduplicate(dataset, column="prompt"):
-    seen = set()
-    indices = []
-    for i, example in enumerate(dataset):
-        key = example[column]
-        if key not in seen:
-            seen.add(key)
-            indices.append(i)
-    return dataset.select(indices)
-```
-
-## Training on HuggingFace Jobs
-
-### Using HF Jobs MCP Tool
-
-```python
-# If using Claude Code with HF Jobs MCP
-# This is submitted via hf_jobs() MCP tool
-
-training_script = '''
-from trl import SFTTrainer, SFTConfig
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from datasets import load_dataset
-
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.1-8B")
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B")
-dataset = load_dataset("your-org/your-dataset", split="train")
-
-config = SFTConfig(
-    output_dir="./output",
-    max_seq_length=2048,
-    per_device_train_batch_size=4,
-    num_train_epochs=3,
-    bf16=True,
-    push_to_hub=True,
-    hub_model_id="your-org/fine-tuned-model",
-)
-
-trainer = SFTTrainer(model=model, args=config, train_dataset=dataset, tokenizer=tokenizer)
-trainer.train()
-'''
-
-# Submit via MCP: hf_jobs("uv", {"script": training_script, "gpu": "a100"})
-```
-
-### Cost Estimation
-
-```python
-# Rough cost estimates for HF Jobs / Cloud GPUs
-TRAINING_COSTS = {
-    # GPU type: (hourly_rate, tokens_per_hour_8B)
-    "a10g": (1.50, 50_000_000),
-    "a100_40gb": (3.50, 150_000_000),
-    "a100_80gb": (5.00, 200_000_000),
-    "h100": (8.00, 400_000_000),
-}
-
-def estimate_cost(
-    model_size: str,
-    dataset_tokens: int,
-    epochs: int,
-    gpu_type: str = "a100_40gb"
-) -> dict:
-    rate, throughput = TRAINING_COSTS[gpu_type]
-    total_tokens = dataset_tokens * epochs
-    hours = total_tokens / throughput
-    cost = hours * rate
-
-    return {
-        "gpu": gpu_type,
-        "estimated_hours": round(hours, 1),
-        "estimated_cost": f"${cost:.2f}",
-        "total_tokens": f"{total_tokens:,}"
-    }
-
-# Example: 10M token dataset, 3 epochs on A100
-estimate_cost("8B", 10_000_000, 3, "a100_40gb")
-# {'gpu': 'a100_40gb', 'estimated_hours': 0.2, 'estimated_cost': '$0.70', 'total_tokens': '30,000,000'}
-```
-
-## GGUF Conversion for Local Deployment
-
-```python
-# Convert to GGUF for llama.cpp / Ollama
-
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-# Load your fine-tuned model
-model = AutoModelForCausalLM.from_pretrained("./fine-tuned-model")
-tokenizer = AutoTokenizer.from_pretrained("./fine-tuned-model")
-
-# Save in format for conversion
-model.save_pretrained("./model-for-gguf", safe_serialization=True)
-tokenizer.save_pretrained("./model-for-gguf")
-
-# Then use llama.cpp for conversion:
-# python convert_hf_to_gguf.py ./model-for-gguf --outtype q4_k_m
-```
-
-### Quantization Options
-
-| Type | Size Reduction | Quality Loss | Use Case |
-|------|---------------|--------------|----------|
-| f16 | 2x | None | Best quality |
-| q8_0 | 4x | Minimal | Good balance |
-| q4_k_m | 8x | Small | Production |
-| q4_0 | 8x | Moderate | Resource constrained |
-| q2_k | 16x | Significant | Extreme constraints |
-
-## Evaluation
-
-### Using lm-eval-harness
-
-```python
-# Install: pip install lm-eval
-
-# Command line evaluation
-# lm_eval --model hf --model_args pretrained=./fine-tuned-model --tasks hellaswag,arc_easy --batch_size 8
-
-# Programmatic
-from lm_eval import evaluator, tasks
-
-results = evaluator.simple_evaluate(
-    model="hf",
-    model_args="pretrained=./fine-tuned-model",
-    tasks=["hellaswag", "arc_easy", "mmlu"],
-    batch_size=8,
-)
-
-print(results["results"])
-```
-
-### Custom Evaluation
-
-```python
-def evaluate_on_test_set(model, tokenizer, test_dataset):
-    correct = 0
-    total = 0
-
-    for example in test_dataset:
-        prompt = example["prompt"]
-        expected = example["expected"]
-
-        inputs = tokenizer(prompt, return_tensors="pt")
-        outputs = model.generate(**inputs, max_new_tokens=100)
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-        if expected.lower() in response.lower():
-            correct += 1
-        total += 1
-
-    return {"accuracy": correct / total, "total": total}
-```
-
-## Best Practices
-
-### Training Checklist
+### Training checklist
 
 ```yaml
 before_training:
@@ -587,7 +387,9 @@ after_training:
   - [ ] Push to Hub with model card
 ```
 
-### Hyperparameter Guidelines
+### Hyperparameter guidelines
+
+Common starting points as of 2026-01-06 [UNVERIFIED], not tuned values; see the [TRL docs](https://huggingface.co/docs/trl) for current defaults.
 
 ```python
 # SFT defaults
@@ -617,3 +419,8 @@ DPO_DEFAULTS = {
 - [HuggingFace Jobs](https://huggingface.co/jobs)
 - [lm-eval-harness](https://github.com/EleutherAI/lm-evaluation-harness)
 - [Axolotl](https://github.com/OpenAccess-AI-Collective/axolotl) - High-level training framework
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale versions and GPU figures dated and sourced, unsourced rates and cost outputs replaced with placeholders, Jobs, export and evaluation moved to references/.
+- 1.1.0: earlier content, dated 2026-01-06.

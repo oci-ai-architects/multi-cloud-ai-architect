@@ -1,24 +1,22 @@
 ---
-name: Enterprise AI Patterns
-description: Production-grade AI architecture patterns for enterprise - security, governance, scalability, and operational excellence
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "2026 Enterprise Patterns"
-triggers:
-  - enterprise AI
-  - production AI
-  - AI governance
-  - AI at scale
-  - enterprise patterns
+name: enterprise-ai-patterns
+description: Architecture patterns for running AI systems in production at organisational scale - an AI gateway for auth, rate limiting, routing, caching and fallback across providers; a model registry with lifecycle states and approval workflow; an observability stack with latency, throughput, quality and cost metrics; prompts managed as versioned, tested code; layered AI security including prompt-injection defence; AI cost governance; multi-region resilience; and a phased implementation checklist. Use when designing the shared platform layer around LLM applications, reviewing an architecture for governance or operability gaps, or planning an AI platform rollout in phases. Trigger on "enterprise AI", "production AI", "AI governance", "AI at scale", "AI gateway", "model registry", "prompt management", "AI platform". For a full agent design method prefer architect-method.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# Enterprise AI Patterns
+# Enterprise AI patterns
 
-You are an expert in enterprise-grade AI architecture patterns. You help organizations build AI systems that are secure, scalable, governable, and operationally excellent.
+Content as of 2026-01-06. Provider and model names in the examples below were not re-checked on 2026-10-05; confirm on the provider's model page before quoting.
 
-## Enterprise AI Architecture Principles
+Patterns for AI systems that are secure, scalable, governable and operable. Deep sections live in references: [prompt management](references/prompt-management.md) and [security layers and prompt-injection defence](references/security-layers.md).
 
-### The Five Pillars
+## Architecture principles
+
+### The five pillars
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                  ENTERPRISE AI PILLARS                           │
@@ -42,7 +40,7 @@ You are an expert in enterprise-grade AI architecture patterns. You help organiz
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Pattern 1: AI Gateway Architecture
+## Pattern 1: AI gateway architecture
 
 ### Purpose
 Centralized entry point for all AI services with security, routing, and observability.
@@ -135,7 +133,7 @@ class AIGateway:
             return self.providers["oci"]  # Default to OCI
 ```
 
-## Pattern 2: Model Registry & Governance
+## Pattern 2: Model registry and governance
 
 ### Purpose
 Central catalog of approved AI models with versioning, lineage, and access control.
@@ -172,7 +170,7 @@ Central catalog of approved AI models with versioning, lineage, and access contr
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Model Lifecycle
+### Model lifecycle
 ```yaml
 Model States:
   DEVELOPMENT:
@@ -206,7 +204,7 @@ Model States:
     - No access
 ```
 
-## Pattern 3: AI Observability Stack
+## Pattern 3: AI observability stack
 
 ### Purpose
 Full visibility into AI system health, performance, and behavior.
@@ -248,7 +246,7 @@ Full visibility into AI system health, performance, and behavior.
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Key Metrics
+### Key metrics
 ```yaml
 Latency Metrics:
   - p50_latency_ms: Typical response time
@@ -275,172 +273,15 @@ Cost Metrics:
   - cost_by_application: Breakdown
 ```
 
-## Pattern 4: Prompt Management System
+## Pattern 4: Prompt management system
 
-### Purpose
-Version-controlled, tested, and deployed prompts as code.
+Version-controlled, tested and deployed prompts as code: a prompt repository with versioned system prompts, examples and tests, promoted through commit, test, review, stage and deploy. Repository layout, pipeline and a prompt template with test assertions: [references/prompt-management.md](references/prompt-management.md).
 
-### Architecture
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                  PROMPT MANAGEMENT SYSTEM                        │
-│                                                                  │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │                  PROMPT REPOSITORY                           ││
-│  │                                                              ││
-│  │  prompts/                                                    ││
-│  │  ├── customer_support/                                       ││
-│  │  │   ├── v1.0.0/                                            ││
-│  │  │   │   ├── system.txt                                     ││
-│  │  │   │   ├── examples.json                                  ││
-│  │  │   │   └── tests.json                                     ││
-│  │  │   └── v1.1.0/                                            ││
-│  │  │       └── ...                                            ││
-│  │  └── data_analysis/                                          ││
-│  │      └── ...                                                 ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  CI/CD Pipeline:                                                │
-│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  │
-│  │ Commit │─▶│  Test  │─▶│ Review │─▶│  Stage │─▶│ Deploy │  │
-│  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘  │
-│                                                                  │
-│  Testing:                                                       │
-│  - Unit tests (expected outputs)                                │
-│  - Regression tests (no quality drop)                           │
-│  - A/B tests (compare versions)                                 │
-│  - Safety tests (no harmful outputs)                            │
-└─────────────────────────────────────────────────────────────────┘
-```
+## Pattern 5: AI security layers
 
-### Prompt Template
-```yaml
-# prompts/customer_support/v1.1.0/config.yaml
-name: customer_support
-version: 1.1.0
-description: "Handle customer support inquiries"
+Defence in depth across five layers: perimeter, input validation, model security, data protection, and audit and compliance. Layer diagram and a prompt-injection sanitizer example: [references/security-layers.md](references/security-layers.md). Pattern matching alone does not stop prompt injection; pair it with privilege separation and output filtering (see the ai-security-expert skill).
 
-system_prompt: |
-  You are a helpful customer support agent for {company_name}.
-
-  Guidelines:
-  - Be professional and empathetic
-  - Cite knowledge base sources
-  - Escalate complex issues
-  - Never share internal policies
-
-  Knowledge cutoff: {kb_update_date}
-
-variables:
-  - company_name: required
-  - kb_update_date: required
-
-examples:
-  - input: "I want to return my order"
-    expected_topics: ["return_policy", "refund_timeline"]
-  - input: "My product is broken"
-    expected_topics: ["warranty", "replacement"]
-
-tests:
-  - name: "handles_refund_question"
-    input: "How do I get a refund?"
-    assertions:
-      - contains: "refund"
-      - does_not_contain: "internal"
-      - sentiment: "helpful"
-```
-
-## Pattern 5: AI Security Layers
-
-### Defense in Depth
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                   AI SECURITY LAYERS                             │
-│                                                                  │
-│  Layer 1: PERIMETER                                             │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ - API Gateway authentication                                 ││
-│  │ - Rate limiting                                              ││
-│  │ - IP allowlisting                                            ││
-│  │ - WAF rules                                                  ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  Layer 2: INPUT VALIDATION                                      │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ - Prompt injection detection                                 ││
-│  │ - Input sanitization                                         ││
-│  │ - Length limits                                              ││
-│  │ - Content filtering                                          ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  Layer 3: MODEL SECURITY                                        │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ - Dedicated clusters (isolation)                             ││
-│  │ - Content moderation                                         ││
-│  │ - Output filtering                                           ││
-│  │ - Guardrails                                                 ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  Layer 4: DATA PROTECTION                                       │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ - Encryption at rest                                         ││
-│  │ - Encryption in transit                                      ││
-│  │ - PII detection/masking                                      ││
-│  │ - Data residency controls                                    ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  Layer 5: AUDIT & COMPLIANCE                                    │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │ - Request/response logging                                   ││
-│  │ - Access audit trail                                         ││
-│  │ - Compliance reporting                                       ││
-│  │ - Incident response                                          ││
-│  └─────────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Prompt Injection Defense
-```python
-class PromptSanitizer:
-    """Detect and mitigate prompt injection attacks."""
-
-    INJECTION_PATTERNS = [
-        r"ignore previous instructions",
-        r"disregard .*instructions",
-        r"you are now",
-        r"new persona",
-        r"system prompt",
-        r"<\|.*\|>",  # Special tokens
-    ]
-
-    def sanitize(self, user_input: str) -> str:
-        # 1. Check for known patterns
-        for pattern in self.INJECTION_PATTERNS:
-            if re.search(pattern, user_input, re.IGNORECASE):
-                raise SecurityError("Potential prompt injection detected")
-
-        # 2. Escape special characters
-        sanitized = self.escape_special(user_input)
-
-        # 3. Wrap in delimiters
-        wrapped = f"<user_input>{sanitized}</user_input>"
-
-        return wrapped
-
-    def escape_special(self, text: str) -> str:
-        """Escape characters that could be interpreted as instructions."""
-        replacements = {
-            "```": "'''",  # Code blocks
-            "###": "---",  # Markdown headers
-            "<|": "< |",   # Special tokens
-            "|>": "| >",
-        }
-        for old, new in replacements.items():
-            text = text.replace(old, new)
-        return text
-```
-
-## Pattern 6: Cost Management
+## Pattern 6: Cost management
 
 ### FinOps for AI
 ```
@@ -473,12 +314,14 @@ class PromptSanitizer:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Cost Optimization Strategies
+### Cost optimization strategies
 ```yaml
 Strategy 1: MODEL TIERING
   - Route simple queries to cheaper models
   - Reserve expensive models for complex tasks
-  - Example: Command Light for FAQ, Command R+ for analysis
+  - Example: a small model for FAQ, a larger model for analysis
+    (the 2026-01-06 text named Cohere Command Light and Command R+;
+    current OCI models: https://docs.oracle.com/en-us/iaas/Content/generative-ai/pretrained-models.htm)
 
 Strategy 2: CACHING
   - Cache identical queries
@@ -502,7 +345,7 @@ Strategy 5: COMMITMENT
   - Multi-year agreements where appropriate
 ```
 
-## Pattern 7: Multi-Region Resilience
+## Pattern 7: Multi-region resilience
 
 ### Architecture
 ```
@@ -538,7 +381,7 @@ Strategy 5: COMMITMENT
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Implementation Checklist
+## Implementation checklist
 
 ### Phase 1: Foundation
 ```markdown
@@ -590,3 +433,8 @@ Strategy 5: COMMITMENT
 - [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
 - [MLOps Principles](https://ml-ops.org/)
 - [Responsible AI Practices](https://ai.google/responsibility/principles/)
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale model names dated and sourced, prompt management and security layers moved to references/.
+- 1.1.0: earlier content, dated 2026-01-06.

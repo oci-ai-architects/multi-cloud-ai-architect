@@ -1,17 +1,23 @@
 ---
 name: agentic-orchestration
-description: Patterns for multi-agent coordination, task decomposition, handoffs, and workflow orchestration. Best practices for building and managing agent systems.
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "Claude Opus 4.5, LangGraph 1.0, OpenAI Agents 0.6.4"
-changelog: |
-  - 1.1.0: Updated for 2026 agent frameworks (LangGraph 1.0 GA, OpenAI Agents 0.6.4)
-  - 1.0.0: Initial skill with orchestration patterns from Claude Agent SDK and FrankX system
+description: Framework-neutral patterns for coordinating several AI agents - hierarchical, parallel and iterative task decomposition; explicit handoff payloads, capability-based routing and context compression at handoffs; conductor, pipeline, swarm and blackboard coordination models; retry with backoff, fallback agents and checkpoint-resume; structured logging, progress tracking and decision audit trails; a weighted-synthesis worked example; and the anti-patterns that make multi-agent systems fail. Use when deciding whether and how to split work across agents, designing the handoff contract between agents, choosing a coordination topology, adding recovery or observability to an agent workflow, or reviewing a multi-agent design for god agents, lost context or handoff loops. Trigger on "multi-agent", "agent orchestration", "orchestrator", "handoff", "task decomposition", "agent swarm", "blackboard", "agent team".
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# Agentic Orchestration Patterns
+# Agentic orchestration patterns
 
-This skill covers patterns for coordinating multiple AI agents, decomposing complex tasks, managing handoffs, and building robust agent workflows.
+Content as of 2026-01-06. The patterns here are framework-neutral; any framework named elsewhere in
+this repository (LangGraph, OpenAI Agents SDK, Claude Agent SDK) was not re-checked on 2026-10-05,
+so confirm versions on the framework's own release page before quoting.
+
+Patterns for coordinating multiple AI agents, decomposing complex tasks, managing handoffs, and
+building robust agent workflows. Start with the lowest level of complexity that meets the
+requirement (one model call, then a fixed workflow, then one agent, then several agents), as
+`SOUL.md` value 2 asks.
 
 ---
 
@@ -247,7 +253,7 @@ One orchestrator coordinates all activity:
 └─────────────────────────────────────────────┘
 
 Best for: Complex projects with many dependencies
-Example: FrankX Starlight Orchestrator
+Example: the weighted-synthesis council in the worked example below
 ```
 
 ### Pattern 2: Pipeline Model
@@ -309,231 +315,81 @@ Example: Debugging a complex system issue
 
 ---
 
-## Error Handling & Recovery
+## Error handling, recovery and observability
 
-### Pattern 1: Retry with Backoff
-```typescript
-async function executeWithRetry(agent, task, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await agent.execute(task);
-    } catch (error) {
-      if (attempt === maxRetries) throw error;
-
-      const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
-      console.log(`Attempt ${attempt} failed, retrying in ${delay}ms`);
-      await sleep(delay);
-    }
-  }
-}
-```
-
-### Pattern 2: Fallback Agents
-```typescript
-const agentFallbacks = {
-  "SpecialistCodeReviewer": ["GeneralCodeReviewer", "SeniorDeveloper"],
-  "SecurityAnalyst": ["GeneralAnalyst", "SeniorDeveloper"],
-  "PerformanceExpert": ["GeneralAnalyst", "SeniorDeveloper"]
-};
-
-async function executeWithFallback(primaryAgent, task) {
-  try {
-    return await primaryAgent.execute(task);
-  } catch (error) {
-    const fallbacks = agentFallbacks[primaryAgent.name] || [];
-
-    for (const fallbackName of fallbacks) {
-      try {
-        console.log(`Primary failed, trying ${fallbackName}`);
-        return await getAgent(fallbackName).execute(task);
-      } catch (fallbackError) {
-        continue;
-      }
-    }
-
-    throw new Error(`All agents failed for task: ${task.id}`);
-  }
-}
-```
-
-### Pattern 3: Checkpoint & Resume
-```typescript
-interface Checkpoint {
-  task_id: string;
-  completed_steps: string[];
-  current_step: string;
-  state: any;
-  timestamp: Date;
-}
-
-async function executeWithCheckpoints(task, steps) {
-  const checkpoint = await loadCheckpoint(task.id);
-  const startIndex = checkpoint
-    ? steps.indexOf(checkpoint.current_step)
-    : 0;
-
-  for (let i = startIndex; i < steps.length; i++) {
-    const step = steps[i];
-
-    try {
-      await executeStep(step, task);
-      await saveCheckpoint({
-        task_id: task.id,
-        completed_steps: steps.slice(0, i + 1),
-        current_step: steps[i + 1] || "complete",
-        state: task.state,
-        timestamp: new Date()
-      });
-    } catch (error) {
-      // Checkpoint is saved, can resume from here
-      throw error;
-    }
-  }
-}
-```
+Retry with backoff, fallback agents, checkpoint and resume, structured logging, progress tracking and
+a decision audit trail, each with TypeScript sketches, are in
+[references/resilience-and-observability.md](references/resilience-and-observability.md).
 
 ---
 
-## Observability Patterns
+## Worked example: weighted synthesis
 
-### Pattern 1: Structured Logging
-```typescript
-function agentLog(agent, event, details) {
-  console.log(JSON.stringify({
-    timestamp: new Date().toISOString(),
-    agent: agent.name,
-    task_id: agent.currentTask?.id,
-    event: event,
-    details: details,
-    duration_ms: details.duration,
-    tokens_used: details.tokens
-  }));
-}
+A conductor that asks several specialist perspectives for a view on one strategic decision, then
+weights and reconciles them. The weights are illustrative, not measured; set them per decision type
+and record why.
 
-// Usage
-agentLog(agent, "TASK_START", { task: task.description });
-agentLog(agent, "TOOL_CALL", { tool: "read_file", path: "/src/index.ts" });
-agentLog(agent, "TASK_COMPLETE", { result: "success", duration: 5230 });
 ```
-
-### Pattern 2: Progress Tracking
-```typescript
-interface TaskProgress {
-  task_id: string;
-  total_steps: number;
-  completed_steps: number;
-  current_step: string;
-  estimated_remaining: number; // seconds
-  agents_involved: string[];
-}
-
-// Expose progress for UI/monitoring
-function getProgress(task): TaskProgress {
-  return {
-    task_id: task.id,
-    total_steps: task.steps.length,
-    completed_steps: task.completedSteps.length,
-    current_step: task.currentStep?.description || "idle",
-    estimated_remaining: estimateRemaining(task),
-    agents_involved: task.agentHistory
-  };
-}
-```
-
-### Pattern 3: Decision Audit Trail
-```typescript
-interface Decision {
-  timestamp: Date;
-  agent: string;
-  decision: string;
-  options_considered: string[];
-  rationale: string;
-  confidence: number; // 0-1
-  reversible: boolean;
-}
-
-// Track all significant decisions
-const decisionLog: Decision[] = [];
-
-function recordDecision(agent, decision, options, rationale, confidence) {
-  decisionLog.push({
-    timestamp: new Date(),
-    agent: agent.name,
-    decision,
-    options_considered: options,
-    rationale,
-    confidence,
-    reversible: true
-  });
-}
-```
-
----
-
-## FrankX System Application
-
-### Starlight Orchestrator Pattern
-```
-The FrankX system uses weighted synthesis:
-
 ┌────────────────────────────────────────────────────┐
-│              STARLIGHT ORCHESTRATOR                 │
-│        (Meta-intelligence coordinator)              │
+│              SYNTHESIS ORCHESTRATOR                 │
+│        (coordinates perspectives, not domains)      │
 ├────────────────────────────────────────────────────┤
 │                                                     │
-│  Weight Distribution for Strategic Decisions:       │
-│  ├── Starlight Architect: 30%  (Systems design)    │
-│  ├── Creation Engine: 25%      (Content/product)   │
-│  ├── Luminor Oracle: 25%       (Future strategy)   │
-│  └── Frequency Alchemist: 20%  (Consciousness)     │
+│  Example weight distribution for one decision:      │
+│  ├── Systems architect: 30%   (systems design)      │
+│  ├── Product lead: 25%        (content/product)     │
+│  ├── Strategist: 25%          (future strategy)     │
+│  └── Risk reviewer: 20%       (constraints, risk)   │
 │                                                     │
-│  Synthesis Process:                                 │
+│  Synthesis process:                                 │
 │  1. Each agent provides perspective                 │
-│  2. Orchestrator weights by domain relevance       │
-│  3. Conflicts are explicitly surfaced              │
-│  4. Final recommendation synthesizes all views     │
+│  2. Orchestrator weights by domain relevance        │
+│  3. Conflicts are explicitly surfaced               │
+│  4. Final recommendation synthesizes all views      │
 │                                                     │
 └────────────────────────────────────────────────────┘
 ```
 
-### Agent Team Patterns in FrankX
+### Example team compositions
 
-**Book Writing Team:**
-- Master Story Architect → Design
-- Genre Writer → Draft
+**Book writing team:**
+- Story architect → Design
+- Genre writer → Draft
 - Editor → Review cycles
-- Sensitivity Reader → Final check
-- Continuity Guardian → Consistency
+- Sensitivity reader → Final check
+- Continuity checker → Consistency
 
-**Arcanea Development Team:**
+**Product development team:**
 - Architect → Design
-- Frontend Specialist → UI
-- Backend Specialist → API
-- AI Specialist → Luminor integration
+- Frontend specialist → UI
+- Backend specialist → API
+- AI specialist → Model integration
 - DevOps → Deployment
 
 ---
 
-## Anti-Patterns to Avoid
+## Anti-patterns to avoid
 
-### ❌ God Agent
+### God Agent
 One agent that does everything - no specialization, no delegation.
 
-### ❌ Agent Explosion
+### Agent Explosion
 Too many tiny agents with overlapping responsibilities.
 
-### ❌ Lost Context
+### Lost Context
 Handoffs that don't preserve essential information.
 
-### ❌ Infinite Loops
+### Infinite Loops
 Agents that keep handing work back and forth.
 
-### ❌ Silent Failures
+### Silent Failures
 Agents that fail without proper error reporting.
 
-### ❌ Unobservable Execution
+### Unobservable Execution
 Can't see what agents are doing or why.
 
----
+## Changelog
 
-*Good orchestration is invisible - the system should feel like one coherent intelligence, not a committee of bickering agents.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/, personal-brand example replaced by a neutral worked example.
+- 1.1.0: updated for 2026 agent frameworks (LangGraph 1.0 GA, OpenAI Agents 0.6.4), as of 2026-01-06.
+- 1.0.0: initial skill with orchestration patterns.

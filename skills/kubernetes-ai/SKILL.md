@@ -1,21 +1,19 @@
 ---
-name: Kubernetes AI Expert
-description: Deploy and operate AI workloads on Kubernetes with GPU scheduling, model serving, and MLOps patterns
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "Kubernetes 1.31"
-resources: resources/manifests.yaml
-triggers:
-  - kubernetes
-  - k8s
-  - helm
-  - GPU
-  - model serving
+name: kubernetes-ai
+description: Reference for running AI inference and training workloads on Kubernetes - NVIDIA GPU Operator, GPU and MIG resource requests, model serving with vLLM, Triton and TGI, Helm chart layout, HPA and KEDA autoscaling on GPU and queue metrics, ingress and network policy for inference, DCGM monitoring, and GPU node pools on EKS, AKS and OKE. Use when deploying a model server on Kubernetes, sizing or scheduling GPU nodes, autoscaling inference pods, or reviewing a Helm chart for an AI service. Trigger on "kubernetes", "k8s", "helm", "GPU node pool", "model serving", "vLLM on Kubernetes", "KEDA", "MIG". For provider-level agent runtime choices prefer the pack-* skills.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
+  resources: resources/manifests.yaml
 ---
 
-# Kubernetes AI Expert
+# Kubernetes for AI workloads
 
-Expert in deploying AI/ML workloads on Kubernetes with GPU scheduling, model serving frameworks, and MLOps patterns.
+Content as of 2026-01-06, written against Kubernetes 1.31 ([release notes](https://kubernetes.io/releases/), [UNVERIFIED] since). Instance types, GPU shapes, chart names and flags below were not re-checked on 2026-10-05; confirm on the linked primary source before quoting.
+
+Deploying AI and ML workloads on Kubernetes with GPU scheduling, model serving frameworks and MLOps patterns.
 
 ## GPU Workload Scheduling
 
@@ -138,6 +136,8 @@ helm install dcgm-exporter nvidia/dcgm-exporter
 
 ## Managed Kubernetes
 
+Shapes and instance types as of 2026-01-06 [UNVERIFIED]. Sources: [EC2 accelerated computing](https://aws.amazon.com/ec2/instance-types/#Accelerated_Computing), [Azure GPU VM sizes](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview), [OCI GPU shapes](https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm).
+
 ### AWS EKS
 - Instance types: `g5.2xlarge`, `p4d.24xlarge`
 - AMI: `AL2_x86_64_GPU`
@@ -179,6 +179,7 @@ helm install dcgm-exporter nvidia/dcgm-exporter
 - [KEDA](https://keda.sh/)
 - [Kubernetes GPU Scheduling](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
 
----
+## Changelog
 
-*Deploy AI workloads at scale with GPU-optimized Kubernetes.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, closing tagline removed.
+- 1.1.0: earlier content, dated 2026-01-06.

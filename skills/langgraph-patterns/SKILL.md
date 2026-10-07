@@ -1,27 +1,39 @@
 ---
-name: LangGraph Patterns Expert
-description: Build production-grade agentic workflows with LangGraph using graph-based orchestration, state machines, human-in-the-loop, and advanced control flow
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "LangGraph 1.0 GA, langgraph-sdk 0.3.1"
+name: langgraph-patterns
+description: Patterns for building agent workflows with LangGraph - StateGraph nodes and edges, conditional routing, cycles with retry caps, parallel fan-out and fan-in, supervisor multi-agent graphs, checkpointing (memory, SQLite, Postgres), human-in-the-loop interrupts, streaming and tracing. Use when designing or reviewing a LangGraph agent, choosing between a graph state machine and a simpler agent loop, adding durable checkpoints or approval steps to an agent, or deciding whether LangGraph, the OpenAI Agents SDK, the Claude Agent SDK or the OCI ADK fits a workload. Trigger on "LangGraph", "StateGraph", "checkpointer", "interrupt", "human in the loop", "supervisor agent", "agent state machine", "langgraph.prebuilt". Prefer architect-method for the end-to-end design decision; this skill covers the LangGraph implementation layer.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# LangGraph Patterns Expert Skill
+# LangGraph patterns
+
+Content as of 2026-01-06. Package versions, import paths and model IDs below were not re-checked on
+2026-10-05; confirm them on the LangGraph docs (https://langchain-ai.github.io/langgraph/) and the
+release notes (https://github.com/langchain-ai/langgraph/releases) before quoting.
 
 ## Purpose
-Master LangGraph for building production-ready AI agents with fine-grained control, checkpointing, streaming, and complex state management.
+Build LangGraph agents with fine-grained control, checkpointing, streaming and explicit state management.
 
-## LangGraph 1.0 (GA - October 2025)
+## LangGraph 1.0
 
-LangGraph 1.0 is the first stable major release in the durable agent framework space. After powering agents at Uber, LinkedIn, and Klarna, it's officially production-ready.
+As of 2026-01-06 [UNVERIFIED]: LangGraph 1.0 was released as generally available in October 2025,
+and `langgraph-sdk` was at 0.3.1. Sources: https://github.com/langchain-ai/langgraph/releases and
+https://blog.langchain.com/. LangChain's own announcement names production users; we have not
+verified those claims and do not repeat them.
 
-## Core Philosophy
+## Core philosophy
 
-**LangGraph is:** An orchestration framework with both declarative and imperative APIs focused on control and durability for production agents.
+**LangGraph is** an orchestration framework with declarative and imperative APIs, focused on
+control and durability for production agents. It provides low-level building blocks and leaves
+composition to you.
 
-**Not:** High-level abstractions that hide complexity - instead provides building blocks for full control.
-
-**BREAKING CHANGE (v1.0):** `langgraph.prebuilt` is deprecated. Use `langchain.agents` instead for prebuilt components.
+**Breaking change in 1.0** (as of 2026-01-06 [UNVERIFIED], source:
+https://github.com/langchain-ai/langgraph/releases): `langgraph.prebuilt` is deprecated in favour of
+`langchain.agents` for prebuilt components. The `create_react_agent` examples below use the older
+import and need that change on 1.0.
 
 ## The Six Production Features
 
@@ -252,6 +264,9 @@ app.invoke(input)
 
 ## Integration Examples
 
+Model IDs in these snippets are as of 2026-01-06 [UNVERIFIED]. Check current IDs at
+https://docs.anthropic.com/en/docs/about-claude/models and https://platform.openai.com/docs/models.
+
 ### With Claude
 ```python
 from langchain_anthropic import ChatAnthropic
@@ -290,7 +305,7 @@ agent = create_react_agent(llm, tools)
 - Want managed platform (use OpenAI AgentKit)
 - Need visual builder (use AgentKit)
 - Want simpler API (use Claude SDK directly)
-- Building on Oracle Cloud only (use Oracle ADK)
+- Building on OCI only (use the OCI ADK, see `oracle-adk`)
 
 ## Resources
 
@@ -298,6 +313,7 @@ agent = create_react_agent(llm, tools)
 - GitHub: https://github.com/langchain-ai/langgraph
 - Tutorials: https://langchain-ai.github.io/langgraph/tutorials/
 
----
+## Changelog
 
-*LangGraph is the production-grade choice for complex agentic workflows requiring maximum control.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, depth moved to references/ where needed.
+- 1.1.0: updated for LangGraph 1.0 GA and langgraph-sdk 0.3.1.

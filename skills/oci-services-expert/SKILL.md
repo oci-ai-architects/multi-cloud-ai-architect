@@ -1,18 +1,28 @@
 ---
-name: OCI Services Expert
-description: Expert guidance on Oracle Cloud Infrastructure services, cloud architecture patterns, cost optimization, deployment strategies, and OCI best practices for enterprise solutions
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "OCI 2026"
+name: oci-services-expert
+description: Reference for designing on Oracle Cloud Infrastructure (OCI) - compute (VMs, bare metal, OKE, Container Instances, Functions), storage tiers, Autonomous Database and MySQL HeatWave, VCN networking and FastConnect, OCI Generative AI and Data Science, IAM policies and compartments, NSGs, Vault, observability, disaster recovery and cost levers. Use when an architecture must run on OCI or connect to it, when mapping a design from AWS, Azure or Google Cloud to OCI service names, when writing OCI IAM policy statements or NSG rules, when choosing between OKE, Container Instances and Functions, or when checking an OCI deployment for security and DR gaps. Trigger on "OCI", "Oracle Cloud", "compartment", "tenancy", "OCID", "OKE", "Autonomous Database", "FastConnect", "VCN". pack-oci does not exist yet; see docs/research/providers/oracle-oci.md for sourced provider research. Built on public OCI documentation; not affiliated with Oracle.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# OCI Services Expert
+# OCI services reference
 
-You are an Oracle Cloud Infrastructure architect with deep expertise in OCI services, cloud-native architectures, multi-cloud strategies, cost optimization, and enterprise deployment patterns. You provide strategic guidance for building scalable, secure, and cost-effective solutions on OCI.
+Content as of 2026-01-06. Service names, model lists and prices below were not re-checked on
+2026-10-05; confirm on the linked primary source before quoting. Prices and discount percentages
+were removed in 1.2.0 because they carried no source; read them from the OCI price list
+(https://www.oracle.com/cloud/price-list/) or the cost estimator
+(https://www.oracle.com/cloud/costestimator.html) on the day you quote them.
 
-## Core OCI Service Categories
+This skill covers OCI services, cloud-native architecture on OCI, multi-cloud placement, cost levers
+and deployment patterns. It is written from public OCI documentation
+(https://docs.oracle.com/en-us/iaas/Content/home.htm).
 
-### Compute Services
+## Core OCI service categories
+
+### Compute services
 
 **OCI Compute Instances**
 - Flexible VMs with custom shapes
@@ -38,10 +48,11 @@ You are an Oracle Cloud Infrastructure architect with deep expertise in OCI serv
 - Integration with OCI Events, API Gateway
 - Use cases: APIs, data processing, automation
 
-### Storage Services
+### Storage services
 
 **Object Storage**
-- Unlimited scalability, 99.999999999% durability
+- Scales without capacity planning; the durability figure is published in the Object Storage
+  overview (https://docs.oracle.com/en-us/iaas/Content/Object/Concepts/objectstorageoverview.htm) [UNVERIFIED as of 2026-01-06]
 - Standard, Infrequent Access, Archive tiers
 - Use cases: Data lakes, backups, static website hosting
 
@@ -55,10 +66,10 @@ You are an Oracle Cloud Infrastructure architect with deep expertise in OCI serv
 - Concurrent access from multiple instances
 - Use cases: Shared application data, content management
 
-### Database Services
+### Database services
 
 **Autonomous Database**
-- Self-driving, self-securing, self-repairing
+- Automated provisioning, patching, tuning and backups
 - ATP (Transaction Processing), ADW (Data Warehouse)
 - Automatic scaling, patching, backups
 - Use cases: OLTP, analytics, mixed workloads
@@ -70,10 +81,11 @@ You are an Oracle Cloud Infrastructure architect with deep expertise in OCI serv
 
 **MySQL HeatWave**
 - Integrated analytics engine in MySQL
-- 1000� faster analytics than MySQL alone
+- Performance multipliers are vendor benchmarks; quote them only as the vendor's, with the link
+  (https://www.oracle.com/mysql/) [UNVERIFIED]
 - Use cases: Real-time analytics on operational data
 
-### Networking Services
+### Networking services
 
 **Virtual Cloud Network (VCN)**
 - Private network in OCI
@@ -90,7 +102,7 @@ You are an Oracle Cloud Infrastructure architect with deep expertise in OCI serv
 - Higher bandwidth and lower latency than internet
 - Use cases: Hybrid cloud, data migration, security requirements
 
-### AI & Data Science
+### AI and data science
 
 **OCI Data Science**
 - Managed platform for building ML models
@@ -103,11 +115,12 @@ You are an Oracle Cloud Infrastructure architect with deep expertise in OCI serv
 - Use cases: Document processing, chatbots, image analysis
 
 **OCI Generative AI**
-- Access to LLMs (Cohere, Meta Llama)
-- Fine-tuning, prompt engineering
+- Hosted LLMs; as of 2026-01-06 the catalogue listed Cohere and Meta Llama families [UNVERIFIED].
+  Current list: https://docs.oracle.com/en-us/iaas/Content/generative-ai/pretrained-models.htm
+- Fine-tuning and dedicated AI clusters (see `genai-dac-specialist`)
 - Use cases: Content generation, summarization, Q&A
 
-### Integration & Application Services
+### Integration and application services
 
 **API Gateway**
 - Managed API deployment and management
@@ -122,9 +135,9 @@ You are an Oracle Cloud Infrastructure architect with deep expertise in OCI serv
 - Pre-built adapters for SaaS and on-prem apps
 - Use cases: Enterprise integration, workflow automation
 
-## Cloud Architecture Patterns
+## Cloud architecture patterns
 
-### 1. Three-Tier Web Application
+### 1. Three-tier web application
 ```
 ARCHITECTURE:
 - Web Tier: OCI Compute/Containers behind Load Balancer (public subnet)
@@ -158,7 +171,7 @@ BEST PRACTICES:
 - Distributed tracing with APM
 ```
 
-### 3. Data Lake & Analytics
+### 3. Data lake and analytics
 ```
 ARCHITECTURE:
 - Object Storage as data lake (raw, processed, curated zones)
@@ -168,19 +181,19 @@ ARCHITECTURE:
 - OCI Data Catalog for metadata management
 
 BEST PRACTICES:
-- Use storage tiers (Standard � Infrequent Access � Archive)
+- Use storage tiers (Standard -> Infrequent Access -> Archive)
 - Implement data lifecycle policies
 - Partition data for query optimization
 - Use Data Flow for big data processing (Spark)
 ```
 
-### 4. Hybrid Cloud Architecture
+### 4. Hybrid cloud architecture
 ```
 ARCHITECTURE:
 - On-premises data center connected via FastConnect or VPN
 - OCI as extension of on-prem (disaster recovery, burst capacity)
-- OCI Database Migration Service for seamless migration
-- Shared identity with IDCS federation
+- OCI Database Migration Service for migration
+- Shared identity through IAM identity domains federated with the on-prem IdP
 
 BEST PRACTICES:
 - Use redundant FastConnect connections
@@ -189,35 +202,40 @@ BEST PRACTICES:
 - Disaster recovery plan with defined RPO/RTO
 ```
 
-## Cost Optimization Strategies
+## Cost levers
 
-### 1. Right-Sizing Compute
+Discount percentages that earlier versions listed here had no source and were removed. The levers
+stand; the size of each one is `[OPEN]` until read from the OCI price list
+(https://www.oracle.com/cloud/price-list/) for the target region and date.
+
+### 1. Right-sizing compute
 - Use OCI Compute Autoscaling for variable workloads
 - Rightsize VMs based on CPU/memory metrics
-- Consider Preemptible Instances for fault-tolerant workloads (50-70% savings)
-- Use Reserved Capacity for predictable workloads (up to 72% savings)
+- Consider preemptible instances for fault-tolerant workloads
+  (https://docs.oracle.com/en-us/iaas/Content/Compute/Concepts/preemptible.htm)
+- Use reserved or committed capacity for predictable workloads
 
-### 2. Storage Optimization
-- Use Infrequent Access tier for rarely accessed data (45% cheaper)
-- Use Archive tier for compliance/backup data (90% cheaper)
+### 2. Storage optimization
+- Use the Infrequent Access tier for rarely accessed data
+- Use the Archive tier for compliance and backup data
 - Implement Object Storage lifecycle policies (auto-tiering)
 - Delete unused snapshots and backups
 
-### 3. Database Cost Management
+### 3. Database cost management
 - Use Autonomous Database auto-scaling (scales down during low usage)
 - Consider ATP vs ADW based on workload type
-- Use MySQL HeatWave instead of separate analytics DB
-- Leverage database cloning for dev/test (thin clones use minimal storage)
+- Consider MySQL HeatWave instead of a separate analytics database
+- Use database cloning for dev/test (thin clones use minimal storage)
 
-### 4. Network Cost Reduction
-- Use OCI Service Gateway (free egress to OCI services)
-- Minimize data transfer out of OCI (expensive)
-- Use OCI Object Storage as CDN origin (cheaper than internet egress)
-- Consolidate VCNs where security allows (reduce peering costs)
+### 4. Network cost reduction
+- Use the OCI Service Gateway for private access to OCI services
+- Measure data transfer out of OCI; egress pricing and any free allowance are on the price list
+- Put a CDN in front of Object Storage for static content served globally
+- Consolidate VCNs where security allows
 
-## Security Best Practices
+## Security practices
 
-### Identity & Access Management (IAM)
+### Identity and access management (IAM)
 ```
 BEST PRACTICES:
 - Use groups and dynamic groups, not individual user policies
@@ -231,7 +249,7 @@ Allow group DataScientists to manage data-science-family in compartment ML-Workl
 Allow dynamic-group FunctionsGroup to use object-storage in compartment AppData
 ```
 
-### Network Security
+### Network security
 ```
 BEST PRACTICES:
 - Use Network Security Groups (NSGs) over Security Lists (more granular)
@@ -246,7 +264,7 @@ Allow TCP (8080) from Web-Tier NSG to App-Tier NSG
 Allow TCP (1521) from App-Tier NSG to DB-Tier NSG
 ```
 
-### Data Protection
+### Data protection
 ```
 BEST PRACTICES:
 - Enable encryption at rest (default for most services)
@@ -256,9 +274,9 @@ BEST PRACTICES:
 - Use OCI Data Safe for database security assessment
 ```
 
-## Deployment & Operations
+## Deployment and operations
 
-### Infrastructure as Code (IaC)
+### Infrastructure as code (IaC)
 ```
 TOOLS:
 - OCI Resource Manager (Terraform-based, managed service)
@@ -273,7 +291,7 @@ BEST PRACTICES:
 - Tag all resources for cost tracking and organization
 ```
 
-### Monitoring & Observability
+### Monitoring and observability
 ```
 OCI MONITORING:
 - Metrics: CPU, memory, network, custom metrics
@@ -293,7 +311,7 @@ BEST PRACTICES:
 - Implement distributed tracing for troubleshooting
 ```
 
-### Disaster Recovery
+### Disaster recovery
 ```
 STRATEGIES:
 - Backup and Restore (cheapest, highest RTO)
@@ -303,7 +321,7 @@ STRATEGIES:
 
 OCI DR FEATURES:
 - Cross-Region Replication (Object Storage, Block Volume)
-- Data Guard (Autonomous Database, Base Database)
+- Data Guard (Base Database) and Autonomous Data Guard (Autonomous Database)
 - OCI Full Stack DR (automated failover orchestration)
 
 RPO/RTO TARGETS:
@@ -312,48 +330,46 @@ RTO (Recovery Time Objective): How fast recovery needed
 Example: RPO 1 hour, RTO 4 hours = moderate DR requirements
 ```
 
-## OCI vs. Other Clouds (When to Choose OCI)
+## When OCI fits a design
 
-### OCI Strengths
-- **Oracle Database workloads**: Best performance, licensing portability
-- **Cost**: Generally 20-40% cheaper than AWS/Azure for compute and storage
-- **Performance**: Bare metal instances, RDMA networking, NVMe storage
-- **Predictable Pricing**: No egress fees for most services, flat pricing
-- **Enterprise support**: Strong SLAs, Oracle support ecosystem
+Place a workload on OCI when one or more of these hold, and record the reason in the ADR:
 
-### Use Cases Where OCI Excels
-- Oracle Database migration or modernization
-- High-performance computing (HPC)
-- Enterprise workloads requiring Oracle stack (DB, Middleware, Apps)
-- Cost-sensitive projects with predictable workloads
-- Hybrid cloud with existing Oracle infrastructure
+- The workload depends on Oracle Database features or licensing (BYOL, Exadata, Data Guard)
+- The design needs bare metal instances, RDMA cluster networking or local NVMe
+- The organisation already runs Oracle applications or databases on OCI
+- Egress volume is large and the current OCI price list makes it material to the decision
+  (compare egress lines on each provider's price page on the day of the decision)
+- A hybrid design needs FastConnect into an existing Oracle footprint
 
-## Communication Style
+Relative cost against AWS, Azure or Google Cloud is `[OPEN]` for each design; compute it from each
+provider's price list for the same shapes, region and date, and cite all of them.
 
-When providing OCI guidance:
-- Reference specific OCI services by official name
+## Response style
+
+When giving OCI guidance:
+- Reference specific OCI services by their documented names
 - Provide architecture diagrams or ASCII representations when helpful
-- Include cost considerations in recommendations
-- Emphasize security and compliance best practices
-- Offer multi-cloud perspective (OCI strengths vs. other clouds)
-- Provide Terraform/CLI examples for automation
-- Consider enterprise constraints (licensing, existing infrastructure)
+- Include cost considerations, with figures only from a dated price-list read
+- Emphasize security and compliance practices
+- Offer a multi-cloud perspective with the trade-off stated for each provider
+- Provide Terraform or CLI examples for automation (see `terraform-iac`)
+- Consider constraints such as licensing and existing infrastructure
 
-## Sample Interaction
+## Example interaction
 
 **User**: "How should I architect a scalable web application on OCI that needs to handle variable traffic?"
 
-**OCI Expert Response**:
+**Example response**:
 
-"For a scalable web app with variable traffic, I recommend this architecture:
+"For a scalable web app with variable traffic, this architecture fits:
 
 **ARCHITECTURE:**
 ```
-Internet � Load Balancer � Auto-Scaling Compute Instances � Autonomous Database
-              �                        �
-          WAF (DDoS)            OCI Functions (async tasks)
-                                       �
-                                Object Storage (media)
+Internet -> Load Balancer -> Auto-scaling compute instance pool -> Autonomous Database
+               |                        |
+           WAF (DDoS)            OCI Functions (async tasks)
+                                        |
+                                 Object Storage (media)
 ```
 
 **COMPONENTS:**
@@ -363,15 +379,15 @@ Internet � Load Balancer � Auto-Scaling Compute Instances � Autonomous Dat
    - SSL termination, health checks
    - Enable WAF for DDoS protection
 
-2. **Instance Pool with Auto-Scaling** (private subnet)
+2. **Instance pool with auto-scaling** (private subnet)
    - Start: 2 instances (high availability)
    - Scale: 2-10 instances based on CPU utilization
-   - Use Preemptible Instances for non-critical tasks (50% savings)
+   - Use preemptible instances only for interruptible background work
 
 3. **Autonomous Database** (private subnet)
    - Auto-scaling enabled (1-3 OCPUs based on load)
    - Automatic backups, patching
-   - Alternative: Use MySQL HeatWave if open-source DB preferred
+   - Alternative: MySQL HeatWave if an open-source database is preferred
 
 4. **OCI Functions** (serverless)
    - For background jobs (email, processing)
@@ -379,31 +395,27 @@ Internet � Load Balancer � Auto-Scaling Compute Instances � Autonomous Dat
 
 5. **Object Storage**
    - Static assets, user uploads
-   - Cheaper than Block Storage for media
 
-**COST ESTIMATE** (assuming moderate traffic):
-- Load Balancer: $30/month
-- Compute (2-10 auto-scaling): $150-750/month
-- Autonomous DB (1-3 OCPU): $500-1500/month
-- Functions: ~$10/month (low usage)
-- Object Storage (100GB): $2.5/month
-
-**Total**: ~$700-2300/month depending on traffic
+**COST ESTIMATE:** `[OPEN]`. Price each component in the OCI cost estimator
+(https://www.oracle.com/cloud/costestimator.html) for the target region and traffic profile, and
+record the read date beside each figure.
 
 **OPTIMIZATION:**
-- Use Reserved Capacity for base compute (2 instances always running)
-- Enable Autonomous DB auto-scaling (only pay for peak)
-- Use CDN (Akamai via OCI) for static content delivery globally
+- Use reserved capacity for the always-on base instances
+- Enable Autonomous Database auto-scaling so peak capacity is paid only at peak
+- Put a CDN in front of Object Storage for static content served globally
 
-Would you like me to provide Terraform code for this architecture or discuss specific database requirements?"
+Would Terraform for this architecture, or a closer look at the database requirements, help next?"
 
-## Integration with Other Skills
+## Related skills in this repository
 
-- **Oracle ADK**: Build AI agents deployed on OCI infrastructure
-- **Oracle Database Expert**: Optimize database performance on OCI Base DB Service
-- **Product Management Expert**: OCI cost modeling for product roadmap decisions
-- **Next.js/React Expert**: Deploy Next.js apps on OCI Compute or Container Instances
+- `oracle-adk`: agents built with the OCI Generative AI Agents ADK on this infrastructure
+- `oracle-agent-spec`: portable agent definitions that can target OCI runtimes
+- `genai-dac-specialist`: OCI Generative AI dedicated AI clusters
+- `terraform-iac`: Terraform modules for OCI and other clouds
+- `multi-cloud-ai-architect`: cross-cloud placement and routing
 
----
+## Changelog
 
-*Build cloud solutions that are secure, scalable, and cost-effective. Leverage OCI's strengths for Oracle workloads and high-performance computing.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, nominative non-affiliated wording; unsourced discounts, cost estimates and relative-cost claims removed
+- 1.1.0: 2026 refresh (content as of 2026-01-06)

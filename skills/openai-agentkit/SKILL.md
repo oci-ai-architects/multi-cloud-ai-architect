@@ -1,20 +1,28 @@
 ---
-name: OpenAI AgentKit Expert
-description: Build production-ready multi-agent systems using OpenAI AgentKit and Agents SDK with best practices for agent orchestration, handoffs, and routines
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "OpenAI Agents SDK 0.6.4, GPT-5.2"
+name: openai-agentkit
+description: Reference for building multi-agent systems with OpenAI AgentKit (Agent Builder, Connector Registry, ChatKit, evals) and the OpenAI Agents SDK - agents, routines, handoffs, triage, sequential and parallel patterns, testing, monitoring and migration from Swarm. Use when a design runs agents on OpenAI models, when choosing between the Agents SDK, LangGraph and the Claude Agent SDK, when designing handoff conditions and context passing, when porting legacy Swarm code, or when defining evals and traces for an OpenAI-based agent. Trigger on "AgentKit", "OpenAI Agents SDK", "Agent Builder", "ChatKit", "handoff", "Swarm migration", "triage agent". Content dates from 2026-01-06; confirm SDK names and versions on the linked OpenAI docs before quoting.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# OpenAI AgentKit Expert Skill
+# OpenAI AgentKit and Agents SDK
+
+Content as of 2026-01-06. Product names, SDK versions and model names below were not re-checked on
+2026-10-05; confirm on the linked primary source before quoting. At that date the skill was written
+against OpenAI Agents SDK 0.6.4 [UNVERIFIED]; current releases are listed at
+https://github.com/openai/openai-agents-python/releases.
 
 ## Purpose
-This skill provides comprehensive guidance on building production-ready multi-agent systems using OpenAI's AgentKit platform and Agents SDK, following 2026 best practices.
+Guidance for building multi-agent systems with OpenAI AgentKit and the OpenAI Agents SDK.
 
-## Platform Overview
+## Platform overview
 
-### OpenAI AgentKit (2026)
-Complete platform for building, deploying, and optimizing agents with enterprise-grade tooling.
+### OpenAI AgentKit
+Platform for building, deploying and evaluating agents. Component list as of 2026-01-06
+[UNVERIFIED], from the AgentKit announcement (https://openai.com/index/introducing-agentkit/).
 
 **Core Components:**
 - **Agent Builder** - Visual canvas for creating and versioning multi-agent workflows
@@ -24,11 +32,13 @@ Complete platform for building, deploying, and optimizing agents with enterprise
 - **Multi-Model Support** - Third-party model integration capabilities
 
 ### Agents SDK (Production-Ready)
-The Agents SDK is the production evolution of the experimental Swarm framework. **Use Agents SDK for all production work** - Swarm is educational only.
+The Agents SDK is the production successor to the experimental Swarm framework
+(https://github.com/openai/swarm describes itself as educational) [UNVERIFIED as of 2026-01-06].
+Use the Agents SDK for production work.
 
-**Migration Note:** If you encounter legacy Swarm code, migrate to Agents SDK immediately.
+**Migration note:** plan a migration for any legacy Swarm code you find.
 
-## Core Concepts
+## Core concepts
 
 ### 1. Agents
 An Agent encapsulates:
@@ -61,7 +71,7 @@ elif task.type == "sales":
     handoff_to(sales_agent)
 ```
 
-## Architectural Patterns
+## Architectural patterns
 
 ### Pattern 1: Triage Pattern
 **Use Case:** Routing requests to specialized sub-agents
@@ -125,9 +135,9 @@ Synthesis Agent (combines results)
 - Need to aggregate multiple perspectives
 - Performance optimization through parallelization
 
-## Best Practices
+## Best practices
 
-### Agent Design
+### Agent design
 
 **DO:**
 ✅ Keep agents focused on single responsibilities
@@ -143,7 +153,7 @@ Synthesis Agent (combines results)
 ❌ Ignore error handling in handoffs
 ❌ Skip agent boundary testing
 
-### Routine Design
+### Routine design
 
 **Effective Routines:**
 - Have clear entry and exit conditions
@@ -169,7 +179,7 @@ routine = {
 }
 ```
 
-### Handoff Design
+### Handoff design
 
 **Critical Elements:**
 - **Clear Trigger Conditions** - When should handoff occur?
@@ -188,9 +198,9 @@ def handoff_condition(state):
     return None  # Continue with current agent
 ```
 
-## Performance Optimization
+## Performance optimization
 
-### Minimize LLM Calls
+### Minimize LLM calls
 **Principle:** Frameworks that limit LLM involvement and rely on predefined or direct execution flows operate more efficiently.
 
 **Strategies:**
@@ -200,7 +210,7 @@ def handoff_condition(state):
 - Pre-compute decision trees
 - Use smaller models for simple tasks
 
-### Efficient Tool Use
+### Efficient tool use
 **Principle:** Give agents only the tools they need for their specialty.
 
 **Pattern:**
@@ -211,13 +221,13 @@ sales_agent.tools = [check_inventory, create_quote, process_order]
 # NOT: both agents get all 6 tools
 ```
 
-### Latency Reduction
+### Latency reduction
 - Prefer single-agent solutions when possible
 - Use async operations for I/O-bound tasks
 - Implement request coalescing
 - Monitor and optimize hot paths
 
-## Common Anti-Patterns
+## Common anti-patterns
 
 ### 1. Over-Decomposition
 **Problem:** Too many agents for simple tasks creates overhead
@@ -239,9 +249,9 @@ sales_agent.tools = [check_inventory, create_quote, process_order]
 
 **Solution:** Define explicit agent domains and decision criteria
 
-## Evaluation & Testing
+## Evaluation and testing
 
-### Key Metrics
+### Key metrics
 
 **Agent-Level:**
 - Task completion rate
@@ -255,7 +265,7 @@ sales_agent.tools = [check_inventory, create_quote, process_order]
 - Cost per interaction
 - User satisfaction scores
 
-### Testing Strategy
+### Testing strategy
 
 **Unit Testing:**
 ```python
@@ -286,7 +296,7 @@ def test_customer_journey():
         assert result.meets_requirements()
 ```
 
-## Production Deployment
+## Production deployment
 
 ### Monitoring
 **Essential Observability:**
@@ -317,7 +327,7 @@ def test_customer_journey():
 - Encrypt state/context storage
 - Implement PII detection and masking
 
-### Scaling Strategies
+### Scaling strategies
 
 **Horizontal Scaling:**
 - Deploy agent instances across multiple servers
@@ -330,15 +340,16 @@ def test_customer_journey():
 - Batch similar requests
 - Upgrade to more powerful models selectively
 
-## Code Examples
+## Code examples
 
-### Basic Agent Structure
+### Basic agent structure
 ```python
 from openai import OpenAI
 
 client = OpenAI()
 
-# Define specialized agent
+# Illustrative shape only; check the Agents SDK docs for the current Agent class.
+# Model name as of 2026-01-06 [UNVERIFIED]: https://platform.openai.com/docs/models
 support_agent = {
     "name": "Technical Support Agent",
     "model": "gpt-4o",
@@ -353,7 +364,7 @@ support_agent = {
 }
 ```
 
-### Handoff Implementation
+### Handoff implementation
 ```python
 def execute_agent_workflow(initial_request):
     current_agent = triage_agent
@@ -382,7 +393,7 @@ def execute_agent_workflow(initial_request):
     return context
 ```
 
-## Integration with Other Systems
+## Integration with other systems
 
 ### With Claude SDK
 Use AgentKit for OpenAI-based workflows, Claude SDK for Anthropic-based workflows, and MCP to bridge data sources to both.
@@ -393,7 +404,7 @@ LangGraph provides more fine-grained control flow. Use AgentKit for simpler work
 ### With MCP
 AgentKit agents can consume MCP servers as tools, standardizing data source connections.
 
-## Migration Guide
+## Migration guide
 
 ### From Swarm to Agents SDK
 
@@ -404,12 +415,13 @@ AgentKit agents can consume MCP servers as tools, standardizing data source conn
 4. Add proper error handling
 5. Implement monitoring and observability
 
-**Timeline:** Swarm is maintenance-only. Migrate all production code by Q2 2025.
+**Timeline:** an earlier version gave a Q2 2025 deadline with no source; it was removed. Swarm's
+maintenance status is `[OPEN]` until read on https://github.com/openai/swarm.
 
-## Decision Framework
+## Decision framework
 
 **Use OpenAI AgentKit when:**
-- Building on OpenAI models (GPT-4, etc.)
+- Building on OpenAI models (current list: https://platform.openai.com/docs/models)
 - Need visual agent builder for non-technical stakeholders
 - Want integrated evaluation and monitoring
 - Prefer managed platform over open-source frameworks
@@ -422,17 +434,16 @@ AgentKit agents can consume MCP servers as tools, standardizing data source conn
 
 ## Resources
 
-**Official Documentation:**
-- AgentKit Platform: https://platform.openai.com/docs/agents
-- Agents SDK: https://github.com/openai/agents-sdk
-- Best Practices: https://platform.openai.com/docs/guides/agents-best-practices
+**Official documentation:**
+- Agents guide: https://platform.openai.com/docs/guides/agents
+- Agents SDK (Python): https://openai.github.io/openai-agents-python/ and https://github.com/openai/openai-agents-python
+- Agents SDK (TypeScript): https://github.com/openai/openai-agents-js
+- AgentKit announcement: https://openai.com/index/introducing-agentkit/
 
 **Community:**
-- OpenAI Developer Forum
-- AgentKit Discord
-- GitHub Discussions
+- OpenAI Developer Forum: https://community.openai.com/
 
-## Final Principles
+## Principles
 
 1. **Simplicity First** - Start with single agents, add complexity only when needed
 2. **Specialization Over Generalization** - Focused agents perform better
@@ -440,6 +451,7 @@ AgentKit agents can consume MCP servers as tools, standardizing data source conn
 4. **Production-Ready** - Use Agents SDK, not Swarm, for real applications
 5. **Measure Everything** - Observability is critical for multi-agent systems
 
----
+## Changelog
 
-*This skill ensures you build robust, scalable, production-ready multi-agent systems using OpenAI's latest platform capabilities in 2025.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, nominative non-affiliated wording; wrong Agents SDK repository link and unsourced Swarm deadline replaced
+- 1.1.0: updated for OpenAI Agents SDK 0.6.4 and GPT-5.2 (content as of 2026-01-06)

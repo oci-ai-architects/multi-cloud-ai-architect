@@ -1,34 +1,32 @@
 ---
-name: GenAI DAC Specialist
-description: Expert in OCI Generative AI Dedicated AI Clusters - deployment, fine-tuning, optimization, and production operations
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "OCI GenAI GA"
-triggers:
-  - dedicated ai cluster
-  - DAC
-  - genai cluster
-  - fine-tuning
-  - model hosting
+name: genai-dac-specialist
+description: Reference for Oracle Cloud Infrastructure (OCI) Generative AI dedicated AI clusters - hosting versus fine-tuning cluster types, choosing between dedicated and on-demand serving, cluster and endpoint configuration in Terraform, fine-tuning data preparation, monitoring alarms, IAM policies, troubleshooting and SDK or LangChain calls against a dedicated endpoint. Use when deciding whether an OCI workload needs a dedicated AI cluster, writing Terraform for a cluster or endpoint, preparing a fine-tuning dataset for OCI Generative AI, or debugging a dedicated endpoint. Trigger on "dedicated AI cluster", "DAC", "GenAI cluster", "OCI fine-tuning", "OCI model hosting", "generative-ai endpoint". Built on public OCI documentation; sizing and prices must be read from the current OCI pages.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# GenAI Dedicated AI Clusters Specialist
+# OCI Generative AI dedicated AI clusters
 
-You are an expert in Oracle Cloud Infrastructure's Generative AI Dedicated AI Clusters (DACs). You help enterprises deploy, configure, optimize, and operate private GPU clusters for LLM hosting and fine-tuning.
+Content as of 2026-01-06. Model names, unit shapes, limits and prices below were not re-checked on 2026-10-05; confirm on the linked primary source before quoting. Primary docs: [Managing dedicated AI clusters](https://docs.oracle.com/en-us/iaas/Content/generative-ai/ai-cluster.htm) and [pretrained models](https://docs.oracle.com/en-us/iaas/Content/generative-ai/pretrained-models.htm). Built on public OCI documentation; no affiliation with Oracle is implied.
 
-## Core Expertise
+Dedicated AI clusters (DACs) in OCI Generative AI are private GPU clusters for hosting and fine-tuning large language models. This skill covers how to deploy, configure, size, operate and troubleshoot them.
 
-### What You Know
+## Scope
+
+### Topics covered
 - DAC architecture and cluster types (Hosting vs Fine-Tuning)
 - Model selection (Cohere Command family, Meta Llama family)
 - Cluster sizing and capacity planning
 - Fine-tuning workflows and best practices
-- Endpoint management (up to 50 per cluster)
+- Endpoint management (per-cluster endpoint limit: see the [cluster docs](https://docs.oracle.com/en-us/iaas/Content/generative-ai/ai-cluster.htm); the 2026-01-06 text said up to 50, [UNVERIFIED])
 - Cost optimization strategies
 - Production operations and monitoring
 - Security and compliance configuration
 
-### What You Can Do
+### Tasks this skill supports
 - Design DAC deployment architectures
 - Size clusters based on workload requirements
 - Plan fine-tuning strategies
@@ -47,7 +45,7 @@ You are an expert in Oracle Cloud Infrastructure's Generative AI Dedicated AI Cl
 - Predictable, high-volume workloads
 - Fine-tuning with proprietary data
 - SLA requirements (guaranteed performance)
-- Multi-model deployment (up to 50 endpoints)
+- Multi-model deployment (several endpoints on one cluster)
 - Regulatory compliance needs
 ```
 
@@ -59,7 +57,9 @@ You are an expert in Oracle Cloud Infrastructure's Generative AI Dedicated AI Cl
 - Quick prototyping
 ```
 
-### Model Selection Guide
+### Model selection guide
+
+As of 2026-01-06 [UNVERIFIED]. The model families on offer change; read the current list at https://docs.oracle.com/en-us/iaas/Content/generative-ai/pretrained-models.htm before recommending one.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -76,35 +76,33 @@ You are an expert in Oracle Cloud Infrastructure's Generative AI Dedicated AI Cl
 └──────────────────┴─────────────┴─────────────┴─────────────────┘
 ```
 
-## Cluster Sizing
+## Cluster sizing
 
-### Hosting Cluster Sizing
+The 2026-01-06 version of this skill carried a traffic-to-units table and fine-tuning duration estimates with no source. They are removed.
+
+### Hosting cluster sizing
 ```
-Traffic Estimate → Units Needed:
-
-Light (< 10 req/sec):     2-5 units
-Medium (10-50 req/sec):   5-15 units
-Heavy (50-200 req/sec):   15-30 units
-Enterprise (200+ req/sec): 30-50 units
-
-Each unit = 1 endpoint slot
-Cluster max = 50 units (50 endpoints)
+Units needed per traffic level: [OPEN]
+Settle with: the unit sizes and per-model throughput in
+https://docs.oracle.com/en-us/iaas/Content/generative-ai/ai-cluster.htm
+plus a load test against the workload's own prompt and completion lengths.
 ```
 
-### Fine-Tuning Cluster Sizing
+### Fine-tuning cluster sizing
 ```
-Dataset Size → Cluster Recommendation:
+Units and duration per dataset size: [OPEN]
+Settle with: the fine-tuning unit requirements per base model in
+https://docs.oracle.com/en-us/iaas/Content/generative-ai/fine-tuning.htm
+and a timed run on a sample of the dataset.
 
-Small (< 10K examples):    2 units, ~2-4 hours
-Medium (10K-100K):         4 units, ~4-8 hours
-Large (100K-1M):           8 units, ~8-24 hours
-
-Fine-tuning is batch - pay for duration
+Fine-tuning is a batch job; it is billed for the time the cluster runs.
 ```
 
-## Terraform Templates
+## Terraform templates
 
-### Basic Hosting Cluster
+Resource and argument names as of 2026-01-06 [UNVERIFIED]. Source: [OCI Terraform provider, generative_ai resources](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/generative_ai_dedicated_ai_cluster).
+
+### Basic hosting cluster
 ```hcl
 resource "oci_generative_ai_dedicated_ai_cluster" "hosting" {
   compartment_id = var.compartment_id
@@ -134,7 +132,7 @@ resource "oci_generative_ai_endpoint" "primary" {
 }
 ```
 
-### Fine-Tuning Workflow
+### Fine-tuning workflow
 ```hcl
 # Fine-tuning cluster
 resource "oci_generative_ai_dedicated_ai_cluster" "finetuning" {
@@ -157,21 +155,23 @@ resource "oci_objectstorage_bucket" "training_data" {
 }
 ```
 
-## Fine-Tuning Best Practices
+## Fine-tuning practices
 
-### Data Preparation
+### Data preparation
+
+Format as of 2026-01-06 [UNVERIFIED]; the accepted format depends on the base model. Source: https://docs.oracle.com/en-us/iaas/Content/generative-ai/fine-tuning.htm
 ```json
 // training_data.jsonl format
 {"prompt": "Your custom prompt here", "completion": "Expected response"}
 {"prompt": "Another example", "completion": "Another response"}
 ```
 
-### Quality Guidelines
+### Quality guidelines
 ```
 1. QUANTITY
-   - Minimum: 100 high-quality examples
-   - Recommended: 500-2000 examples
-   - More isn't always better - quality > quantity
+   - Minimum and recommended example counts: [OPEN]; read the
+     per-model requirements in the fine-tuning docs linked above
+   - Quality of examples matters more than count
 
 2. DIVERSITY
    - Cover all expected use cases
@@ -189,7 +189,9 @@ resource "oci_objectstorage_bucket" "training_data" {
    - Test before full training
 ```
 
-### Hyperparameter Recommendations
+### Hyperparameter starting points
+
+Illustrative starting values, not OCI defaults [UNVERIFIED]. The hyperparameters each base model accepts, and their defaults, are in https://docs.oracle.com/en-us/iaas/Content/generative-ai/fine-tuning.htm
 ```yaml
 # Conservative (start here)
 learning_rate: 0.0001
@@ -207,9 +209,9 @@ epochs: 2
 batch_size: 4
 ```
 
-## Monitoring & Operations
+## Monitoring and operations
 
-### Key Metrics
+### Key metrics
 ```
 Latency Metrics:
 - p50_latency_ms: Typical response time
@@ -227,7 +229,9 @@ Health Metrics:
 - endpoint_status: UP/DOWN
 ```
 
-### OCI Monitoring Alarms
+### OCI Monitoring alarms
+
+Metric namespace and names as of 2026-01-06 [UNVERIFIED]. Source: [Generative AI metrics](https://docs.oracle.com/en-us/iaas/Content/generative-ai/metrics.htm).
 ```hcl
 resource "oci_monitoring_alarm" "high_latency" {
   compartment_id = var.compartment_id
@@ -255,13 +259,14 @@ resource "oci_monitoring_alarm" "high_error_rate" {
 }
 ```
 
-## Cost Optimization
+## Cost optimization
 
 ### Strategies
 ```
 1. MODEL SELECTION
    - Use lighter models for simple tasks
-   - Command Light: 3-5x cheaper than Command R+
+   - Relative unit cost between models: [OPEN]; read
+     https://www.oracle.com/artificial-intelligence/generative-ai/generative-ai-service/pricing/
    - Match model capability to task complexity
 
 2. CLUSTER RIGHT-SIZING
@@ -276,26 +281,24 @@ resource "oci_monitoring_alarm" "high_error_rate" {
 
 4. ENDPOINT CONSOLIDATION
    - Share endpoints across similar workloads
-   - Use up to 50 endpoints per cluster
+   - Use the per-cluster endpoint allowance (limit in the cluster docs)
    - Avoid single-purpose clusters
 ```
 
-### Cost Estimation Formula
+### Cost estimation formula
 ```
-Monthly Hosting Cost ≈ Cluster Units × Unit Price × Hours
-Monthly Fine-Tuning ≈ Training Units × Unit Price × Training Hours
+Monthly hosting cost ≈ cluster units × unit price × hours
+Monthly fine-tuning ≈ training units × unit price × training hours
 
-Example (rough):
-10-unit hosting cluster, 24/7
-= 10 × ~$X/hour × 720 hours
-= ~$Y/month (check current OCI pricing)
+Unit price: [OPEN]. Read it with a date from
+https://www.oracle.com/artificial-intelligence/generative-ai/generative-ai-service/pricing/
 ```
 
 ## Troubleshooting
 
-### Common Issues
+### Common issues
 
-**Issue: High Latency**
+**Issue: high latency**
 ```
 Causes:
 - Cluster undersized for traffic
@@ -308,7 +311,7 @@ Solutions:
 - Check VCN configuration
 ```
 
-**Issue: Fine-Tuning Fails**
+**Issue: fine-tuning fails**
 ```
 Causes:
 - Invalid training data format
@@ -321,7 +324,7 @@ Solutions:
 - Request quota increase
 ```
 
-**Issue: Endpoint Not Responding**
+**Issue: endpoint not responding**
 ```
 Causes:
 - Endpoint being created (takes time)
@@ -334,9 +337,11 @@ Solutions:
 - Verify IAM policies
 ```
 
-## IAM Policies
+## IAM policies
 
-### Required Policies
+Resource-type names as of 2026-01-06 [UNVERIFIED]. Source: [Generative AI IAM policies](https://docs.oracle.com/en-us/iaas/Content/generative-ai/iam-policies.htm).
+
+### Required policies
 ```hcl
 # GenAI Administrators
 Allow group GenAI-Admins to manage generative-ai-family in compartment AI
@@ -349,7 +354,9 @@ Allow group ML-Engineers to manage generative-ai-dedicated-ai-clusters in compar
 Allow group ML-Engineers to read objectstorage-objects in compartment Training-Data
 ```
 
-## Integration Examples
+## Integration examples
+
+SDK classes and model IDs as of 2026-01-06 [UNVERIFIED]. Sources: [OCI Python SDK](https://docs.oracle.com/en-us/iaas/tools/python/latest/), [LangChain OCI integration](https://python.langchain.com/docs/integrations/llms/oci_generative_ai/).
 
 ### Python SDK
 ```python
@@ -375,7 +382,7 @@ response = client.generate_text(
 print(response.data.inference_response.generated_texts[0].text)
 ```
 
-### LangChain Integration
+### LangChain integration
 ```python
 from langchain_community.llms import OCIGenAI
 
@@ -396,3 +403,9 @@ response = llm.invoke("What are best practices for cloud architecture?")
 - [Managing Dedicated AI Clusters](https://docs.oracle.com/en-us/iaas/Content/generative-ai/ai-cluster.htm)
 - [Fine-Tuning Guide](https://docs.oracle.com/en-us/iaas/Content/generative-ai/fine-tuning.htm)
 - [Model Limitations](https://docs.oracle.com/en-us/iaas/Content/generative-ai/limitations.htm)
+- [Pricing](https://www.oracle.com/artificial-intelligence/generative-ai/generative-ai-service/pricing/)
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, unsourced sizing tables and cost ratios replaced with [OPEN], nominative non-affiliated framing.
+- 1.1.0: earlier content, dated 2026-01-06.

@@ -1,24 +1,31 @@
 ---
-name: Multi-Cloud AI Architect
-description: Design and deploy AI workloads across AWS, Azure, GCP, and OCI with intelligent routing, cost optimization, and cross-cloud patterns
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "OCI-Azure Interconnect GA"
-triggers:
-  - multi-cloud
-  - cross-cloud
-  - hybrid cloud
-  - cloud agnostic
-  - OCI Azure interconnect
+name: multi-cloud-ai-architect
+description: Cross-cloud patterns for model inference workloads spanning AWS Bedrock, Azure OpenAI, Google Cloud Vertex AI and Oracle Cloud Infrastructure (OCI) Generative AI - model-specific routing, failover between providers, the OCI-Azure interconnect, cost-tiered routing, a workload placement matrix, federated data and data residency, with a dated pricing snapshot, Terraform, observability and identity sketches in references/. Use when placing a model workload on one of several clouds, designing provider failover or routing behind one gateway, planning cross-cloud data residency, or estimating egress between clouds. Trigger on "multi-cloud", "cross-cloud", "hybrid cloud", "cloud agnostic", "OCI Azure interconnect", "model routing across providers", "LLM failover". Prefer architect-method for end-to-end agent system design and the pack-* skills for per-provider decisions; this skill holds the older cross-cloud patterns.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# Multi-Cloud AI Architect
+# Multi-cloud AI architecture patterns
 
-You are an expert multi-cloud AI architect specializing in designing AI systems that span AWS, Azure, GCP, and OCI. You optimize workload placement, leverage cloud-specific AI services, and implement cross-cloud patterns for resilience and cost efficiency.
+Content as of 2026-01-06. Model names, model availability per cloud, SDK versions and prices below
+were not re-checked on 2026-10-05; confirm them on the linked primary sources before quoting. This
+skill uses provider documentation only and implies no affiliation with any provider.
+
+Scope: AI systems that span AWS, Azure, Google Cloud and OCI, covering workload placement, use of
+cloud-specific AI services, and cross-cloud patterns for resilience and cost.
 
 ## Cloud AI Services Comparison
 
 ### LLM/Foundation Model Services
+
+As of 2026-01-06 [UNVERIFIED]. Model availability changes often; rebuild this matrix from the
+catalogs before relying on it: AWS Bedrock (https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html),
+Azure (https://learn.microsoft.com/azure/ai-foundry/concepts/foundry-models-overview),
+Vertex AI Model Garden (https://cloud.google.com/vertex-ai/generative-ai/docs/model-garden/explore-models)
+and OCI Generative AI (https://docs.oracle.com/en-us/iaas/Content/generative-ai/pretrained-models.htm).
 
 | Feature | AWS Bedrock | Azure OpenAI | GCP Vertex AI | OCI GenAI |
 |---------|-------------|--------------|---------------|-----------|
@@ -38,16 +45,14 @@ You are an expert multi-cloud AI architect specializing in designing AI systems 
 |---------|-----|-------|-----|-----|
 | **Vector DB** | OpenSearch | Cognitive Search | Vertex Vector | OCI Search |
 | **Embeddings** | Titan, Cohere | Ada, Cohere | Gecko | Cohere |
-| **Max dimensions** | 1536 | 3072 | 768 | 1024 |
+| **Max dimensions** | [OPEN] | [OPEN] | [OPEN] | [OPEN] |
 
-### Pricing Comparison (Per 1M tokens, approx.)
+As of 2026-01-06 [UNVERIFIED]. The original dimension figures had no source and are removed; each
+embedding model's page in the catalogs above states its output dimensions.
 
-| Model | AWS Bedrock | Azure OpenAI | GCP Vertex | OCI GenAI |
-|-------|-------------|--------------|------------|-----------|
-| GPT-4o | N/A | $5.00 in / $15 out | N/A | N/A |
-| Claude 3.5 Sonnet | $3 / $15 | N/A | $3 / $15 | N/A |
-| Llama 3.1 70B | $2.65 / $3.50 | $2.68 / $3.54 | $2.65 / $3.50 | ~$3.00 |
-| Command R+ | $3.00 / $15 | N/A | N/A | Included in DAC |
+### Pricing
+
+Per-token prices are not kept in this file. A dated snapshot with the primary pricing pages is in [pricing snapshot](references/pricing-snapshot.md); re-read those pages before quoting any figure.
 
 ## Multi-Cloud Architecture Patterns
 
@@ -76,7 +81,7 @@ Route requests to the best provider for each model type.
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Implementation**:
+**Implementation** (model IDs as of 2026-01-06 [UNVERIFIED]; several are retired, check the catalogs above):
 ```python
 class MultiCloudRouter:
     MODEL_ROUTING = {
@@ -164,7 +169,10 @@ class FailoverClient:
 
 ### Pattern 3: OCI-Azure Interconnect
 
-Leverage FastConnect/ExpressRoute for <2ms latency between clouds.
+Use FastConnect and ExpressRoute to link OCI and Azure in paired regions. Oracle's documentation
+describes low-latency private connectivity between the two; the figure of under 2 ms carried here
+since 2026-01-06 is [UNVERIFIED] and region-dependent. Source:
+https://docs.oracle.com/en-us/iaas/Content/Network/Concepts/azure.htm.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -182,7 +190,7 @@ Leverage FastConnect/ExpressRoute for <2ms latency between clouds.
 │  │         │           │        │         │           │         │
 │  │  ┌───────────────┐  │        │  ┌───────────────┐  │         │
 │  │  │ ExpressRoute  │◀─┼──────▶─┼─▶│ FastConnect   │  │         │
-│  │  │ Gateway       │  │ <2ms   │  │ Gateway       │  │         │
+│  │  │ Gateway       │  │ link   │  │ Gateway       │  │         │
 │  │  └───────────────┘  │        │  └───────────────┘  │         │
 │  │                     │        │                     │         │
 │  │  ┌───────────────┐  │        │  ┌───────────────┐  │         │
@@ -205,6 +213,7 @@ Leverage FastConnect/ExpressRoute for <2ms latency between clouds.
 class CostOptimizedRouter:
     """Route based on cost with quality constraints"""
 
+    # Budget ceilings are example configuration values chosen by the operator, not provider prices.
     COST_TIERS = {
         # Tier 1: High capability, high cost
         "premium": {
@@ -327,232 +336,17 @@ cross_region_allowed:
   - Model training (anonymized)
 ```
 
-## Terraform Multi-Cloud Module
+## Terraform multi-cloud module
 
-```hcl
-# main.tf - Multi-Cloud AI Infrastructure
+A sketch of one Terraform root that enables Bedrock, Azure OpenAI, OCI Generative AI and Vertex AI behind one gateway is in [infrastructure, observability and security](references/infra-observability-security.md#terraform-multi-cloud-module).
 
-# AWS Bedrock
-module "aws_ai" {
-  source = "./modules/aws-bedrock"
+## Cost optimization strategies
 
-  enabled_models = ["anthropic.claude-3-5-sonnet", "meta.llama3-70b-instruct"]
-  vpc_id         = var.aws_vpc_id
-}
+Commitment types (Azure PTU, OCI DAC units, AWS Savings Plans, GCP committed use discounts) and an egress-aware routing sketch are in [pricing snapshot](references/pricing-snapshot.md#cost-optimization-strategies). Discount percentages and egress rates are left [OPEN] there until read from the providers' pages.
 
-# Azure OpenAI
-module "azure_ai" {
-  source = "./modules/azure-openai"
+## Monitoring and security across clouds
 
-  resource_group = var.azure_rg
-  deployments = {
-    "gpt-4o" = {
-      model   = "gpt-4o"
-      version = "2024-05-13"
-      sku     = "Standard"
-    }
-  }
-}
-
-# OCI GenAI
-module "oci_ai" {
-  source = "./modules/oci-genai"
-
-  compartment_id   = var.oci_compartment
-  dedicated_cluster = true
-  cluster_units    = 10
-}
-
-# GCP Vertex AI
-module "gcp_ai" {
-  source = "./modules/gcp-vertex"
-
-  project_id = var.gcp_project
-  region     = "us-central1"
-  endpoints  = ["gemini-pro", "claude-3-sonnet"]
-}
-
-# Unified API Gateway
-module "ai_gateway" {
-  source = "./modules/ai-gateway"
-
-  providers = {
-    aws   = module.aws_ai.endpoint
-    azure = module.azure_ai.endpoint
-    oci   = module.oci_ai.endpoint
-    gcp   = module.gcp_ai.endpoint
-  }
-
-  routing_rules = {
-    "gpt-*"     = "azure"
-    "claude-*"  = "aws"
-    "gemini-*"  = "gcp"
-    "command-*" = "oci"
-  }
-}
-```
-
-## Cost Optimization Strategies
-
-### Reserved Capacity Planning
-
-| Cloud | Commitment Type | Discount | Best For |
-|-------|-----------------|----------|----------|
-| Azure | PTU (Provisioned) | ~30% | Predictable GPT-4 workloads |
-| OCI | DAC Units | Flat rate | High-volume private inference |
-| AWS | Savings Plans | ~20% | General compute |
-| GCP | CUDs | ~20% | Vertex AI workloads |
-
-### Egress Cost Reduction
-
-```python
-class EgressOptimizer:
-    """Minimize cross-cloud data transfer costs"""
-
-    EGRESS_COSTS_PER_GB = {
-        "aws_to_azure": 0.09,
-        "aws_to_gcp": 0.09,
-        "azure_to_oci": 0.00,  # Interconnect!
-        "oci_to_azure": 0.00,  # Interconnect!
-        "gcp_to_aws": 0.12,
-    }
-
-    def optimize_data_flow(self, source: str, dest: str, data_gb: float):
-        direct_cost = self.EGRESS_COSTS_PER_GB.get(
-            f"{source}_to_{dest}", 0.10
-        ) * data_gb
-
-        # Check if routing through another cloud is cheaper
-        for intermediate in ["azure", "oci"]:
-            if intermediate not in [source, dest]:
-                hop1 = self.EGRESS_COSTS_PER_GB.get(f"{source}_to_{intermediate}", 0.10)
-                hop2 = self.EGRESS_COSTS_PER_GB.get(f"{intermediate}_to_{dest}", 0.10)
-                indirect_cost = (hop1 + hop2) * data_gb
-
-                if indirect_cost < direct_cost:
-                    return {
-                        "route": [source, intermediate, dest],
-                        "cost": indirect_cost,
-                        "savings": direct_cost - indirect_cost
-                    }
-
-        return {"route": [source, dest], "cost": direct_cost}
-```
-
-## Monitoring Multi-Cloud AI
-
-### Unified Observability
-
-```yaml
-# OpenTelemetry configuration for multi-cloud
-receivers:
-  otlp:
-    protocols:
-      grpc:
-        endpoint: 0.0.0.0:4317
-
-processors:
-  batch:
-    timeout: 10s
-
-exporters:
-  # Send to each cloud's native monitoring
-  awsxray:
-    region: us-east-1
-  azuremonitor:
-    connection_string: ${AZURE_CONNECTION_STRING}
-  googlecloud:
-    project: ${GCP_PROJECT}
-  oci_apm:
-    data_key: ${OCI_APM_KEY}
-
-  # Also send to central observability platform
-  prometheus:
-    endpoint: 0.0.0.0:8889
-
-service:
-  pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [awsxray, azuremonitor, googlecloud, oci_apm]
-    metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [prometheus]
-```
-
-### Key Multi-Cloud Metrics
-
-```python
-MULTI_CLOUD_METRICS = {
-    # Availability
-    "provider_availability": "Uptime per cloud provider",
-    "failover_count": "Times failover was triggered",
-
-    # Latency
-    "cross_cloud_latency_p99": "99th percentile cross-cloud latency",
-    "model_response_time_by_provider": "Response time per provider",
-
-    # Cost
-    "cost_per_request_by_provider": "Cost breakdown by cloud",
-    "egress_cost_total": "Data transfer costs",
-
-    # Quality
-    "model_quality_score_by_provider": "Output quality metrics",
-    "error_rate_by_provider": "Error rates per cloud",
-}
-```
-
-## Security Across Clouds
-
-### Unified Identity
-
-```yaml
-# Federated identity configuration
-identity_federation:
-  primary_idp: azure_ad
-  federations:
-    - aws:
-        type: SAML
-        role_mapping:
-          AI_Engineer: arn:aws:iam::123:role/BedrockAccess
-    - gcp:
-        type: OIDC
-        workload_identity_pool: ai-workloads
-    - oci:
-        type: SAML
-        group_mapping:
-          AI_Engineer: ocid1.group.oc1..xxx
-```
-
-### Cross-Cloud Secrets Management
-
-```python
-class MultiCloudSecrets:
-    """Unified secrets access across clouds"""
-
-    def __init__(self):
-        self.backends = {
-            "aws": AWSSecretsManager(),
-            "azure": AzureKeyVault(),
-            "gcp": GCPSecretManager(),
-            "oci": OCIVault(),
-        }
-
-    def get_secret(self, name: str, cloud: str = None) -> str:
-        """Get secret from appropriate cloud"""
-        if cloud:
-            return self.backends[cloud].get(name)
-
-        # Try each cloud (for migration scenarios)
-        for backend in self.backends.values():
-            try:
-                return backend.get(name)
-            except SecretNotFound:
-                continue
-        raise SecretNotFound(name)
-```
+An OpenTelemetry collector fanning out to each cloud's native monitoring, the key multi-cloud metrics, federated identity, and a cross-cloud secrets wrapper are in [infrastructure, observability and security](references/infra-observability-security.md#monitoring-multi-cloud-ai).
 
 ## Resources
 
@@ -561,3 +355,8 @@ class MultiCloudSecrets:
 - [Azure OpenAI Docs](https://learn.microsoft.com/azure/ai-services/openai/)
 - [GCP Vertex AI Docs](https://cloud.google.com/vertex-ai/docs)
 - [Multi-Cloud Architecture Patterns](https://cloud.google.com/architecture/hybrid-and-multi-cloud-patterns-and-practices)
+
+## Changelog
+
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced or removed, pricing, Terraform, observability and security moved to references/.
+- 1.1.0: updated for OCI-Azure Interconnect GA.

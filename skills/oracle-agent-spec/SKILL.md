@@ -1,41 +1,59 @@
 ---
-name: Oracle Agent Spec Expert
-description: Design framework-agnostic AI agents using Oracle's Open Agent Specification for portable, interoperable agentic systems with JSON/YAML definitions
-version: 1.1.0
-last_updated: 2026-01-06
-external_version: "Agent Spec 1.0"
+name: oracle-agent-spec
+description: Reference for the Open Agent Specification (Agent Spec), an open, framework-agnostic configuration language for describing agents and structured workflows in JSON or YAML so one definition can run on several runtimes (LangGraph, WayFlow, AutoGen, CrewAI adapters). Covers the component model, agent and flow definitions, orchestration and integration patterns, the PyAgentSpec Python package, and how Agent Spec sits beside MCP (tools) and A2A (agent-to-agent messaging). Use when an agent design must stay portable across frameworks, when writing or reviewing an Agent Spec file, when recording the swap cost of an agent runtime in an ADR, or when comparing declarative agent definitions with code-first SDKs. Trigger on "Agent Spec", "Open Agent Specification", "pyagentspec", "portable agent definition", "framework-agnostic agent", "WayFlow". pack-oci does not exist yet; see docs/research/providers/oracle-oci.md. Built on the public github.com/oracle/agent-spec repository; not affiliated with Oracle.
+metadata:
+  version: "1.2.0"
+  asOf: "2026-10-05"
+  contentAsOf: "2026-01-06"
+  scope: reference
 ---
 
-# Oracle Agent Spec Expert Skill
+# Open Agent Specification (Agent Spec)
+
+Content as of 2026-01-06. Version numbers, model names and API shapes below were not re-checked
+against the full documentation on 2026-10-05; confirm on the linked primary source before quoting.
+
+**Checked on 2026-10-05** against https://github.com/oracle/agent-spec (README): Agent Spec is "a
+portable, platform-agnostic configuration language" for agents and agentic systems; the Python
+package is PyAgentSpec (`pip install pyagentspec`); the README lists runtime adapters for
+LangGraph, WayFlow, AutoGen and CrewAI; the project is dual-licensed Apache-2.0 or UPL-1.0; the
+README names `Agent` and `Flow` components and `Property` for inputs.
+
+**Examples are illustrative.** The node type names (`LLMNode`, `APINode`, `WorkflowNode`,
+`MCPNode` and others), the `spec.compile(target=...)` call and the model names in the YAML below
+come from the 2026-01-06 version of this skill and were not found on the README on 2026-10-05.
+Take exact component class names and serialization calls from the Agent Spec documentation
+(https://oracle.github.io/agent-spec/) before writing a real spec.
 
 ## Purpose
-Master Oracle's Open Agent Specification (Agent Spec) to design framework-agnostic, declarative AI agents that can be authored once and deployed across multiple frameworks and runtimes.
+Design framework-agnostic, declarative agents with Agent Spec so they can be authored once and run
+on more than one framework or runtime.
 
-## What is Agent Spec?
+## What Agent Spec is
 
 ### Open Agent Specification
 Framework-agnostic declarative language for defining agentic systems, building blocks for standalone agents and structured workflows, plus composition patterns for multi-agent systems.
 
 **Key Innovation:** Decouple design from execution - write agents once, run anywhere.
 
-**Release:** Technical report published October 2025 (arXiv:2510.04173)
+**Release:** technical report on arXiv, 2510.04173 (https://arxiv.org/abs/2510.04173) [UNVERIFIED as of 2026-01-06]
 
-## Core Philosophy
+## Core philosophy
 
 **The Problem:** Fragmented agent development - each framework requires different implementation.
 
-**The Solution:** Unified representation - Agent Spec defines structure and behavior in JSON/YAML that any compatible runtime can execute.
+**Approach:** a unified representation. Agent Spec defines structure and behavior in JSON/YAML that any compatible runtime can execute.
 
-**Benefit:** Author agents once → Deploy across frameworks → Reduce redundant development.
+**Benefit:** Author agents once, deploy across frameworks, and reduce redundant development.
 
 ## Architecture
 
-### Component Model
+### Component model
 Agent Spec defines **conceptual building blocks** (components) that make up agent-based systems.
 
 **Key Property:** All components are trivially serializable to JSON/YAML.
 
-### Core Components
+### Core components (illustrative)
 
 #### 1. LLMNode
 **Purpose:** Text generation via LLM
@@ -95,9 +113,9 @@ steps:
 error_handling: retry
 ```
 
-## Agent Specification Format
+## Agent specification format (illustrative)
 
-### Basic Agent
+### Basic agent
 ```json
 {
   "version": "1.0",
@@ -140,7 +158,7 @@ error_handling: retry
 }
 ```
 
-### Multi-Agent System
+### Multi-agent system
 ```yaml
 version: "1.0"
 system:
@@ -182,9 +200,9 @@ system:
   output: final_report
 ```
 
-## Node Library
+## Node library (illustrative)
 
-### Orchestration Nodes
+### Orchestration nodes
 
 **SequentialNode:**
 ```yaml
@@ -221,7 +239,7 @@ max_iterations: 3
 body: retry_agent
 ```
 
-### Integration Nodes
+### Integration nodes
 
 **MCPNode:**
 ```yaml
@@ -240,9 +258,9 @@ connection: "postgresql://..."
 query: "SELECT * FROM customers WHERE id = {input.customer_id}"
 ```
 
-## Design Patterns
+## Design patterns
 
-### Pattern 1: Triage and Route
+### Pattern 1: Triage and route
 ```yaml
 name: TriageSystem
 components:
@@ -278,7 +296,7 @@ workflow:
     prompt: "Generate report from: {analyze.output}"
 ```
 
-### Pattern 3: Parallel Processing with Synthesis
+### Pattern 3: Parallel processing with synthesis
 ```yaml
 name: MultiPerspective
 components:
@@ -295,18 +313,24 @@ components:
     input: "{parallel_agents.outputs}"
 ```
 
-## Framework Portability
+## Framework portability
 
-### Supported Runtimes
-Agent Spec can be executed by any compatible runtime:
+### Supported runtimes
+Runtime adapters listed on the project README, read 2026-10-05 (https://github.com/oracle/agent-spec):
 
-- **Oracle ADK** - Native support via `agent_spec` package
-- **LangGraph** - Via Agent Spec → LangGraph compiler
-- **AutoGen** - Via Agent Spec → AutoGen adapter
-- **Custom Runtimes** - Implement Agent Spec interpreter
+- **WayFlow** - the project's reference runtime
+- **LangGraph** - adapter
+- **AutoGen** - adapter
+- **CrewAI** - adapter
+- **Custom runtimes** - implement an Agent Spec loader for your framework
 
-### Compilation Example
+Direct support in the OCI Generative AI Agents ADK was claimed in the 2026-01-06 version of this
+skill and is `[UNVERIFIED]`; check the ADK documentation
+(https://docs.oracle.com/en-us/iaas/Content/generative-ai-agents/adk/).
+
+### Compilation example (illustrative)
 ```python
+# Illustrative only: check the Agent Spec docs for the real loader and adapter calls.
 # Load Agent Spec definition
 from agent_spec import load_spec
 
@@ -317,10 +341,10 @@ langgraph_agent = spec.compile(target="langgraph")
 autogen_agent = spec.compile(target="autogen")
 oracle_adk_agent = spec.compile(target="oracle_adk")
 
-# All three agents have identical behavior
+# Behaviour equivalence across runtimes is a claim to test with one eval set, not an assumption
 ```
 
-## Best Practices
+## Best practices
 
 ### DO:
 ✅ Use descriptive names for all components
@@ -337,7 +361,7 @@ oracle_adk_agent = spec.compile(target="oracle_adk")
 ❌ Skip input validation definitions
 ❌ Ignore version compatibility
 
-## Integration with Other Specs
+## Integration with other specs
 
 ### MCP (Model Context Protocol)
 **Relationship:** MCP standardizes tool/resource provisioning; Agent Spec standardizes agent configuration.
@@ -355,7 +379,7 @@ agent:
       resource: "issues"
 ```
 
-### A2A (Agent-to-Agent Communication)
+### A2A (agent-to-agent communication)
 **Relationship:** A2A standardizes inter-agent communication; Agent Spec defines agent structure.
 
 **Together:**
@@ -369,27 +393,27 @@ multi_agent_system:
   communication: a2a_protocol
 ```
 
-## Ecosystem Benefits
+## Ecosystem benefits
 
-### For Developers
+### For developers
 - **Write Once, Run Anywhere** - Single specification, multiple runtimes
 - **Reusable Components** - Share agent definitions across projects
 - **Version Control** - Track agent evolution in Git
 - **Collaboration** - Common language for team communication
 
-### For Frameworks
+### For frameworks
 - **Standardized Input** - Consistent agent definitions
 - **Faster Adoption** - Lower barrier to entry
 - **Interoperability** - Agents can migrate between frameworks
 
-### For Enterprises
+### For enterprises
 - **Vendor Independence** - Not locked into single framework
 - **Reproducible Deployments** - Consistent behavior across environments
 - **Compliance** - Audit trail through declarative definitions
 
-## Tools & Resources
+## Tools and resources
 
-### PyAgentSpec (Python Package)
+### PyAgentSpec (Python package)
 ```bash
 pip install pyagentspec
 ```
@@ -418,7 +442,7 @@ if not is_valid:
     print(f"Validation errors: {errors}")
 ```
 
-## Decision Framework
+## Decision framework
 
 **Use Agent Spec when:**
 - Need framework portability (deploy across multiple platforms)
@@ -428,7 +452,7 @@ if not is_valid:
 - Team collaboration on agent design
 
 **Combine with:**
-- Oracle ADK (for OCI deployment)
+- OCI Generative AI Agents ADK (for OCI deployment)
 - LangGraph (for complex state machines)
 - Claude SDK (for Anthropic models)
 - MCP (for data source standardization)
@@ -438,6 +462,7 @@ if not is_valid:
 **Official:**
 - GitHub: https://github.com/oracle/agent-spec
 - Documentation: https://oracle.github.io/agent-spec/
+- License: Apache-2.0 or UPL-1.0 (README, read 2026-10-05)
 - Technical Paper: https://arxiv.org/pdf/2510.04173
 - PyAgentSpec: https://pypi.org/project/pyagentspec/
 
@@ -446,7 +471,7 @@ if not is_valid:
 Oracle Corporation. (2025). Open Agent Specification (Agent Spec) Technical Report.
 ```
 
-## Final Principles
+## Principles
 
 1. **Framework-Agnostic** - Design once, deploy anywhere
 2. **Declarative** - Describe what, not how
@@ -455,6 +480,7 @@ Oracle Corporation. (2025). Open Agent Specification (Agent Spec) Technical Repo
 5. **Portable** - Migrate between frameworks without rewrite
 6. **Interoperable** - Works with MCP, A2A, and other standards
 
----
+## Changelog
 
-*This skill enables you to design portable, reusable AI agents using Oracle's open specification standard for 2025 and beyond.*
+- 1.2.0: frontmatter to agentskills.io spec, stale figures dated and sourced, nominative non-affiliated wording; runtime list and license checked against the README on 2026-10-05, examples marked illustrative
+- 1.1.0: 2026 refresh against Agent Spec 1.0 (content as of 2026-01-06)

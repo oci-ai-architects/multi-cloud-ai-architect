@@ -1,0 +1,8 @@
+node_modules
+.wrangler
+.vercel
+evals
+targets/cloudflare
+targets/vercel
+.dev.vars
+.env*

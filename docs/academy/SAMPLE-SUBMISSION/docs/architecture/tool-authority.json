@@ -1,0 +1,23 @@
+{
+  "schema": "ai-architect-academy/tool-authority.v1",
+  "fixture": true,
+  "note": "The model holds none of these tools (ADR-0001). Every tool is called by code in worker/src/pipeline.ts. The matrix still matters: it bounds what a bug, a compromised dependency or a stolen credential can do.",
+  "principals": [
+    { "id": "svc-ingest", "kind": "Cloudflare API token, scoped", "scope": "R2 write to bucket ledgerline-inbox; POST to worker /enqueue only", "revocationPath": "Cloudflare dashboard > API tokens > roll svc-ingest; worker rejects old HMAC on next request" },
+    { "id": "svc-acct-read", "kind": "accounting API key, read-only role", "scope": "read POs, goods receipts, vendor master", "revocationPath": "accounting admin > integrations > revoke key; worker fails closed to needs_human" },
+    { "id": "svc-acct-draft", "kind": "accounting API key, custom role draft-writer", "scope": "create payment drafts; cannot approve, pay, or edit vendors", "revocationPath": "accounting admin > integrations > revoke key; runbook step R3" },
+    { "id": "svc-mail-read", "kind": "mailbox OAuth app, read-only", "scope": "read replies in folder supplier-replies", "revocationPath": "mail admin > app access > remove ledgerline-reader" },
+    { "id": "svc-mail-send", "kind": "mailbox OAuth app, send-as ap@ only", "scope": "send templated query; invoked only by a clerk action in the portal", "revocationPath": "mail admin > app access > remove ledgerline-sender" },
+    { "id": "clerk-session", "kind": "portal user session (SSO)", "scope": "approve or reject a draft; press send on a drafted query", "revocationPath": "SSO admin > disable user; portal sessions expire in 8 h" }
+  ],
+  "tools": [
+    { "name": "store_raw_email", "principal": "svc-ingest", "sideEffecting": true, "calledBy": "Cloudflare Email Worker", "guard": "size limit 25 MB; attachments only pdf" },
+    { "name": "lookup_po_and_receipt", "principal": "svc-acct-read", "sideEffecting": false, "calledBy": "worker/src/match.ts" },
+    { "name": "read_vendor_iban", "principal": "svc-acct-read", "sideEffecting": false, "calledBy": "worker/src/iban.ts" },
+    { "name": "create_payment_draft", "principal": "svc-acct-draft", "sideEffecting": true, "calledBy": "worker/src/tools/draft.ts", "guard": "refuses unless ibanStatus == match and matchStatus == matched and duplicate == false; all three written only by code" },
+    { "name": "read_supplier_reply", "principal": "svc-mail-read", "sideEffecting": false, "calledBy": "worker/src/replies.ts", "guard": "output wrapped as untrusted_reply; never sets status" },
+    { "name": "send_supplier_query", "principal": "svc-mail-send", "sideEffecting": true, "calledBy": "portal action only", "guard": "template ids from templates/ only; clerk-session required" },
+    { "name": "approve_draft", "principal": "clerk-session", "sideEffecting": true, "calledBy": "portal button", "guard": "human only; no service principal holds this right" }
+  ],
+  "absentByDesign": ["execute_payment", "update_vendor", "change_bank_details", "delete_invoice"]
+}

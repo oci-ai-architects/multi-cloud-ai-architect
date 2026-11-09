@@ -1,0 +1,45 @@
+{
+  "schema": "ai-architect-academy/cost-model.v1",
+  "fixture": true,
+  "fixtureNote": "Every price below is an illustrative figure for teaching and is [UNVERIFIED]. A real submission records the price shown on source_url at retrieved_at, and the reviewer re-opens the URL.",
+  "currency": "EUR",
+  "unitOfWork": "one supplier invoice taken from email arrival to approval-ready (draft or flag)",
+  "volume": { "invoicesPerMonth": 600, "scannedShare": 0.3, "flaggedShare": 0.1 },
+  "tokensPerUnit": {
+    "extract_invoice": { "input": 5000, "output": 600 },
+    "explain_flag": { "input": 1200, "output": 200, "share": 0.1 },
+    "blended": { "input": 5120, "output": 620 }
+  },
+  "prices": [
+    { "item": "provider A model input", "unit": "1M tokens", "unit_price": 1.0, "currency": "EUR", "source_url": "https://ai.google.dev/gemini-api/docs/pricing", "retrieved_at": "2026-10-01", "notes": "[UNVERIFIED] fixture figure" },
+    { "item": "provider A model output", "unit": "1M tokens", "unit_price": 6.5, "currency": "EUR", "source_url": "https://ai.google.dev/gemini-api/docs/pricing", "retrieved_at": "2026-10-01", "notes": "[UNVERIFIED] fixture figure" },
+    { "item": "provider B model input", "unit": "1M tokens", "unit_price": 3.0, "currency": "EUR", "source_url": "https://www.anthropic.com/pricing", "retrieved_at": "2026-10-01", "notes": "[UNVERIFIED] fixture figure" },
+    { "item": "provider B model output", "unit": "1M tokens", "unit_price": 13.3, "currency": "EUR", "source_url": "https://www.anthropic.com/pricing", "retrieved_at": "2026-10-01", "notes": "[UNVERIFIED] fixture figure" },
+    { "item": "Railway worker and Postgres", "unit": "month", "unit_price": 20.0, "currency": "EUR", "source_url": "https://railway.com/pricing", "retrieved_at": "2026-10-01", "notes": "[UNVERIFIED] fixture figure; usage-based, observed fixture month" },
+    { "item": "Vercel portal", "unit": "month", "unit_price": 20.0, "currency": "EUR", "source_url": "https://vercel.com/pricing", "retrieved_at": "2026-10-01", "notes": "[UNVERIFIED] fixture figure; one seat" },
+    { "item": "Cloudflare Email Worker, R2, AI Gateway", "unit": "month", "unit_price": 0.0, "currency": "EUR", "source_url": "https://developers.cloudflare.com/workers/platform/pricing/", "retrieved_at": "2026-10-01", "notes": "[UNVERIFIED] fixture assumes this volume stays inside included usage" }
+  ],
+  "costPerUnit": {
+    "modelProviderA": 0.0092,
+    "modelProviderB": 0.0236,
+    "infrastructureShare": 0.0667,
+    "totalAtPrimary": 0.0759,
+    "arithmetic": "model A: 5120 x 1.0/1e6 + 620 x 6.5/1e6 = 0.00915. Infra: (20 + 20 + 0) / 600 = 0.0667. Total 0.0759."
+  },
+  "budgetCheck": {
+    "nfrTarget": 0.05,
+    "status": "OVER on total, UNDER on model cost",
+    "reading": "Model cost per invoice is 18% of the NFR target. Fixed platform cost dominates at 600 invoices a month; the NFR was written for model cost only and is reworded in SPEC.md v2 to 'model cost under EUR 0.05; platform under EUR 45 a month'. Raised by reviewer R2 as finding F2."
+  },
+  "sensitivity": [
+    { "driver": "invoice volume", "low": 300, "high": 1200, "unitCostLow": 0.1425, "unitCostHigh": 0.0425 },
+    { "driver": "fallback share on provider B", "low": 0.0, "high": 0.2, "unitCostLow": 0.0759, "unitCostHigh": 0.0787 },
+    { "driver": "scanned share (OCR doubles input tokens)", "low": 0.1, "high": 0.6, "unitCostLow": 0.0749, "unitCostHigh": 0.0774 }
+  ],
+  "ceiling": { "monthly": 60.0, "modelMonthly": 15.0 },
+  "runawayGuard": {
+    "mechanism": "Worker reads month-to-date model spend from the gateway log table before each model call; at EUR 15 it stops dequeuing model work and parks invoices in needs_human with reason budget. Cloudflare AI Gateway rate limit of 30 requests per minute caps a loop bug independently.",
+    "enforcing": true,
+    "testedBy": "runbook check budget-guard: set modelMonthly to 0.05 on staging, enqueue 10 invoices, observe 5 processed and 5 parked with reason budget (fixture run 2026-10-03)"
+  }
+}

@@ -99,8 +99,8 @@ claude-ai-architect/
 
 ## Autonomy & Permissions
 
-- **Full Autonomy Mode**: All operations pre-approved
-- Act decisively - create, modify, deploy as needed
+- Ask before destructive, outward-facing or money-touching actions (force-push, publish, delete, spend).
+- Read AGENTS.md and SOUL.md first; they define the roster, gates and refusal rules.
 - Reference `dev-docs/` for persistent context across sessions
 
 ---

@@ -1,0 +1,30 @@
+{
+  "provider": "AWS",
+  "currency": "USD",
+  "asOf": "2026-10-05",
+  "note": "Amazon Bedrock AgentCore list prices read from the official pricing page 2026-10-05; the page did not state a region in the extract. Model token prices are separate (Bedrock pricing).",
+  "rows": [
+    {"item": "AgentCore Runtime v1 CPU", "unit": "vCPU-hour", "price": 0.0895, "notes": "per-second billing, 1-second minimum", "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Runtime v1 memory", "unit": "GB-hour", "price": 0.00945, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Runtime v2 CPU (consumption)", "unit": "vCPU-hour", "price": 0.1276, "notes": "CPU scales to zero during I/O wait; memory reclaimed during session", "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Runtime v2 memory (consumption)", "unit": "GB-hour", "price": 0.0169, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Runtime v2 CPU (committed baseline)", "unit": "vCPU-hour", "price": 0.0997, "notes": "listed as launching October 2026", "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Runtime v2 memory (committed baseline)", "unit": "GB-hour", "price": 0.0132, "notes": "listed as launching October 2026", "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Gateway API invocations (ListTools, InvokeTool, Ping)", "unit": "1,000 invocations", "price": 0.005, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Gateway Search API", "unit": "1,000 invocations", "price": 0.025, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Gateway tool indexing", "unit": "100 tools indexed per month", "price": 0.02, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Memory short-term ingestion", "unit": "GB ingested", "price": 1.00, "notes": "page marks this 'As of October 6, 2026'", "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Memory short-term retrieval", "unit": "GB retrieved", "price": 0.20, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Memory short-term storage", "unit": "GB-month", "price": 0.10, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Memory long-term storage (built-in)", "unit": "1,000 records-month", "price": 0.75, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Memory long-term retrieval", "unit": "1,000 retrievals", "price": 0.50, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Browser / Code Interpreter CPU", "unit": "vCPU-hour", "price": 0.0895, "notes": "idle during I/O wait is free", "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Browser / Code Interpreter memory", "unit": "GB-hour", "price": 0.00945, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Identity token or API key requests", "unit": "1,000 requests", "price": 0.010, "notes": "no charge when used through Runtime or Gateway", "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Policy authorization", "unit": "request", "price": 0.000025, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Evaluations (built-in) input", "unit": "1,000 input tokens", "price": 0.0024, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AgentCore Evaluations (built-in) output", "unit": "1,000 output tokens", "price": 0.012, "sourceUrl": "https://aws.amazon.com/bedrock/agentcore/pricing/", "asOf": "2026-10-05"},
+    {"item": "AWS Certified Generative AI Developer - Professional (AIP-C01)", "unit": "exam", "price": 300, "sourceUrl": "https://aws.amazon.com/certification/certified-generative-ai-developer-professional/", "asOf": "2026-10-05"},
+    {"item": "AWS Certified AI Practitioner (AIF-C01)", "unit": "exam", "price": 100, "sourceUrl": "https://aws.amazon.com/certification/certified-ai-practitioner/", "asOf": "2026-10-05"}
+  ]
+}

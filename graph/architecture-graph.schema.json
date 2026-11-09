@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/oci-ai-architects/multi-cloud-ai-architect/graph/architecture-graph.schema.json",
+  "title": "Agentic architecture graph",
+  "description": "A typed knowledge graph of one agent system: who uses it, which agents, models, tools, stores and services it has, which provider and trust boundary each sits in, how they talk, which decisions shaped them, and which risks and controls apply. It is the C4 agentic profile for this organisation: C4 levels are carried on each node, and agent-specific facts (exit conditions, protocols, content trust, controls) are first-class. Semantic rules that JSON Schema cannot express are enforced by graph/archgraph.mjs.",
+  "type": "object",
+  "required": ["schema", "id", "name", "asOf", "ontology", "boundaries", "nodes", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "mcaa.archgraph.v1" },
+    "id": { "$ref": "#/$defs/slug" },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "asOf": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "ontology": { "type": "string", "minLength": 1 },
+    "boundaries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/boundary" } },
+    "nodes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/node" } },
+    "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" } },
+    "decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "risks": { "type": "array", "items": { "$ref": "#/$defs/risk" } }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "boundary": {
+      "type": "object",
+      "required": ["id", "name", "kind", "trust"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["provider-account", "user-device", "public-internet", "ci", "customer-network"] },
+        "trust": { "enum": ["trusted", "untrusted"] },
+        "provider": { "type": "string", "pattern": "^provider:[a-z0-9-]+$" }
+      }
+    },
+    "exitCondition": {
+      "type": "object",
+      "required": ["kind", "enforcedIn", "where"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["iteration-cap", "token-budget", "wall-clock", "state-machine"] },
+        "enforcedIn": { "const": "code" },
+        "maxIterations": { "type": "integer", "minimum": 1 },
+        "where": { "type": "string", "minLength": 1 }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "kind", "name", "boundary", "c4"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "kind": { "enum": ["person", "ui", "agent", "workflow", "model", "gateway", "tool-server", "datastore", "service", "external-system", "eval-harness", "observability", "control"] },
+        "name": { "type": "string", "minLength": 1 },
+        "boundary": { "$ref": "#/$defs/slug" },
+        "c4": { "enum": ["person", "software-system", "container", "component", "external"] },
+        "plane": { "enum": ["plane:experience", "plane:observability", "plane:evaluation", "plane:orchestration", "plane:tools", "plane:context", "plane:model"] },
+        "provider": { "type": "string", "pattern": "^provider:[a-z0-9-]+$" },
+        "service": { "type": "string", "pattern": "^svc:[a-z0-9-]+$" },
+        "control": { "type": "string", "pattern": "^ctl:[a-z0-9-]+$" },
+        "technology": { "type": "string" },
+        "owner": { "type": "string", "minLength": 1 },
+        "contentTrust": { "enum": ["trusted", "untrusted"] },
+        "exitCondition": { "$ref": "#/$defs/exitCondition" },
+        "cases": { "type": "array", "items": { "type": "string", "pattern": "^EVAL-\\d{3}$" } },
+        "openQuestions": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        { "if": { "properties": { "kind": { "const": "agent" } } }, "then": { "required": ["exitCondition", "plane", "owner", "service"] } },
+        { "if": { "properties": { "kind": { "const": "control" } } }, "then": { "required": ["control"] } },
+        { "if": { "properties": { "kind": { "const": "model" } } }, "then": { "required": ["provider", "service", "plane"] } },
+        { "if": { "properties": { "kind": { "const": "gateway" } } }, "then": { "required": ["provider", "service", "plane"] } },
+        { "if": { "properties": { "kind": { "const": "eval-harness" } } }, "then": { "required": ["cases"] } }
+      ]
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "from", "to", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "from": { "$ref": "#/$defs/slug" },
+        "to": { "$ref": "#/$defs/slug" },
+        "kind": { "enum": ["uses", "calls", "calls-model", "routes-model", "invokes-tool", "delegates", "reads", "writes", "fetches", "emits-telemetry", "evaluates", "enforces", "approves"] },
+        "protocol": { "enum": ["https", "mcp-streamable-http", "mcp-stdio", "a2a-jsonrpc", "a2a-grpc", "a2a-http-json", "workers-binding", "private-network", "postgres-wire", "otlp-http", "in-process"] },
+        "auth": { "type": "string", "minLength": 1 },
+        "async": { "type": "boolean" },
+        "irreversible": { "type": "boolean" },
+        "label": { "type": "string" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["id", "title", "status", "decisionType", "affects"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^ADR-\\d{4}$" },
+        "title": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["Proposed", "Accepted", "Superseded"] },
+        "decisionType": { "type": "string", "pattern": "^decision:[a-z0-9-]+$" },
+        "acceptanceEval": { "type": "string", "pattern": "^EVAL-\\d{3}$" },
+        "affects": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } }
+      },
+      "allOf": [
+        { "if": { "properties": { "status": { "const": "Accepted" } } }, "then": { "required": ["acceptanceEval"] } }
+      ]
+    },
+    "risk": {
+      "type": "object",
+      "required": ["id", "risk", "affects", "controls"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "risk": { "type": "string", "pattern": "^risk:[a-z0-9-]+$" },
+        "affects": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } },
+        "controls": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } }
+      }
+    }
+  }
+}

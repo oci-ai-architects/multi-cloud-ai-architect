@@ -1,0 +1,24 @@
+{
+  "provider": "Vercel",
+  "currency": "USD",
+  "asOf": "2026-10-05",
+  "note": "Pro-plan rates in the default iad1 region unless stated; Vercel labels most usage rates 'starting at' and they vary by region. Re-check before quoting.",
+  "rows": [
+    {"item": "Pro plan developer seat", "unit": "seat-month", "price": 20.00, "included": "$20 monthly usage credit", "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Fluid Compute Active CPU", "unit": "hour", "price": 0.128, "notes": "starting at; I/O wait not billed", "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Fluid Compute provisioned memory", "unit": "GB-hour", "price": 0.0106, "notes": "starting at", "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Function invocations", "unit": "1M invocations", "price": 0.60, "notes": "starting at", "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Sandbox Active CPU", "unit": "hour", "price": 0.128, "included": "Hobby: 5 h/month", "sourceUrl": "https://vercel.com/docs/sandbox/pricing", "asOf": "2026-10-05"},
+    {"item": "Sandbox provisioned memory", "unit": "GB-hour", "price": 0.0212, "included": "Hobby: 420 GB-h/month", "notes": "1-minute minimum increments; 2 GB per vCPU", "sourceUrl": "https://vercel.com/docs/sandbox/pricing", "asOf": "2026-10-05"},
+    {"item": "Sandbox creations", "unit": "1M creations", "price": 0.60, "included": "Hobby: 5,000/month", "sourceUrl": "https://vercel.com/docs/sandbox/pricing", "asOf": "2026-10-05"},
+    {"item": "Sandbox snapshot storage", "unit": "GB-month", "price": 0.08, "sourceUrl": "https://vercel.com/docs/sandbox/pricing", "asOf": "2026-10-05"},
+    {"item": "Sandbox drive storage", "unit": "GB-month", "price": 0.05, "sourceUrl": "https://vercel.com/docs/sandbox/pricing", "asOf": "2026-10-05"},
+    {"item": "Workflows events", "unit": "1M events", "price": 20.00, "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Workflows storage written", "unit": "GB", "price": 0.50, "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "Workflows storage retained", "unit": "GB-month", "price": 0.50, "sourceUrl": "https://vercel.com/pricing", "asOf": "2026-10-05"},
+    {"item": "AI Gateway token markup", "unit": "percent", "price": 0, "notes": "Provider list price; BYOK no fee on paid tier; payment processing fees may apply", "sourceUrl": "https://vercel.com/docs/ai-gateway/pricing", "asOf": "2026-10-05"},
+    {"item": "AI Gateway team-wide zero data retention", "unit": "1,000 requests", "price": 0.10, "notes": "per-request ZDR is free on Pro/Ent", "sourceUrl": "https://vercel.com/docs/ai-gateway/pricing", "asOf": "2026-10-05"},
+    {"item": "AI Gateway team-wide provider allowlist", "unit": "1,000 successful requests", "price": 0.10, "sourceUrl": "https://vercel.com/docs/ai-gateway/pricing", "asOf": "2026-10-05"},
+    {"item": "AI Gateway trace drains", "unit": "1,000 traces", "price": 0.05, "notes": "plus $0.50/GB trace egress; no Pro allowance", "sourceUrl": "https://vercel.com/docs/ai-gateway/pricing", "asOf": "2026-10-05"}
+  ]
+}

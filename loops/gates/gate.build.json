@@ -1,0 +1,36 @@
+{
+  "id": "gate.build",
+  "name": "Build Conformance Gate",
+  "type": "workflow",
+  "source": "internal_custom",
+  "provider": "multi-cloud-ai-architect",
+  "status": "draft",
+  "owner": "agent.lead-architect",
+  "trust_level": "high",
+  "apps": {
+    "claude_code": "supported",
+    "codex": "supported",
+    "cursor": "supported",
+    "gemini_cli": "supported"
+  },
+  "last_reviewed": "2026-10-05",
+  "profile_kind": "operating_excellence_gate",
+  "gate_category": "implementation_conformance",
+  "stage": "build",
+  "agent": "agent.lead-architect",
+  "extends_schema": "../ai-architect/schemas/operating-excellence-gate.schema.json",
+  "pass_criteria": [
+    "Every merged change traces to a task in docs/architecture/spec/tasks.md",
+    "The model call seam count measured with the decide-stage command is unchanged, or the change carries a new ADR",
+    "No component exists in the code that the architecture graph does not contain; drift is recorded as a graph change plus an ADR",
+    "No secret value appears in the diff (credentials gate)",
+    "Build checks named in the repository (lint, typecheck, test) were run and their exit codes are quoted"
+  ],
+  "evidence_sources": [
+    "docs/architecture/spec/tasks.md",
+    "the seam-count command recorded in SYSTEM.md, re-run",
+    "git diff --stat against the base branch"
+  ],
+  "severity_if_failed": "block_release",
+  "notes": "Agents in this organisation do not write application source. The customer coding agent builds; this gate checks the build against the design."
+}

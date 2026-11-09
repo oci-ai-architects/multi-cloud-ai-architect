@@ -1,0 +1,13 @@
+# AI Architects
+
+> Independent community for engineers who design agentic systems. Vendor-neutral, eval-gated architecture method; a kit with packs for seven platforms (in progress); a planned credential assessed on a reviewed design. The kit and the credential are not available yet. Not affiliated with or endorsed by any cloud provider.
+
+## Pages
+
+- [Method](method.html): spec, architecture decision record, C4 agentic views, evals, deploy. A decision is accepted only when its eval passes.
+- [Providers](providers.html): vendor-published skills repositories, MCP servers, agent frameworks, certifications and architecture guidance for Google Cloud, Cloudflare, Vercel, Railway, AWS, Microsoft Azure and Oracle OCI, with sources. Collected 2026-10-05.
+- [Academy](academy.html): how the credential is assessed and how it compares with vendor exams and cohorts.
+
+## Data
+
+- [Provider matrix (JSON)](data/provider-matrix.json): the machine-readable source for the providers comparison.

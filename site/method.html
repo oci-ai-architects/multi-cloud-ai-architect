@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The method</title>
+  <meta name="description" content="Spec, decision record, C4 agentic views, evals, deploy. Five stages with one gate: a decision is accepted when its eval passes.">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f4f1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101318">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="wordmark" href="./" aria-label="AI Architects, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 29 16 16 29 3 16Z" fill="none" stroke="currentColor" stroke-width="2.25"/><path d="M3 16h26" stroke="currentColor" stroke-width="2.25"/><circle cx="16" cy="16" r="3.2" fill="var(--accent)"/></svg>
+        <span>AI Architects</span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="method.html" aria-current="page">Method</a></li>
+          <li><a href="providers.html">Providers</a></li>
+          <li><a href="academy.html">Academy</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="wrap">
+        <h1 id="page-title">Spec, decide, draw, evaluate, deploy.</h1>
+        <p class="lede">Five stages in a fixed order, with one gate. Each stage builds on published work, linked in the stage. The method's own rule joins them: an architecture decision counts as accepted only when its eval passes.</p>
+        <p class="note">Status: the method is written and has not yet been run end to end on a reviewed design. The first sample design, assessed against the published rubric, comes before the academy opens.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" aria-labelledby="stages-title">
+      <div class="wrap">
+        <h2 id="stages-title" class="visually-hidden">The five stages</h2>
+
+        <article class="stage" id="spec" aria-labelledby="s1">
+          <div class="stage-id">Stage 1<strong id="s1">Spec</strong></div>
+          <div class="prose">
+            <p>One spec per change: the problem, who has it, the constraints, what is out of scope, and a budget for the qualities that matter to agents, such as latency, cost per task and where data may live.</p>
+            <dl>
+              <dt>You produce</dt><dd><code>spec.md</code>, short enough to review in one sitting.</dd>
+              <dt>Done when</dt><dd>Every requirement traces to a decision or a test.</dd>
+              <dt>Builds on</dt><dd><a href="https://github.com/github/spec-kit">Spec Kit</a> and <a href="https://github.com/Fission-AI/OpenSpec">OpenSpec</a>. The file stays readable by both.</dd>
+            </dl>
+            <p style="margin-top:1.25rem">Size matters. Birgitta Böckeler watched one tool turn a single bug into four user stories and sixteen acceptance criteria. A spec should be as large as the change, and no larger. <a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html">Read her review</a>.</p>
+          </div>
+        </article>
+
+        <article class="stage" id="adr" aria-labelledby="s2">
+          <div class="stage-id">Stage 2<strong id="s2">Decision record</strong></div>
+          <div class="prose">
+            <p>One ADR per consequential choice. The first one is usually the cheapest to get right: does this need an agent at all, or will a single model call or a fixed workflow do? Azure's guidance puts it as using the lowest level of complexity that reliably meets the requirements.</p>
+            <dl>
+              <dt>You produce</dt><dd><code>adr/NNNN-title.md</code> with context, options, decision, consequences and the eval that accepts it.</dd>
+              <dt>Done when</dt><dd>The acceptance eval is named, has a threshold, and can run.</dd>
+              <dt>Builds on</dt><dd>The decisions section of <a href="https://github.com/arc42/arc42-template/releases/tag/2026.10.2">arc42</a>, Anthropic's <a href="https://www.anthropic.com/engineering/building-effective-agents">workflow and agent patterns</a>, and the <a href="https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns">Azure complexity ladder</a>.</dd>
+            </dl>
+            <pre tabindex="0" aria-label="Example decision record"><code><span class="c"># Example only. Names and thresholds are illustrative.</span>
+# ADR 0003: Route refund requests through a fixed workflow
+
+Status: proposed
+Context: Refunds follow policy with three branches. Errors cost money.
+Options: single agent with tools; routing workflow; human queue.
+Decision: routing workflow. An agent only drafts the customer reply.
+Consequences: less flexible on edge cases; every branch is testable.
+
+Acceptance eval: evals/refund-routing.yaml
+  - routes each of the 120 labelled cases to the policy branch
+  - threshold: 118 of 120 correct, zero refunds above policy limit
+  - runs in CI on every change to the workflow or its prompts</code></pre>
+          </div>
+        </article>
+
+        <article class="stage" id="c4" aria-labelledby="s3">
+          <div class="stage-id">Stage 3<strong id="s3">C4 agentic views</strong></div>
+          <div class="prose">
+            <p>Context and container diagrams in standard C4, with the parts agents add drawn as first-class elements: the agent runtime, tool access through MCP, memory, the model endpoint, the eval harness, and the trust boundary they cross.</p>
+            <dl>
+              <dt>You produce</dt><dd>Context and container views as code, so they diff and review like everything else.</dd>
+              <dt>Done when</dt><dd>Every arrow that crosses the trust boundary has an owner and a control.</dd>
+              <dt>Builds on</dt><dd>The <a href="https://c4model.com/">C4 model</a> and current research <a href="https://arxiv.org/pdf/2603.15021">applying C4 to agentic systems</a>.</dd>
+            </dl>
+          </div>
+        </article>
+
+        <figure class="diagram sheet" style="margin-block:0.5rem 1rem">
+          <div class="sheet-body diagram-scroll" tabindex="0" role="region" aria-label="C4 agentic container view, scrollable">
+            <svg viewBox="0 0 1040 440" role="img" aria-labelledby="c4-t c4-d" class="c4">
+              <title id="c4-t">Example C4 agentic container view</title>
+              <desc id="c4-d">A customer chats with an agent runtime inside a trust boundary. The runtime calls tools through an MCP gateway that handles authorization and audit, reads and writes a memory store, and sends prompts to an external model API outside the boundary. An eval harness reads the runtime's traces and gates decision records.</desc>
+              <defs>
+                <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" class="d-arrow"/></marker>
+                <marker id="ah-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" class="d-arrow--fail"/></marker>
+              </defs>
+              <g aria-hidden="true">
+                <rect class="d-zone" x="220" y="30" width="650" height="390" rx="6"/>
+                <text class="d-small" x="236" y="52">Trust boundary: your tenant</text>
+
+                <rect class="d-node" x="24" y="180" width="150" height="80" rx="4"/>
+                <text class="d-title" x="99" y="215" text-anchor="middle">Customer</text>
+                <text class="d-small" x="99" y="236" text-anchor="middle">person</text>
+
+                <rect class="d-node d-node--accent" x="270" y="180" width="190" height="80" rx="4"/>
+                <text class="d-title" x="365" y="214" text-anchor="middle">Agent runtime</text>
+                <text class="d-small" x="365" y="236" text-anchor="middle">orchestration, policy</text>
+
+                <rect class="d-node" x="530" y="80" width="170" height="74" rx="4"/>
+                <text class="d-title" x="615" y="112" text-anchor="middle">MCP gateway</text>
+                <text class="d-small" x="615" y="133" text-anchor="middle">authorization, audit</text>
+
+                <rect class="d-node" x="735" y="62" width="118" height="56" rx="4"/>
+                <text class="d-label" x="794" y="95" text-anchor="middle">Ticket API</text>
+                <rect class="d-node" x="735" y="134" width="118" height="56" rx="4"/>
+                <text class="d-label" x="794" y="160" text-anchor="middle">Knowledge</text>
+                <text class="d-label" x="794" y="177" text-anchor="middle">index</text>
+
+                <rect class="d-node" x="530" y="300" width="170" height="74" rx="4"/>
+                <text class="d-title" x="615" y="332" text-anchor="middle">Memory store</text>
+                <text class="d-small" x="615" y="353" text-anchor="middle">per user, expiring</text>
+
+                <rect class="d-node" x="270" y="320" width="190" height="74" rx="4" stroke-dasharray="5 4"/>
+                <text class="d-title" x="365" y="352" text-anchor="middle">Eval harness</text>
+                <text class="d-small" x="365" y="373" text-anchor="middle">reads traces, gates ADRs</text>
+
+                <rect class="d-node" x="896" y="270" width="124" height="74" rx="4"/>
+                <text class="d-title" x="958" y="302" text-anchor="middle">Model API</text>
+                <text class="d-small" x="958" y="323" text-anchor="middle">external</text>
+
+                <path class="d-flow" d="M174 220 H266" marker-end="url(#ah)"/>
+                <text class="d-label" x="220" y="208" text-anchor="middle">chat</text>
+
+                <path class="d-flow" d="M460 200 L526 140" marker-end="url(#ah)"/>
+                <text class="d-label" x="452" y="150">tool calls</text>
+
+                <path class="d-flow" d="M700 108 L731 94" marker-end="url(#ah)"/>
+                <path class="d-flow" d="M700 128 L731 152" marker-end="url(#ah)"/>
+
+                <path class="d-flow" d="M460 240 L526 316" marker-end="url(#ah)"/>
+                <text class="d-label" x="500" y="300" text-anchor="end">read, write</text>
+
+                <path class="d-fail" d="M460 230 L892 298" marker-end="url(#ah-fail)"/>
+                <text class="d-fail-text" x="770" y="248" text-anchor="middle">prompts leave the boundary</text>
+
+                <path class="d-line" d="M365 260 V316" stroke-dasharray="4 4" marker-end="url(#ah)"/>
+                <text class="d-small" x="375" y="294">traces</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption style="padding:0 clamp(1rem,0.5rem + 2.5vw,2.25rem) 1.25rem">An example container view. The one arrow drawn in red crosses the trust boundary, so its ADR has to say what data may travel on it and which eval checks that.</figcaption>
+        </figure>
+
+        <article class="stage" id="evals" aria-labelledby="s4">
+          <div class="stage-id">Stage 4<strong id="s4">Evals</strong></div>
+          <div class="prose">
+            <p>Graders for each decision, checking outcomes and, where it matters, the path the agent took to get there. They run in CI. A pass accepts the ADR. A fail sends the work back to the decision: the method treats a failed eval as a design question before it treats it as a prompt problem.</p>
+            <dl>
+              <dt>You produce</dt><dd>An eval suite per ADR, with labelled cases and a threshold.</dd>
+              <dt>Done when</dt><dd>Every proposed ADR is either accepted by a green run or revised.</dd>
+              <dt>Builds on</dt><dd>Anthropic's <a href="https://anthropic.com/engineering/demystifying-evals-for-ai-agents">guide to agent evals</a> and the <a href="https://maven.com/parlance-labs/evals">AI Evals course</a> from Husain and Shankar.</dd>
+            </dl>
+          </div>
+        </article>
+
+        <article class="stage" id="deploy" aria-labelledby="s5">
+          <div class="stage-id">Stage 5<strong id="s5">Deploy</strong></div>
+          <div class="prose">
+            <p>The same design deployed on at least two platforms. Where the platforms force a difference, that difference becomes its own ADR, so the next team can see what was a choice and what was a constraint.</p>
+            <dl>
+              <dt>You produce</dt><dd>Two working deployments and the ADRs that explain where they differ.</dd>
+              <dt>Done when</dt><dd>Both pass the same eval suite.</dd>
+              <dt>Builds on</dt><dd>The <a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentic-ai-lens.html">AWS Agentic AI Lens</a> as a review checklist, Google's <a href="https://docs.cloud.google.com/architecture/choose-design-pattern-agentic-ai-system">pattern decision guide</a>, and the per-platform packs in the kit.</dd>
+            </dl>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section--sunk" aria-labelledby="scope-title">
+      <div class="wrap prose">
+        <h2 id="scope-title">What the method leaves to others</h2>
+        <p style="margin-top:1rem">Protocols belong to their foundations: MCP and A2A are governed under the Linux Foundation's Agentic AI Foundation. Model behaviour is best explained by the labs that train the models. Framework tutorials are well covered elsewhere. The method uses all of these and owns none of them.</p>
+        <p><a href="academy.html">See how the academy assesses the method</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>
+        <p><strong>AI Architects is an independent community project, not affiliated with or endorsed by any cloud provider.</strong> Product names are trademarks of their owners and appear here only to identify them.</p>
+        <p style="margin-top:0.75rem">Research collected on <time datetime="2026-10-05">5 October 2026</time>. A figure that rests on a secondary source is tagged where it appears.</p>
+      </div>
+      <ul>
+        <li><a href="method.html">Method</a></li>
+        <li><a href="providers.html">Providers</a></li>
+        <li><a href="academy.html">Academy</a></li>
+        <li><a href="llms.txt">llms.txt</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

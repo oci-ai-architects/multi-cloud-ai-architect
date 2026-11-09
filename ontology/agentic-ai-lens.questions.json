@@ -1,0 +1,237 @@
+{
+  "schema": "mcaa.lens-questions.v1",
+  "lens": "AWS Well-Architected Agentic AI Lens",
+  "published": "2026-06-10",
+  "source": "https://github.com/aws-samples/sample-well-architected-custom-lens/blob/main/agentic-ai-lens/agentic-ai-lens.json",
+  "docs": "https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentic-ai-lens.html",
+  "extracted": "2026-10-05",
+  "method": "node: pillars[].questions[] id and title from the custom lens JSON, no hand typing",
+  "pillars": [
+    {
+      "id": "operationalExcellence",
+      "name": "Operational Excellence"
+    },
+    {
+      "id": "security",
+      "name": "Security"
+    },
+    {
+      "id": "reliability",
+      "name": "Reliability"
+    },
+    {
+      "id": "performance",
+      "name": "Performance Efficiency"
+    },
+    {
+      "id": "costOptimization",
+      "name": "Cost Optimization"
+    },
+    {
+      "id": "sustainability",
+      "name": "Sustainability"
+    }
+  ],
+  "questions": [
+    {
+      "id": "AGENTOPS01",
+      "pillar": "operationalExcellence",
+      "title": "How do you establish operational practices for agentic AI systems?"
+    },
+    {
+      "id": "AGENTOPS02",
+      "pillar": "operationalExcellence",
+      "title": "How do you manage prompt and configuration lifecycle?"
+    },
+    {
+      "id": "AGENTOPS03",
+      "pillar": "operationalExcellence",
+      "title": "How do you manage agent lifecycle and deployment processes?"
+    },
+    {
+      "id": "AGENTOPS04",
+      "pillar": "operationalExcellence",
+      "title": "How do you establish tool integration and management practices?"
+    },
+    {
+      "id": "AGENTOPS05",
+      "pillar": "operationalExcellence",
+      "title": "How do you implement comprehensive observability and monitoring for agentic systems?"
+    },
+    {
+      "id": "AGENTOPS06",
+      "pillar": "operationalExcellence",
+      "title": "How do you implement testing, evaluation, and validation frameworks?"
+    },
+    {
+      "id": "AGENTSEC01",
+      "pillar": "security",
+      "title": "How do you secure agentic memory and securely manage state between agents?"
+    },
+    {
+      "id": "AGENTSEC02",
+      "pillar": "security",
+      "title": "How do you control and secure agent tool usage?"
+    },
+    {
+      "id": "AGENTSEC03",
+      "pillar": "security",
+      "title": "How do you manage agent identities, permissions, and prevent privilege escalation?"
+    },
+    {
+      "id": "AGENTSEC04",
+      "pillar": "security",
+      "title": "How do you support agent goal alignment and prevent manipulation?"
+    },
+    {
+      "id": "AGENTSEC05",
+      "pillar": "security",
+      "title": "How do you implement observability and prevent repudiation?"
+    },
+    {
+      "id": "AGENTSEC06",
+      "pillar": "security",
+      "title": "How do you secure multi-agent orchestration and coordination?"
+    },
+    {
+      "id": "AGENTSEC07",
+      "pillar": "security",
+      "title": "How do you protect human oversight from manipulation and detect rogue agents?"
+    },
+    {
+      "id": "AGENTSEC08",
+      "pillar": "security",
+      "title": "How do you validate and secure agent inputs and outputs?"
+    },
+    {
+      "id": "AGENTSEC09",
+      "pillar": "security",
+      "title": "How do you perform vulnerability scanning and penetration testing for agentic AI systems?"
+    },
+    {
+      "id": "AGENTREL01",
+      "pillar": "reliability",
+      "title": "How do I develop reliable agentic systems?"
+    },
+    {
+      "id": "AGENTREL02",
+      "pillar": "reliability",
+      "title": "How do you develop agentic systems that reliably execute tasks with predictable outcomes?"
+    },
+    {
+      "id": "AGENTREL03",
+      "pillar": "reliability",
+      "title": "How do you support agent memory and state remaining reliably accessible throughout the agent lifecycle?"
+    },
+    {
+      "id": "AGENTREL04",
+      "pillar": "reliability",
+      "title": "How do you orchestrate multi-agent systems to reliably execute tasks?"
+    },
+    {
+      "id": "AGENTREL05",
+      "pillar": "reliability",
+      "title": "How do you implement reliable agent cognition that accesses the right data at the right time?"
+    },
+    {
+      "id": "AGENTREL06",
+      "pillar": "reliability",
+      "title": "How do agents integrate effectively with existing systems without impacting the reliability of established processes?"
+    },
+    {
+      "id": "AGENTREL07",
+      "pillar": "reliability",
+      "title": "How do fault tolerant agent systems recover?"
+    },
+    {
+      "id": "AGENTREL08",
+      "pillar": "reliability",
+      "title": "How do agents determine when and where graceful degradation is appropriate?"
+    },
+    {
+      "id": "AGENTPERF01",
+      "pillar": "performance",
+      "title": "How do you plan strategically for agent performance and establish measurement practices?"
+    },
+    {
+      "id": "AGENTPERF02",
+      "pillar": "performance",
+      "title": "How do you optimize core agent processing and reasoning pipelines?"
+    },
+    {
+      "id": "AGENTPERF03",
+      "pillar": "performance",
+      "title": "How do you optimize memory management, context windows, and retrieval-augmented generation?"
+    },
+    {
+      "id": "AGENTPERF04",
+      "pillar": "performance",
+      "title": "How do you achieve efficient communication and protocol usage across agent interactions?"
+    },
+    {
+      "id": "AGENTPERF05",
+      "pillar": "performance",
+      "title": "How do you optimize workflow orchestration and multi-agent collaboration for performance?"
+    },
+    {
+      "id": "AGENTPERF06",
+      "pillar": "performance",
+      "title": "How do you optimize tool integrations and framework usage for agent performance?"
+    },
+    {
+      "id": "AGENTPERF07",
+      "pillar": "performance",
+      "title": "How do you manage multitenant performance isolation and optimize resource utilization?"
+    },
+    {
+      "id": "AGENTCOST01",
+      "pillar": "costOptimization",
+      "title": "How do you optimize agent reasoning and execution costs?"
+    },
+    {
+      "id": "AGENTCOST02",
+      "pillar": "costOptimization",
+      "title": "How do you optimize agent model invocation and token consumption costs?"
+    },
+    {
+      "id": "AGENTCOST03",
+      "pillar": "costOptimization",
+      "title": "How do you manage agent memory and state costs efficiently?"
+    },
+    {
+      "id": "AGENTCOST04",
+      "pillar": "costOptimization",
+      "title": "How do you optimize agent tool invocation costs?"
+    },
+    {
+      "id": "AGENTCOST05",
+      "pillar": "costOptimization",
+      "title": "How do you implement cost attribution?"
+    },
+    {
+      "id": "AGENTCOST06",
+      "pillar": "costOptimization",
+      "title": "How do you optimize agent discovery, registry, and deployment costs?"
+    },
+    {
+      "id": "AGENTCOST07",
+      "pillar": "costOptimization",
+      "title": "How do you establish agent cost governance and continuous optimization?"
+    },
+    {
+      "id": "AGENTSUS01",
+      "pillar": "sustainability",
+      "title": "How do you build sustainable and repeatable frameworks for managing compute, memory, and other shareable agent resources?"
+    },
+    {
+      "id": "AGENTSUS02",
+      "pillar": "sustainability",
+      "title": "How do I establish sustainable frameworks for agent dependencies?"
+    },
+    {
+      "id": "AGENTSUS03",
+      "pillar": "sustainability",
+      "title": "How do I establish durable patterns for agent interactions with users and business processes?"
+    }
+  ]
+}

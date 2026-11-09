@@ -1,0 +1,21 @@
+{
+  "provider": "Cloudflare",
+  "currency": "USD",
+  "asOf": "2026-10-05",
+  "note": "List prices from official pricing pages, read 2026-10-05. Re-check before quoting to a buyer.",
+  "rows": [
+    {"item": "Workers Paid plan base", "unit": "month", "price": 5.00, "included": "10M requests, 30M CPU-ms per month", "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Workers requests (over included)", "unit": "1M requests", "price": 0.30, "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Workers CPU time (over included)", "unit": "1M CPU-ms", "price": 0.02, "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Durable Objects requests (over included)", "unit": "1M requests", "price": 0.15, "included": "1M per month", "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Durable Objects duration (over included)", "unit": "1M GB-s", "price": 12.50, "included": "400,000 GB-s per month", "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Durable Objects SQLite rows read (over included)", "unit": "1M rows", "price": 0.001, "included": "25 billion per month", "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Durable Objects SQLite rows written (over included)", "unit": "1M rows", "price": 1.00, "included": "50M per month", "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Durable Objects stored data (over included)", "unit": "GB-month", "price": 0.20, "included": "5 GB-month", "sourceUrl": "https://developers.cloudflare.com/workers/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Workers AI", "unit": "1,000 Neurons", "price": 0.011, "included": "10,000 Neurons per day on Free and Paid", "sourceUrl": "https://developers.cloudflare.com/workers-ai/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Workers AI example: Llama 3.2 1B input", "unit": "1M input tokens", "price": 0.027, "sourceUrl": "https://developers.cloudflare.com/workers-ai/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "Workers AI example: Llama 3.2 1B output", "unit": "1M output tokens", "price": 0.201, "sourceUrl": "https://developers.cloudflare.com/workers-ai/platform/pricing/", "asOf": "2026-10-05"},
+    {"item": "AI Gateway core features (analytics, caching, rate limiting)", "unit": "flat", "price": 0, "sourceUrl": "https://developers.cloudflare.com/ai-gateway/reference/pricing/", "asOf": "2026-10-05"},
+    {"item": "AI Gateway Unified Billing fee", "unit": "percent of credits purchased", "price": 5, "notes": "Provider inference passed through with no markup", "sourceUrl": "https://developers.cloudflare.com/ai-gateway/reference/pricing/", "asOf": "2026-10-05"}
+  ]
+}

@@ -1,0 +1,780 @@
+{
+  "schema": "mcaa.archgraph.v1",
+  "id": "research-desk",
+  "name": "Research desk: cross-cloud agent system",
+  "description": "Worked example, not a customer system. An analyst asks questions in a Vercel portal. A Cloudflare edge agent (Agents SDK, one Durable Object per session) answers short questions itself and delegates long research over A2A to an ADK worker on Railway, which reads the public web and keeps findings in Postgres. Every model call, from either agent, goes through Cloudflare AI Gateway to a Gemini model on Google Cloud, with a Workers AI model as fallback. Publishing a report is irreversible and needs the analyst's approval. Numbers such as iteration caps are design values for this example, not measurements.",
+  "asOf": "2026-10-05",
+  "ontology": "../../ontology/architecture.jsonld",
+  "boundaries": [
+    {
+      "id": "user-device",
+      "name": "Analyst's browser",
+      "kind": "user-device",
+      "trust": "untrusted"
+    },
+    {
+      "id": "vercel-project",
+      "name": "Vercel project",
+      "kind": "provider-account",
+      "trust": "trusted",
+      "provider": "provider:vercel"
+    },
+    {
+      "id": "cloudflare-account",
+      "name": "Cloudflare account",
+      "kind": "provider-account",
+      "trust": "trusted",
+      "provider": "provider:cloudflare"
+    },
+    {
+      "id": "gcp-project",
+      "name": "Google Cloud project",
+      "kind": "provider-account",
+      "trust": "trusted",
+      "provider": "provider:google-cloud"
+    },
+    {
+      "id": "railway-project",
+      "name": "Railway project",
+      "kind": "provider-account",
+      "trust": "trusted",
+      "provider": "provider:railway"
+    },
+    {
+      "id": "public-web",
+      "name": "Public web",
+      "kind": "public-internet",
+      "trust": "untrusted"
+    },
+    {
+      "id": "ci",
+      "name": "CI and eval sandbox",
+      "kind": "ci",
+      "trust": "trusted"
+    },
+    {
+      "id": "observability",
+      "name": "Trace backend",
+      "kind": "customer-network",
+      "trust": "trusted"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "analyst",
+      "kind": "person",
+      "name": "Analyst",
+      "boundary": "user-device",
+      "c4": "person"
+    },
+    {
+      "id": "portal",
+      "kind": "ui",
+      "name": "Research portal",
+      "boundary": "vercel-project",
+      "c4": "container",
+      "plane": "plane:experience",
+      "provider": "provider:vercel",
+      "service": "svc:vercel-hosting",
+      "technology": "Next.js, AI SDK UI",
+      "owner": "Product engineer (role)"
+    },
+    {
+      "id": "edge-agent",
+      "kind": "agent",
+      "name": "Edge research agent",
+      "boundary": "cloudflare-account",
+      "c4": "container",
+      "plane": "plane:orchestration",
+      "provider": "provider:cloudflare",
+      "service": "svc:cf-agents-sdk",
+      "technology": "Agents SDK on Workers",
+      "owner": "Platform lead (role)",
+      "exitCondition": {
+        "kind": "iteration-cap",
+        "enforcedIn": "code",
+        "maxIterations": 8,
+        "where": "agent loop budget check, file and line set at the build stage"
+      }
+    },
+    {
+      "id": "session-state",
+      "kind": "datastore",
+      "name": "Session state (one Durable Object per session)",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "plane": "plane:orchestration",
+      "provider": "provider:cloudflare",
+      "service": "svc:cf-durable-objects",
+      "owner": "Platform lead (role)"
+    },
+    {
+      "id": "ai-gateway",
+      "kind": "gateway",
+      "name": "AI Gateway (the model call seam)",
+      "boundary": "cloudflare-account",
+      "c4": "container",
+      "plane": "plane:model",
+      "provider": "provider:cloudflare",
+      "service": "svc:cf-ai-gateway",
+      "owner": "Platform lead (role)"
+    },
+    {
+      "id": "gemini",
+      "kind": "model",
+      "name": "Gemini model",
+      "boundary": "gcp-project",
+      "c4": "external",
+      "plane": "plane:model",
+      "provider": "provider:google-cloud",
+      "service": "svc:gcp-agent-platform",
+      "openQuestions": [
+        "Which Gemini model and region: pin in ADR-0001 from the live model list, never from memory"
+      ]
+    },
+    {
+      "id": "fallback-model",
+      "kind": "model",
+      "name": "Workers AI fallback model",
+      "boundary": "cloudflare-account",
+      "c4": "external",
+      "plane": "plane:model",
+      "provider": "provider:cloudflare",
+      "service": "svc:cf-workers-ai",
+      "openQuestions": [
+        "Which Workers AI model: chosen by the eval in EVAL-003"
+      ]
+    },
+    {
+      "id": "docs-mcp",
+      "kind": "tool-server",
+      "name": "Docs tools (remote MCP on Workers)",
+      "boundary": "cloudflare-account",
+      "c4": "container",
+      "plane": "plane:tools",
+      "provider": "provider:cloudflare",
+      "service": "svc:cf-agents-sdk",
+      "contentTrust": "trusted",
+      "owner": "Platform lead (role)"
+    },
+    {
+      "id": "report-publisher",
+      "kind": "tool-server",
+      "name": "Report publisher (MCP tool)",
+      "boundary": "cloudflare-account",
+      "c4": "container",
+      "plane": "plane:tools",
+      "provider": "provider:cloudflare",
+      "service": "svc:cf-agents-sdk",
+      "owner": "Product engineer (role)"
+    },
+    {
+      "id": "research-worker",
+      "kind": "agent",
+      "name": "Deep research worker",
+      "boundary": "railway-project",
+      "c4": "container",
+      "plane": "plane:orchestration",
+      "provider": "provider:railway",
+      "service": "svc:railway-service",
+      "technology": "Google ADK (Python) behind an A2A server",
+      "owner": "Research engineer (role)",
+      "exitCondition": {
+        "kind": "wall-clock",
+        "enforcedIn": "code",
+        "maxIterations": 40,
+        "where": "worker task runner, deadline and step counter, set at the build stage"
+      }
+    },
+    {
+      "id": "research-store",
+      "kind": "datastore",
+      "name": "Research store (Postgres with pgvector)",
+      "boundary": "railway-project",
+      "c4": "container",
+      "plane": "plane:context",
+      "provider": "provider:railway",
+      "service": "svc:railway-postgres",
+      "owner": "Research engineer (role)",
+      "openQuestions": [
+        "Confirm pgvector on Railway Postgres from the docs; if it is absent, retrieval moves to another store under a new ADR"
+      ]
+    },
+    {
+      "id": "web",
+      "kind": "external-system",
+      "name": "Public web pages",
+      "boundary": "public-web",
+      "c4": "external",
+      "contentTrust": "untrusted"
+    },
+    {
+      "id": "eval-harness",
+      "kind": "eval-harness",
+      "name": "Eval harness",
+      "boundary": "ci",
+      "c4": "container",
+      "plane": "plane:evaluation",
+      "owner": "Research engineer (role)",
+      "cases": [
+        "EVAL-001",
+        "EVAL-002",
+        "EVAL-003",
+        "EVAL-004",
+        "EVAL-005",
+        "EVAL-006",
+        "EVAL-007",
+        "EVAL-008",
+        "EVAL-009",
+        "EVAL-010"
+      ],
+      "openQuestions": [
+        "Which CI runs the harness"
+      ]
+    },
+    {
+      "id": "traces",
+      "kind": "observability",
+      "name": "Trace backend (OTLP)",
+      "boundary": "observability",
+      "c4": "external",
+      "plane": "plane:observability",
+      "openQuestions": [
+        "Which OTLP backend: not chosen, so AGENTOPS05 is only partly answered"
+      ]
+    },
+    {
+      "id": "c-content-as-data",
+      "kind": "control",
+      "name": "Fetched content labelled as data",
+      "boundary": "railway-project",
+      "c4": "component",
+      "control": "ctl:retrieved-content-as-data"
+    },
+    {
+      "id": "c-edge-budget",
+      "kind": "control",
+      "name": "Edge loop budget in code",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "control": "ctl:loop-budget-in-code"
+    },
+    {
+      "id": "c-worker-budget",
+      "kind": "control",
+      "name": "Worker deadline in code",
+      "boundary": "railway-project",
+      "c4": "component",
+      "control": "ctl:loop-budget-in-code"
+    },
+    {
+      "id": "c-fallback",
+      "kind": "control",
+      "name": "Ordered model fallback",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "control": "ctl:gateway-fallback"
+    },
+    {
+      "id": "c-seam",
+      "kind": "control",
+      "name": "Single model seam",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "control": "ctl:single-model-seam"
+    },
+    {
+      "id": "c-approval",
+      "kind": "control",
+      "name": "Approve before publish",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "control": "ctl:approval-for-irreversible"
+    },
+    {
+      "id": "c-edge-secrets",
+      "kind": "control",
+      "name": "Secrets by reference (edge)",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "control": "ctl:secrets-by-reference"
+    },
+    {
+      "id": "c-worker-secrets",
+      "kind": "control",
+      "name": "Secrets by reference (worker)",
+      "boundary": "railway-project",
+      "c4": "component",
+      "control": "ctl:secrets-by-reference"
+    },
+    {
+      "id": "c-eval-gate",
+      "kind": "control",
+      "name": "Eval-gated release",
+      "boundary": "ci",
+      "c4": "component",
+      "control": "ctl:eval-gated-release"
+    },
+    {
+      "id": "c-long-run",
+      "kind": "control",
+      "name": "Long runs on Railway with checkpoints",
+      "boundary": "railway-project",
+      "c4": "component",
+      "control": "ctl:durable-long-run-home"
+    },
+    {
+      "id": "c-tracing",
+      "kind": "control",
+      "name": "One trace per run",
+      "boundary": "observability",
+      "c4": "component",
+      "control": "ctl:end-to-end-tracing"
+    },
+    {
+      "id": "c-memory",
+      "kind": "control",
+      "name": "Validated state writes",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "control": "ctl:memory-write-validation"
+    },
+    {
+      "id": "c-tools",
+      "kind": "control",
+      "name": "Per-agent tool allow-list",
+      "boundary": "cloudflare-account",
+      "c4": "component",
+      "control": "ctl:least-privilege-tools"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-use",
+      "from": "analyst",
+      "to": "portal",
+      "kind": "uses",
+      "protocol": "https",
+      "auth": "user session from the portal's identity provider [OPEN: which]"
+    },
+    {
+      "id": "e-approve",
+      "from": "analyst",
+      "to": "portal",
+      "kind": "approves",
+      "protocol": "https",
+      "auth": "same session, re-confirmed per approval",
+      "label": "approve report publication"
+    },
+    {
+      "id": "e-ask",
+      "from": "portal",
+      "to": "edge-agent",
+      "kind": "calls",
+      "protocol": "https",
+      "auth": "signed service token verified in the Worker",
+      "label": "question, streamed answer"
+    },
+    {
+      "id": "e-state-w",
+      "from": "edge-agent",
+      "to": "session-state",
+      "kind": "writes",
+      "protocol": "workers-binding"
+    },
+    {
+      "id": "e-state-r",
+      "from": "edge-agent",
+      "to": "session-state",
+      "kind": "reads",
+      "protocol": "workers-binding"
+    },
+    {
+      "id": "e-edge-model",
+      "from": "edge-agent",
+      "to": "ai-gateway",
+      "kind": "calls-model",
+      "protocol": "workers-binding"
+    },
+    {
+      "id": "e-route-primary",
+      "from": "ai-gateway",
+      "to": "gemini",
+      "kind": "routes-model",
+      "protocol": "https",
+      "auth": "provider key stored in the gateway, referenced, never passed by callers",
+      "label": "primary"
+    },
+    {
+      "id": "e-route-fallback",
+      "from": "ai-gateway",
+      "to": "fallback-model",
+      "kind": "routes-model",
+      "protocol": "workers-binding",
+      "label": "fallback"
+    },
+    {
+      "id": "e-docs",
+      "from": "edge-agent",
+      "to": "docs-mcp",
+      "kind": "invokes-tool",
+      "protocol": "mcp-streamable-http",
+      "auth": "OAuth per the MCP authorization spec"
+    },
+    {
+      "id": "e-publish",
+      "from": "edge-agent",
+      "to": "report-publisher",
+      "kind": "invokes-tool",
+      "protocol": "mcp-streamable-http",
+      "auth": "OAuth per the MCP authorization spec",
+      "irreversible": true,
+      "label": "publish report"
+    },
+    {
+      "id": "e-delegate",
+      "from": "edge-agent",
+      "to": "research-worker",
+      "kind": "delegates",
+      "protocol": "a2a-jsonrpc",
+      "auth": "OAuth 2.0 client credentials declared in the worker's Agent Card",
+      "async": true,
+      "label": "long research task"
+    },
+    {
+      "id": "e-worker-model",
+      "from": "research-worker",
+      "to": "ai-gateway",
+      "kind": "calls-model",
+      "protocol": "https",
+      "auth": "gateway token scoped to the worker"
+    },
+    {
+      "id": "e-fetch",
+      "from": "research-worker",
+      "to": "web",
+      "kind": "fetches",
+      "protocol": "https",
+      "auth": "none"
+    },
+    {
+      "id": "e-store-w",
+      "from": "research-worker",
+      "to": "research-store",
+      "kind": "writes",
+      "protocol": "postgres-wire",
+      "auth": "private network and a database role per service"
+    },
+    {
+      "id": "e-store-r",
+      "from": "research-worker",
+      "to": "research-store",
+      "kind": "reads",
+      "protocol": "postgres-wire",
+      "auth": "private network and a database role per service"
+    },
+    {
+      "id": "e-tel-edge",
+      "from": "edge-agent",
+      "to": "traces",
+      "kind": "emits-telemetry",
+      "protocol": "otlp-http",
+      "auth": "ingest token by reference"
+    },
+    {
+      "id": "e-tel-worker",
+      "from": "research-worker",
+      "to": "traces",
+      "kind": "emits-telemetry",
+      "protocol": "otlp-http",
+      "auth": "ingest token by reference"
+    },
+    {
+      "id": "e-tel-gateway",
+      "from": "ai-gateway",
+      "to": "traces",
+      "kind": "emits-telemetry",
+      "protocol": "otlp-http",
+      "auth": "ingest token by reference [OPEN: gateway log export path]"
+    },
+    {
+      "id": "e-eval-edge",
+      "from": "eval-harness",
+      "to": "edge-agent",
+      "kind": "evaluates",
+      "protocol": "https",
+      "auth": "sandbox deployment credentials"
+    },
+    {
+      "id": "e-eval-worker",
+      "from": "eval-harness",
+      "to": "research-worker",
+      "kind": "evaluates",
+      "protocol": "https",
+      "auth": "sandbox deployment credentials"
+    },
+    {
+      "id": "k-content",
+      "from": "c-content-as-data",
+      "to": "research-worker",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-edge-budget",
+      "from": "c-edge-budget",
+      "to": "edge-agent",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-worker-budget",
+      "from": "c-worker-budget",
+      "to": "research-worker",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-fallback",
+      "from": "c-fallback",
+      "to": "ai-gateway",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-seam",
+      "from": "c-seam",
+      "to": "ai-gateway",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-approval",
+      "from": "c-approval",
+      "to": "edge-agent",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-edge-secrets",
+      "from": "c-edge-secrets",
+      "to": "edge-agent",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-worker-secrets",
+      "from": "c-worker-secrets",
+      "to": "research-worker",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-eval",
+      "from": "c-eval-gate",
+      "to": "eval-harness",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-long-run",
+      "from": "c-long-run",
+      "to": "research-worker",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-tracing",
+      "from": "c-tracing",
+      "to": "traces",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-memory",
+      "from": "c-memory",
+      "to": "session-state",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-tools",
+      "from": "c-tools",
+      "to": "edge-agent",
+      "kind": "enforces"
+    },
+    {
+      "id": "k-memory-store",
+      "from": "c-memory",
+      "to": "research-store",
+      "kind": "enforces"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-0001",
+      "title": "Every model call goes through Cloudflare AI Gateway; Gemini primary, Workers AI fallback",
+      "status": "Accepted",
+      "decisionType": "decision:model-call-seam",
+      "acceptanceEval": "EVAL-003",
+      "affects": [
+        "ai-gateway",
+        "gemini",
+        "fallback-model",
+        "e-edge-model",
+        "e-worker-model"
+      ]
+    },
+    {
+      "id": "ADR-0002",
+      "title": "Research longer than the edge ceiling runs on a Railway worker",
+      "status": "Accepted",
+      "decisionType": "decision:long-run-home",
+      "acceptanceEval": "EVAL-007",
+      "affects": [
+        "research-worker",
+        "research-store",
+        "e-delegate"
+      ]
+    },
+    {
+      "id": "ADR-0003",
+      "title": "Fetched web content is labelled as data before it reaches the worker's context",
+      "status": "Proposed",
+      "decisionType": "decision:trust-boundary",
+      "acceptanceEval": "EVAL-005",
+      "affects": [
+        "research-worker",
+        "e-fetch"
+      ]
+    },
+    {
+      "id": "ADR-0004",
+      "title": "One edge agent loop with a single delegated worker over A2A (handoff pattern)",
+      "status": "Accepted",
+      "decisionType": "decision:orchestration-shape",
+      "acceptanceEval": "EVAL-009",
+      "affects": [
+        "edge-agent",
+        "research-worker",
+        "e-delegate"
+      ]
+    },
+    {
+      "id": "ADR-0005",
+      "title": "Plane placement: experience on Vercel, orchestration and model seam on Cloudflare, model on Google, long runs and research data on Railway",
+      "status": "Accepted",
+      "decisionType": "decision:plane-placement",
+      "acceptanceEval": "EVAL-010",
+      "affects": [
+        "portal",
+        "edge-agent",
+        "ai-gateway",
+        "gemini",
+        "research-worker"
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "id": "r-injection",
+      "risk": "risk:indirect-prompt-injection",
+      "affects": [
+        "research-worker",
+        "e-fetch"
+      ],
+      "controls": [
+        "c-content-as-data"
+      ]
+    },
+    {
+      "id": "r-runaway",
+      "risk": "risk:runaway-loop",
+      "affects": [
+        "edge-agent",
+        "research-worker"
+      ],
+      "controls": [
+        "c-edge-budget",
+        "c-worker-budget"
+      ]
+    },
+    {
+      "id": "r-outage",
+      "risk": "risk:provider-outage",
+      "affects": [
+        "gemini"
+      ],
+      "controls": [
+        "c-fallback",
+        "c-seam"
+      ]
+    },
+    {
+      "id": "r-ceiling",
+      "risk": "risk:execution-ceiling",
+      "affects": [
+        "edge-agent"
+      ],
+      "controls": [
+        "c-long-run"
+      ]
+    },
+    {
+      "id": "r-trace",
+      "risk": "risk:untraceable-run",
+      "affects": [
+        "edge-agent",
+        "research-worker",
+        "ai-gateway"
+      ],
+      "controls": [
+        "c-tracing"
+      ]
+    },
+    {
+      "id": "r-creds",
+      "risk": "risk:credential-leak",
+      "affects": [
+        "e-route-primary",
+        "e-delegate",
+        "e-worker-model"
+      ],
+      "controls": [
+        "c-edge-secrets",
+        "c-worker-secrets"
+      ]
+    },
+    {
+      "id": "r-oversight",
+      "risk": "risk:oversight-bypass",
+      "affects": [
+        "e-publish"
+      ],
+      "controls": [
+        "c-approval"
+      ]
+    },
+    {
+      "id": "r-memory",
+      "risk": "risk:memory-poisoning",
+      "affects": [
+        "session-state",
+        "research-store"
+      ],
+      "controls": [
+        "c-memory"
+      ]
+    },
+    {
+      "id": "r-agency",
+      "risk": "risk:excessive-agency",
+      "affects": [
+        "edge-agent"
+      ],
+      "controls": [
+        "c-tools",
+        "c-approval"
+      ]
+    },
+    {
+      "id": "r-regression",
+      "risk": "risk:silent-regression",
+      "affects": [
+        "edge-agent",
+        "research-worker"
+      ],
+      "controls": [
+        "c-eval-gate"
+      ]
+    }
+  ]
+}

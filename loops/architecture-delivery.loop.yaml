@@ -1,0 +1,141 @@
+# Architecture delivery loop: spec -> ADR -> C4 agentic profile -> build -> eval gate -> claims audit -> ship.
+# Extends the AI Architect nine-stage lifecycle (../ai-architect/templates/WORKFLOW.md); inherited
+# stages and gates are referenced, never redefined. Validate with: node loops/check-loops.mjs
+#
+# Budgets below are policy defaults chosen by this organisation, not measurements. An engagement
+# may lower them in its own copy; raising one needs an operator decision recorded in review.md.
+
+schema: mcaa.loop.v1
+id: architecture-delivery
+purpose: "Take a framed goal to a reviewed, eval-accepted, claims-audited multi-cloud architecture that a human can decide to ship."
+extends_lifecycle: ../ai-architect/templates/SOP.md
+runs_in: "customer repository, under docs/architecture/, on the customer's own model keys"
+
+budgets:
+  basis: policy-default
+  max_stage_runs: 40
+  max_wall_clock_minutes: 480
+  max_model_tokens: 4000000
+  max_parallel_makers: 3
+  max_spend_usd: 0
+
+retry_policy:
+  default_cap: 2
+  max_cap: 3
+  on_retry: "maker re-runs with the checker's failed criteria as its only new input"
+  no_progress_rule: "two consecutive failures with identical failed criteria stop the loop"
+
+human_gates: [publish, external_send, spend, dns, credentials, destructive, legal_ip, brand_identity]
+
+stop_conditions:
+  - "a human gate is reached"
+  - "any stage exceeds its retry cap"
+  - "any budget is exhausted"
+  - "the no-progress rule fires"
+  - "an agent invokes a SOUL.md refusal rule"
+  - "two artifacts disagree about the same fact and the lead architect has not ruled"
+  - "a required input is a fact only the operator has"
+
+stages:
+  - id: intake
+    summary: "Frame, discover and map user flows with the inherited AI Architect agents."
+    maker: [ai-architect:discovery-analyst, ai-architect:experience-designer]
+    checker: claims-auditor
+    gates: [gate.frame, gate.discovery, gate.flow]
+    inputs: ["operator goal"]
+    outputs: [docs/architecture/00-frame.md, docs/architecture/01-discovery.md, docs/architecture/02-user-flows.md, docs/architecture/03-experience-blueprint.md]
+    retry_cap: 2
+    on_pass: spec
+    on_fail: intake
+    stop_if: ["the outcome cannot be stated in one sentence", "an [assumed] tag survives discovery"]
+
+  - id: spec
+    summary: "Right-sized spec with requirement ids, acceptance eval ids and an NFR budget; PRD and portal plan in parallel."
+    maker: [spec-driven-dev-lead, solution-designer]
+    checker: claims-auditor
+    gates: [gate.spec]
+    inputs: [docs/architecture/00-frame.md, docs/architecture/01-discovery.md, docs/architecture/03-experience-blueprint.md]
+    outputs: [docs/architecture/spec/SPEC.md, docs/architecture/spec/tasks.md, docs/architecture/prd/PRD.md, docs/architecture/portal/IA.md, docs/architecture/portal/approvals.md]
+    retry_cap: 2
+    on_pass: adr
+    on_fail: spec
+    stop_if: ["an NFR value would have to be invented"]
+
+  - id: adr
+    summary: "Provider architects propose options in parallel; the lead architect settles decisions and plane placement and writes ADRs, each naming its acceptance eval."
+    maker: [google-cloud-architect, cloudflare-architect, vercel-architect, railway-architect, lead-architect]
+    optional_makers: [aws-architect, azure-architect, oci-architect]
+    checker: claims-auditor
+    gates: [gate.decisions]
+    also_runs: [ai-architect:economics-analyst, ai-architect:trust-reviewer]
+    also_gates: [gate.economics, gate.trust]
+    inputs: [docs/architecture/spec/SPEC.md, docs/architecture/01-discovery.md]
+    outputs: [docs/architecture/providers/google-cloud.md, docs/architecture/providers/cloudflare.md, docs/architecture/providers/vercel.md, docs/architecture/providers/railway.md, docs/architecture/SYSTEM.md, docs/architecture/adr/ADR-0001-model-seam.md, docs/architecture/architecture.json]
+    parallel: true
+    retry_cap: 2
+    on_pass: c4
+    on_fail: adr
+    stop_if: ["two provider notes disagree about the same fact", "a plane has no candidate owner and the operator has not been asked"]
+
+  - id: c4
+    summary: "Encode the decisions as a typed architecture graph and emit C4-style views; boundary crossings and lens coverage are computed."
+    maker: [graph-ontology-engineer]
+    checker: claims-auditor
+    gates: [gate.c4]
+    inputs: [docs/architecture/SYSTEM.md, docs/architecture/architecture.json]
+    outputs: [docs/architecture/graph/architecture.graph.json, docs/architecture/graph/context.mmd, docs/architecture/graph/report.txt]
+    retry_cap: 2
+    on_pass: build
+    on_fail: adr
+    stop_if: ["SYSTEM.md and an ADR disagree about a component"]
+
+  - id: build
+    summary: "The customer's coding agent implements tasks.md; this organisation checks conformance and never writes application source."
+    maker: [external:customer-coding-agent]
+    checker: lead-architect
+    gates: [gate.build]
+    also_runs: [ai-architect:delivery-engineer]
+    also_gates: [gate.operate]
+    inputs: [docs/architecture/spec/tasks.md, docs/architecture/graph/architecture.graph.json]
+    outputs: ["application source in the customer repository (outside this team's write scopes)"]
+    retry_cap: 3
+    on_pass: eval-gate
+    on_fail: build
+    stop_if: ["a change needs a component the graph does not contain and no ADR covers it", "a secret value appears in a diff"]
+
+  - id: eval-gate
+    summary: "Run golden, refusal, injection, trajectory and budget cases; an ADR becomes Accepted only when its named eval passes."
+    maker: [adlc-evals-lead]
+    checker: claims-auditor
+    gates: [gate.evals]
+    inputs: [docs/architecture/spec/SPEC.md, docs/architecture/adr/ADR-0001-model-seam.md, docs/architecture/05-trust-boundary.md]
+    outputs: [docs/architecture/06-evals/cases.jsonl, docs/architecture/06-evals/rubric.md, docs/architecture/06-evals/lens-coverage.md]
+    retry_cap: 2
+    on_pass: claims-audit
+    on_fail: build
+    stop_if: ["no sandbox or fixture exists to run against", "the only available data is production customer data"]
+
+  - id: claims-audit
+    summary: "Fresh-context re-derivation of every pointer and command, plus the prose claims audit against SOUL.md."
+    maker: [claims-auditor]
+    checker: human-or-other-provider
+    gates: [gate.verify, gate.claims]
+    inputs: [docs/architecture/architecture.json]
+    outputs: [docs/architecture/claims/YYYY-MM-DD-claims.md, docs/architecture/receipts/YYYY-MM-DD-verify.md, docs/architecture/review.md]
+    retry_cap: 1
+    on_pass: ship
+    on_fail: adr
+    stop_if: ["a required artifact is missing", "a command would modify a file under review"]
+
+  - id: ship
+    summary: "Assemble the ship packet and stop. A human decides and crosses the gates."
+    maker: [lead-architect]
+    checker: operator
+    gates: [gate.ship]
+    inputs: [docs/architecture/architecture.json, docs/architecture/review.md]
+    outputs: [docs/architecture/SYSTEM.md]
+    retry_cap: 0
+    on_pass: done
+    on_fail: stop
+    human_gate_required: true
+    stop_if: ["always: the loop ends here and hands the packet to the operator"]

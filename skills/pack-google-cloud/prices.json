@@ -1,0 +1,14 @@
+{
+  "provider": "Google Cloud",
+  "currency": "USD",
+  "asOf": "2026-10-05",
+  "note": "Agent Runtime rows were read from a search-engine snippet of the official pricing page on 2026-10-05 because the page exceeded fetch limits; verification field marks them. Region not stated in the snippet.",
+  "rows": [
+    {"item": "Agent Runtime (Agent Engine) compute", "unit": "vCPU-hour", "price": 0.085, "verification": "search-snippet-of-official-page", "sourceUrl": "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing", "asOf": "2026-10-05"},
+    {"item": "Agent Runtime (Agent Engine) memory", "unit": "GiB-hour", "price": 0.009, "verification": "search-snippet-of-official-page", "sourceUrl": "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing", "asOf": "2026-10-05"},
+    {"item": "Sessions read operations", "unit": "3M read operations", "price": 0.085, "notes": "billed as 1 Agent Compute vCPU-hour", "verification": "search-snippet-of-official-page", "sourceUrl": "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing", "asOf": "2026-10-05"},
+    {"item": "Memory Bank read operations", "unit": "3M read operations", "price": 0.085, "notes": "billed as 1 Agent Compute vCPU-hour; Memory Bank billing began 2026-09-01", "verification": "search-snippet-of-official-page", "sourceUrl": "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing", "asOf": "2026-10-05"},
+    {"item": "Memory Bank write operations", "unit": "1M write operations", "price": 0.085, "notes": "billed as 1 Agent Compute vCPU-hour", "verification": "search-snippet-of-official-page", "sourceUrl": "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing", "asOf": "2026-10-05"},
+    {"item": "Professional Agentic Architect exam (GA)", "unit": "exam", "price": 200, "notes": "GA registration opens 2026-11-02; beta was $120", "sourceUrl": "https://cloud.google.com/learn/certification/agentic-architect", "asOf": "2026-10-05"}
+  ]
+}

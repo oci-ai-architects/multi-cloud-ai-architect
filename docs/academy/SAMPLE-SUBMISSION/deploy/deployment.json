@@ -1,0 +1,43 @@
+{
+  "schema": "ai-architect-academy/deployment-record.v1",
+  "fixture": true,
+  "note": "Fixture URLs use the reserved .example domain. In a real submission the reviewer sends an unauthenticated GET to each url and expects a 2xx with a non-empty body.",
+  "whySplit": "docs/architecture/adr/ADR-0003-long-run-home.md: one provider per plane (edge ingress, long-run home and state, experience).",
+  "deployments": [
+    {
+      "provider": "cloudflare",
+      "plane": "edge and ingress",
+      "service": "Email Worker ledgerline-ingress + R2 bucket ledgerline-inbox + Queue ledgerline-dlq",
+      "url": "https://ledgerline-ingress.example/healthz",
+      "deployedAt": "2026-10-03",
+      "version": "worker version 7",
+      "rollback": "wrangler rollback",
+      "observability": "Workers Logs; AI Gateway dashboard ledgerline"
+    },
+    {
+      "provider": "railway",
+      "plane": "long-run home and state",
+      "service": "ledgerline-worker (Node container) + Postgres",
+      "url": "https://ledgerline-worker.example/healthz",
+      "deployedAt": "2026-10-03",
+      "version": "git 4f2c9e1",
+      "rollback": "railway down",
+      "observability": "Langfuse project ledgerline; Railway service metrics"
+    },
+    {
+      "provider": "vercel",
+      "plane": "experience",
+      "service": "ledgerline-portal (Next.js)",
+      "url": "https://ledgerline-portal.example",
+      "deployedAt": "2026-10-03",
+      "version": "git 4f2c9e1",
+      "rollback": "vercel rollback <previous-deployment-url> --yes",
+      "observability": "Vercel runtime logs; portal events draft.opened and draft.decided"
+    }
+  ],
+  "modelProviders": [
+    { "id": "provider-a", "name": "Google Gemini API", "role": "primary", "via": "Cloudflare AI Gateway" },
+    { "id": "provider-b", "name": "Anthropic Claude API", "role": "fallback", "via": "Cloudflare AI Gateway" }
+  ],
+  "liveEvalSlice": "docs/architecture/06-evals/run-report.md#live-deployment-slice"
+}
